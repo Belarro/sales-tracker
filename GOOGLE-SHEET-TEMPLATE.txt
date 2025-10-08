@@ -1,0 +1,91 @@
+====================================================
+GOOGLE SHEETS TEMPLATE FOR SALES TRACKER
+====================================================
+
+Copy and paste these headers into your Google Sheet tabs.
+
+====================================================
+TAB 1: "Data"
+====================================================
+
+Copy this line and paste it into row 1 of the "Data" tab:
+
+Timestamp	Sales Rep	Location Name	Business Address	Business Phone	Business Email	Business Website	Contact Person	Contact Title	Direct Phone	Direct Email	Business Types	Interest Level	Visit Notes	Follow-up Date
+
+====================================================
+TAB 2: "Visit History"
+====================================================
+
+Copy this line and paste it into row 1 of the "Visit History" tab:
+
+Timestamp	Sales Rep	Location Name	Business Address	Business Phone	Business Email	Business Website	Contact Person	Contact Title	Direct Phone	Direct Email	Business Types	Interest Level	Visit Notes	Follow-up Date
+
+====================================================
+TAB 3: "Config"
+====================================================
+
+Leave this tab empty (for future use)
+
+====================================================
+TAB 4: "Authorized Users"
+====================================================
+
+Copy this line and paste it into row 1 of the "Authorized Users" tab:
+
+Email
+
+====================================================
+IMPORTANT NOTES
+====================================================
+
+1. The headers MUST be separated by TAB characters (not spaces)
+2. They MUST be in row 1 (the first row)
+3. Spelling and capitalization MUST match exactly
+4. Don't add extra columns
+5. Don't change the order of columns
+
+====================================================
+HOW TO PASTE CORRECTLY
+====================================================
+
+1. Copy the entire header line above
+2. Click on cell A1 in your Google Sheet
+3. Paste (Ctrl+V or Cmd+V)
+4. The headers should spread across columns A through O
+
+If they all paste into one column:
+- The tab characters might have been lost
+- Try copying again, or manually type them with TAB between each
+
+====================================================
+VERIFY YOUR SETUP
+====================================================
+
+Your "Data" tab should look like this:
+
+A1: Timestamp
+B1: Sales Rep
+C1: Location Name
+D1: Business Address
+E1: Business Phone
+F1: Business Email
+G1: Business Website
+H1: Contact Person
+I1: Contact Title
+J1: Direct Phone
+K1: Direct Email
+L1: Business Types
+M1: Interest Level
+N1: Visit Notes
+O1: Follow-up Date
+
+====================================================
+SHARING SETTINGS
+====================================================
+
+IMPORTANT: Set your sheet sharing to:
+"Anyone with the link" → "Editor"
+
+This allows the app to read and write data using API keys.
+
+====================================================
