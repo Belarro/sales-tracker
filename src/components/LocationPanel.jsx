@@ -32,6 +32,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [dragStartY, setDragStartY] = useState(0);
   const [dragCurrentY, setDragCurrentY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [notesCharCount, setNotesCharCount] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     if (location) {
@@ -72,6 +74,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       [name]: value
     }));
 
+    // Track character count for visit notes
+    if (name === 'visitNotes') {
+      setNotesCharCount(value.length);
+    }
+
     // Mark form as dirty if user enters data in key fields
     if (['contactPerson', 'contactTitle', 'visitNotes'].includes(name) && value.trim()) {
       setHasUnsavedChanges(true);
@@ -104,6 +111,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           visitNotes: '',
           followUpDate: calculateFollowUpDate(CONFIG.FOLLOW_UP_DAYS)
         }));
+        setNotesCharCount(0); // Reset character count
       } else {
         setMessage({ type: 'error', text: 'Failed to save visit. Please try again.' });
       }
@@ -295,14 +303,31 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
 
           <div className="form-group">
-            <label>Visit Notes *</label>
+            <label>
+              Visit Notes *
+              <span style={{
+                fontSize: '12px',
+                fontWeight: 'normal',
+                color: '#666',
+                marginLeft: '8px'
+              }}>
+                ({notesCharCount} characters)
+              </span>
+            </label>
             <textarea
               name="visitNotes"
               value={formData.visitNotes}
               onChange={handleChange}
               required
               placeholder="Add notes about your visit, what you discussed, etc."
+              style={{
+                minHeight: '150px',
+                resize: 'vertical'
+              }}
             />
+            <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+              Tip: Include details about the conversation, menu items discussed, pricing, and next steps.
+            </small>
           </div>
 
           <div className="follow-up-date">
@@ -323,25 +348,51 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
 
         {visitHistory.length > 0 && (
           <div className="visit-history">
-            <h3>Visit History ({visitHistory.length} visit{visitHistory.length !== 1 ? 's' : ''})</h3>
-            {visitHistory.map((visit, index) => (
-              <div key={index} className="history-item">
-                <div className="history-date">
-                  {formatDate(visit.timestamp.split('T')[0])} - {visit.salesRep}
-                </div>
-                <div className="history-details">
-                  <strong>Contact:</strong> {visit.contactPerson} ({visit.contactTitle})<br />
-                  <strong>Interest Level:</strong> {visit.interestLevel}<br />
-                  <strong>Business Type:</strong> {visit.businessTypes}<br />
-                  <strong>Notes:</strong> {visit.visitNotes}<br />
-                  {visit.followUpDate && (
-                    <>
-                      <strong>Follow-up Date:</strong> {formatDate(visit.followUpDate)}
-                    </>
-                  )}
-                </div>
+            <button
+              type="button"
+              onClick={() => setShowHistory(!showHistory)}
+              style={{
+                background: '#f5f5f5',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600',
+                color: '#333',
+                marginBottom: showHistory ? '15px' : '0'
+              }}
+            >
+              <span>Visit History ({visitHistory.length} visit{visitHistory.length !== 1 ? 's' : ''})</span>
+              <span style={{ fontSize: '20px' }}>{showHistory ? '▼' : '▶'}</span>
+            </button>
+
+            {showHistory && (
+              <div>
+                {visitHistory.map((visit, index) => (
+                  <div key={index} className="history-item">
+                    <div className="history-date">
+                      {formatDate(visit.timestamp.split('T')[0])} - {visit.salesRep}
+                    </div>
+                    <div className="history-details">
+                      <strong>Contact:</strong> {visit.contactPerson} ({visit.contactTitle})<br />
+                      <strong>Interest Level:</strong> {visit.interestLevel}<br />
+                      <strong>Business Type:</strong> {visit.businessTypes}<br />
+                      <strong>Notes:</strong> {visit.visitNotes}<br />
+                      {visit.followUpDate && (
+                        <>
+                          <strong>Follow-up Date:</strong> {formatDate(visit.followUpDate)}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>

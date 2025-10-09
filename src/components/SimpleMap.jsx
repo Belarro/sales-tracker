@@ -3,13 +3,14 @@
 // ============================================
 // Uses native Google Maps API instead of React wrapper
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '../config.js';
 
 const SimpleMap = ({ onLocationSelect }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -21,8 +22,21 @@ const SimpleMap = ({ onLocationSelect }) => {
       if (window.google && window.google.maps) {
         initMap();
       } else {
-        // Retry after a short delay
-        setTimeout(checkGoogleMapsLoaded, 100);
+        // Listen for the custom event dispatched when Google Maps loads
+        const handleMapsLoaded = () => {
+          if (mounted) {
+            initMap();
+          }
+        };
+
+        window.addEventListener('google-maps-loaded', handleMapsLoaded, { once: true });
+
+        // Fallback: check if already loaded (in case event fired before listener attached)
+        setTimeout(() => {
+          if (mounted && window.google && window.google.maps) {
+            initMap();
+          }
+        }, 100);
       }
     };
 
@@ -41,6 +55,23 @@ const SimpleMap = ({ onLocationSelect }) => {
         mapInstanceRef.current = null;
       }
     };
+  }, []);
+
+  // Hint management - show on first visit
+  useEffect(() => {
+    const hasSeenHint = localStorage.getItem('salesTracker_hasSeenMapHint');
+    if (!hasSeenHint) {
+      // Show hint after map loads (2 second delay)
+      setTimeout(() => {
+        setShowHint(true);
+      }, 2000);
+
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        setShowHint(false);
+        localStorage.setItem('salesTracker_hasSeenMapHint', 'true');
+      }, 12000);
+    }
   }, []);
 
   const initMap = () => {
@@ -137,14 +168,123 @@ const SimpleMap = ({ onLocationSelect }) => {
     console.log('✅ Map ready! Click any business on the map to add visit notes.');
   };
 
+  const dismissHint = () => {
+    setShowHint(false);
+    localStorage.setItem('salesTracker_hasSeenMapHint', 'true');
+  };
+
+  const zoomToUserLocation = () => {
+    if (navigator.geolocation && mapInstanceRef.current) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          mapInstanceRef.current.setCenter(userLocation);
+          mapInstanceRef.current.setZoom(15);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          alert('Unable to get your location. Please check your browser permissions.');
+        }
+      );
+    }
+  };
+
   return (
-    <div
-      ref={mapRef}
-      style={{
-        width: '100%',
-        height: '100%'
-      }}
-    />
+    <>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+      `}</style>
+
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div
+          ref={mapRef}
+          style={{
+            width: '100%',
+            height: '100%'
+          }}
+        />
+
+        {showHint && (
+          <div style={{
+            position: 'absolute',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: '#1a73e8',
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '24px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            zIndex: 1000,
+            fontSize: '14px',
+            fontWeight: '500',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            maxWidth: '90%',
+            animation: 'fadeIn 0.3s ease'
+          }}>
+            <span>👆 Tap any business on the map to add visit notes</span>
+            <button
+              onClick={dismissHint}
+              style={{
+                background: 'rgba(255,255,255,0.2)',
+                border: 'none',
+                color: 'white',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}
+            >
+              Got it
+            </button>
+          </div>
+        )}
+
+        <button
+          onClick={zoomToUserLocation}
+          style={{
+            position: 'absolute',
+            bottom: window.innerWidth < 768 ? '80px' : '120px',
+            right: window.innerWidth < 768 ? '16px' : '20px',
+            width: '56px',
+            height: '56px',
+            borderRadius: '50%',
+            background: '#1a73e8',
+            color: 'white',
+            border: 'none',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            zIndex: 100,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+          }}
+          title="Zoom to my location"
+          aria-label="Zoom to my location"
+        >
+          📍
+        </button>
+      </div>
+    </>
   );
 };
 
