@@ -7,30 +7,42 @@ import { CONFIG } from '../config.js';
 import { getCurrentTimestamp } from './dateUtils.js';
 
 /**
- * Initialize Google Sheets API with OAuth
+ * Initialize Google Sheets API client with access token from Google Identity Services
  */
 export const initSheetsAPI = () => {
   return new Promise((resolve, reject) => {
-    window.gapi.load('client:auth2', async () => {
-      try {
-        await window.gapi.client.init({
-          apiKey: CONFIG.GOOGLE_SHEETS_API_KEY,
-          clientId: CONFIG.GOOGLE_CLIENT_ID,
-          discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-          scope: 'https://www.googleapis.com/auth/spreadsheets'
+    const initClient = () => {
+      if (window.gapi) {
+        window.gapi.load('client', async () => {
+          try {
+            await window.gapi.client.init({
+              apiKey: CONFIG.GOOGLE_SHEETS_API_KEY,
+              discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+            });
+
+            // Set the access token from Google Identity Services
+            if (window.googleAccessToken) {
+              window.gapi.client.setToken({
+                access_token: window.googleAccessToken
+              });
+              console.log('Sheets API client initialized with access token');
+            } else {
+              console.log('Sheets API client initialized (no token yet)');
+            }
+
+            resolve();
+          } catch (error) {
+            console.error('Failed to initialize Sheets API client:', error);
+            reject(error);
+          }
         });
-
-        // Sign in the user
-        const authInstance = window.gapi.auth2.getAuthInstance();
-        if (!authInstance.isSignedIn.get()) {
-          await authInstance.signIn();
-        }
-
-        resolve();
-      } catch (error) {
-        reject(error);
+      } else {
+        // Retry if gapi not loaded yet
+        setTimeout(initClient, 100);
       }
-    });
+    };
+
+    initClient();
   });
 };
 
@@ -209,6 +221,12 @@ export const addVisitToHistory = async (visitData) => {
  */
 export const saveLocationData = async (locationData, userEmail) => {
   try {
+    // Check if gapi client is initialized
+    if (!window.gapi || !window.gapi.client || !window.gapi.client.sheets) {
+      console.error('Google Sheets API not initialized. Please wait and try again.');
+      throw new Error('Google Sheets API not ready. Please refresh the page and try again.');
+    }
+
     const timestamp = getCurrentTimestamp();
     const visitData = {
       timestamp,

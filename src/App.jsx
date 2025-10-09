@@ -18,83 +18,40 @@ function App() {
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [visitedLocations, setVisitedLocations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    // Load Google API script
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      initSheetsAPI().then(() => {
-        // After successful OAuth sign-in, get user info
-        const authInstance = window.gapi.auth2.getAuthInstance();
-        if (authInstance.isSignedIn.get()) {
-          const profile = authInstance.currentUser.get().getBasicProfile();
-          const userEmail = profile.getEmail();
-          const userName = profile.getName();
-
-          setUser({ email: userEmail, name: userName });
-
-          // Check authorization
-          if (isAdmin(userEmail)) {
-            setAuthorized(true);
-            setShowAdminSetup(true);
-          } else {
-            // Check if user is in authorized list
-            getAuthorizedUsers().then(authorizedUsers => {
-              if (authorizedUsers.includes(userEmail)) {
-                setAuthorized(true);
-                loadVisitedLocations();
-              } else {
-                setError('You are not authorized to access this app. Please contact the administrator.');
-              }
-            }).catch(err => {
-              console.error('Error checking authorization:', err);
-              setError('Failed to verify authorization. Please try again.');
-            });
-          }
-        }
-        setLoading(false);
-      }).catch(err => {
-        console.error('Failed to initialize Sheets API:', err);
-        setLoading(false);
-      });
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
-
   const handleLogin = async (userInfo) => {
+    setLoading(true);
     setUser(userInfo);
 
-    // Check if user is admin
-    if (isAdmin(userInfo.email)) {
-      setAuthorized(true);
-      setShowAdminSetup(true);
-      return;
-    }
-
-    // Check if user is in authorized list
+    // Initialize Sheets API with OAuth after user signs in
     try {
+      await initSheetsAPI();
+      console.log('Sheets API initialized successfully');
+
+      // Check if user is admin (admins are automatically authorized)
+      if (isAdmin(userInfo.email)) {
+        setAuthorized(true);
+        await loadVisitedLocations();
+        setLoading(false);
+        return;
+      }
+
+      // Check if user is in authorized list
       const authorizedUsers = await getAuthorizedUsers();
       if (authorizedUsers.includes(userInfo.email)) {
         setAuthorized(true);
-        loadVisitedLocations();
+        await loadVisitedLocations();
       } else {
         setError('You are not authorized to access this app. Please contact the administrator.');
       }
     } catch (err) {
-      console.error('Error checking authorization:', err);
-      setError('Failed to verify authorization. Please try again.');
+      console.error('Error during login:', err);
+      setError('Failed to initialize. Please try again.');
     }
+
+    setLoading(false);
   };
 
   const loadVisitedLocations = async () => {
@@ -124,27 +81,12 @@ function App() {
   };
 
   const handleSignOut = () => {
-    // Sign out from Google OAuth
-    if (window.gapi && window.gapi.auth2) {
-      const authInstance = window.gapi.auth2.getAuthInstance();
-      if (authInstance) {
-        authInstance.signOut().then(() => {
-          setUser(null);
-          setAuthorized(false);
-          setShowAdminSetup(false);
-          setSelectedLocation(null);
-          setVisitedLocations([]);
-          window.location.reload();
-        });
-      }
-    } else {
-      setUser(null);
-      setAuthorized(false);
-      setShowAdminSetup(false);
-      setSelectedLocation(null);
-      setVisitedLocations([]);
-      window.location.reload();
-    }
+    setUser(null);
+    setAuthorized(false);
+    setShowAdminSetup(false);
+    setSelectedLocation(null);
+    setVisitedLocations([]);
+    window.location.reload();
   };
 
   if (loading) {

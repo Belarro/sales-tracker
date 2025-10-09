@@ -12,21 +12,33 @@ const SimpleMap = ({ onLocationSelect }) => {
   const markersRef = useRef([]);
 
   useEffect(() => {
-    // Load Google Maps script
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places`;
-    script.async = true;
-    script.defer = true;
+    let mounted = true;
 
-    script.onload = () => {
-      initMap();
+    // Wait for Google Maps API to be ready
+    const checkGoogleMapsLoaded = () => {
+      if (!mounted) return;
+
+      if (window.google && window.google.maps) {
+        initMap();
+      } else {
+        // Retry after a short delay
+        setTimeout(checkGoogleMapsLoaded, 100);
+      }
     };
 
-    document.head.appendChild(script);
+    checkGoogleMapsLoaded();
 
     return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+      mounted = false;
+      // Clean up markers
+      markersRef.current.forEach(marker => {
+        if (marker.setMap) marker.setMap(null);
+      });
+      markersRef.current = [];
+
+      // Clean up map instance
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current = null;
       }
     };
   }, []);
@@ -65,10 +77,47 @@ const SimpleMap = ({ onLocationSelect }) => {
       zoomControl: true,
       streetViewControl: false,
       mapTypeControl: false,
-      fullscreenControl: true
+      fullscreenControl: true // POI labels (business names) now visible on map
     });
 
     mapInstanceRef.current = map;
+
+    // Add click listener for Google Maps POI (Points of Interest) markers
+    map.addListener('click', async (event) => {
+      // Check if a POI was clicked
+      if (event.placeId) {
+        event.stop(); // Prevent default info window
+        console.log('Google Maps POI clicked, Place ID:', event.placeId);
+
+        try {
+          // Use NEW Places API (not the legacy PlacesService)
+          const { Place } = await window.google.maps.importLibrary("places");
+
+          // Create a Place instance with the clicked place ID
+          const place = new Place({
+            id: event.placeId
+          });
+
+          // Fetch place details
+          await place.fetchFields({
+            fields: ['displayName', 'formattedAddress', 'nationalPhoneNumber', 'websiteURI', 'googleMapsURI']
+          });
+
+          console.log('✅ Google Maps POI details:', place);
+
+          onLocationSelect({
+            name: place.displayName || 'Unknown Place',
+            address: place.formattedAddress || 'Address not available',
+            phone: place.nationalPhoneNumber || '',
+            website: place.websiteURI || '',
+            googleMapsUrl: place.googleMapsURI || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName)}`,
+            placeId: event.placeId
+          });
+        } catch (error) {
+          console.error('Places API error:', error);
+        }
+      }
+    });
 
     // Add blue user location marker
     new window.google.maps.Marker({
@@ -85,68 +134,7 @@ const SimpleMap = ({ onLocationSelect }) => {
       title: 'Your Location'
     });
 
-    // Create 3 test markers
-    const testPlaces = [
-      {
-        id: 'test1',
-        name: 'Test Restaurant 1',
-        address: 'Test Address 1',
-        position: {
-          lat: center.lat + 0.005,
-          lng: center.lng + 0.005
-        }
-      },
-      {
-        id: 'test2',
-        name: 'Test Cafe 2',
-        address: 'Test Address 2',
-        position: {
-          lat: center.lat - 0.005,
-          lng: center.lng + 0.005
-        }
-      },
-      {
-        id: 'test3',
-        name: 'Test Bakery 3',
-        address: 'Test Address 3',
-        position: {
-          lat: center.lat + 0.005,
-          lng: center.lng - 0.005
-        }
-      }
-    ];
-
-    testPlaces.forEach(place => {
-      const marker = new window.google.maps.Marker({
-        position: place.position,
-        map: map,
-        icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          scale: 12,
-          fillColor: '#ea4335',
-          fillOpacity: 1,
-          strokeColor: '#ffffff',
-          strokeWeight: 2
-        },
-        title: place.name
-      });
-
-      marker.addListener('click', () => {
-        console.log('Marker clicked:', place.name);
-        onLocationSelect({
-          name: place.name,
-          address: place.address,
-          phone: '',
-          website: '',
-          googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}`,
-          placeId: place.id
-        });
-      });
-
-      markersRef.current.push(marker);
-    });
-
-    console.log('Created', testPlaces.length, 'test markers');
+    console.log('✅ Map ready! Click any business on the map to add visit notes.');
   };
 
   return (

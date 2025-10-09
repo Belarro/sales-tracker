@@ -47,7 +47,7 @@ export const decodeJWT = (token) => {
  * @returns {boolean} True if user is admin
  */
 export const isAdmin = (email) => {
-  return email === CONFIG.ADMIN_EMAIL;
+  return CONFIG.ADMIN_EMAILS.includes(email);
 };
 
 /**

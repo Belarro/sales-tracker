@@ -28,6 +28,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [visitHistory, setVisitHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragCurrentY, setDragCurrentY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (location) {
@@ -67,6 +71,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       ...prev,
       [name]: value
     }));
+
+    // Mark form as dirty if user enters data in key fields
+    if (['contactPerson', 'contactTitle', 'visitNotes'].includes(name) && value.trim()) {
+      setHasUnsavedChanges(true);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -78,7 +87,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const success = await saveLocationData(formData, user.email);
 
       if (success) {
-        setMessage({ type: 'success', text: 'Visit saved successfully!' });
+        setMessage({ type: 'success', text: '✅ Visit saved successfully!' });
+        setHasUnsavedChanges(false); // Clear dirty flag
         // Reload visit history
         await loadVisitHistory(formData.locationName, formData.businessAddress);
         // Notify parent to refresh map
@@ -99,21 +109,64 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       }
     } catch (error) {
       console.error('Error saving visit:', error);
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      const errorMessage = error.message || 'An error occurred. Please try again.';
+      setMessage({ type: 'error', text: `❌ ${errorMessage}` });
     }
 
     setLoading(false);
+  };
+
+  const handleCloseWithWarning = () => {
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        'You have unsaved changes. Are you sure you want to close?'
+      );
+      if (!confirmed) return;
+    }
+    setHasUnsavedChanges(false);
+    onClose();
+  };
+
+  const handleTouchStart = (e) => {
+    setDragStartY(e.touches[0].clientY);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    setDragCurrentY(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+
+    const dragDistance = dragCurrentY - dragStartY;
+
+    // If dragged down more than 100px, close panel
+    if (dragDistance > 100) {
+      onClose();
+    }
+
+    setIsDragging(false);
+    setDragStartY(0);
+    setDragCurrentY(0);
   };
 
   if (!location) return null;
 
   return (
     <div className="location-panel open">
-      <div className="panel-handle"></div>
+      <div
+        className="panel-handle"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{ cursor: 'grab' }}
+      ></div>
       <div className="panel-content">
         <div className="panel-header">
+          <button className="close-panel" onClick={handleCloseWithWarning}>×</button>
           <h2>{formData.locationName}</h2>
-          <button className="close-panel" onClick={onClose}>×</button>
         </div>
 
         {message.text && (
@@ -123,6 +176,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         )}
 
         <div className="location-details">
+          <div className="detail-row">
+            <span className="detail-label">Business Name:</span>
+            <span className="detail-value">{formData.locationName}</span>
+          </div>
           <div className="detail-row">
             <span className="detail-label">Address:</span>
             <span className="detail-value">{formData.businessAddress}</span>
@@ -255,7 +312,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
 
           <div className="form-actions">
-            <button type="button" onClick={onClose} className="btn btn-secondary">
+            <button type="button" onClick={handleCloseWithWarning} className="btn btn-secondary">
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={loading}>

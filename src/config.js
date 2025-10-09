@@ -5,8 +5,8 @@
 // Follow the SETUP-GUIDE.md for detailed instructions
 
 export const CONFIG = {
-  // Admin email - this person has full access to setup and manage users
-  ADMIN_EMAIL: 'ronbenyohanan@gmail.com',
+  // Admin emails - these people have full access to setup and manage users
+  ADMIN_EMAILS: ['ronbenyohanan@gmail.com', 'mintzer.elad@gmail.com'],
 
   // Google Maps API Key - Get this from Google Cloud Console
   // Instructions in SETUP-GUIDE.md Part 1
