@@ -216,6 +216,10 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
 
     // Create overlay markers for each visited location
     Object.values(locationVisits).forEach(async ({ count, location, interestLevel }) => {
+      console.log(`🔵 Processing location: ${location.locationName}`);
+      console.log(`   DirectLink: ${location.directLink}`);
+      console.log(`   Address: ${location.businessAddress}`);
+
       // Determine color based on interest level
       let color = '#9e9e9e'; // Gray - default/unvisited
       if (interestLevel === 'Not Interested') {
@@ -282,12 +286,20 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
   }, [visitedLocations]);
 
   const geocodeAndCreateMarker = (address, color, count) => {
-    if (!window.google) return;
+    if (!window.google) {
+      console.error('❌ Google Maps API not ready for geocoding');
+      return;
+    }
 
+    console.log(`🔍 Geocoding address: "${address}"`);
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
+      console.log(`   Geocode status: ${status}`);
       if (status === 'OK' && results[0]) {
+        console.log(`   ✅ Geocoded successfully: ${results[0].geometry.location.lat()}, ${results[0].geometry.location.lng()}`);
         createCustomMarker(results[0].geometry.location, color, count);
+      } else {
+        console.error(`   ❌ Geocoding failed for "${address}": ${status}`);
       }
     });
   };
