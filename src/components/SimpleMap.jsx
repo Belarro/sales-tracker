@@ -174,6 +174,12 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
 
     // Set map ready state to trigger marker creation
     setMapReady(true);
+
+    // TEST: Create a test marker immediately to verify marker creation works
+    setTimeout(() => {
+      console.log('🧪 Creating TEST marker at map center...');
+      createCustomMarker(center, '#ff0000', 999);
+    }, 1000);
   };
 
   // Add custom markers for visited locations
