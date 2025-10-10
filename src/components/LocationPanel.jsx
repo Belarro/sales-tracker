@@ -38,6 +38,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [existingNotes, setExistingNotes] = useState('');
   const [newNotes, setNewNotes] = useState('');
   const [isRevisit, setIsRevisit] = useState(false);
+  const [needsFollowUp, setNeedsFollowUp] = useState(true);
 
   useEffect(() => {
     if (location) {
@@ -112,6 +113,15 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       [name]: value
     }));
 
+    // Auto-set follow-up checkbox based on interest level
+    if (name === 'interestLevel') {
+      if (value === 'Not Interested' || value === 'Closed Deal') {
+        setNeedsFollowUp(false);
+      } else if (value === 'Interested' || value === 'Follow Up' || value === 'Pending') {
+        setNeedsFollowUp(true);
+      }
+    }
+
     // Mark form as dirty if user enters data in key fields
     if (['contactPerson', 'contactTitle', 'visitNotes'].includes(name) && value.trim()) {
       setHasUnsavedChanges(true);
@@ -166,7 +176,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const dataToSave = {
         ...formData,
         visitNotes: combinedNotes,
-        directLink
+        directLink,
+        followUpDate: needsFollowUp ? formData.followUpDate : ''
       };
 
       const success = await saveLocationData(dataToSave, user.name, user.email);
@@ -422,6 +433,36 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             </select>
           </div>
 
+          <div className="form-group" style={{
+            background: '#f0f7ff',
+            padding: '12px',
+            borderRadius: '6px',
+            border: '1px solid #b3d9ff'
+          }}>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: '0' }}>
+              <input
+                type="checkbox"
+                checked={needsFollowUp}
+                onChange={(e) => setNeedsFollowUp(e.target.checked)}
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  marginRight: '10px',
+                  cursor: 'pointer'
+                }}
+              />
+              <span style={{ fontSize: '15px', fontWeight: '600' }}>
+                Schedule follow-up visit?
+              </span>
+            </label>
+            <small style={{ color: '#555', fontSize: '12px', marginLeft: '28px', display: 'block', marginTop: '4px' }}>
+              {needsFollowUp
+                ? '✓ Follow-up will be scheduled for ' + CONFIG.FOLLOW_UP_DAYS + ' business days ahead'
+                : '✗ No follow-up will be scheduled for this visit'
+              }
+            </small>
+          </div>
+
           {isRevisit && existingNotes && (
             <div className="form-group">
               <label style={{ color: '#1976d2', fontWeight: '600' }}>
@@ -475,62 +516,64 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             </small>
           </div>
 
-          <div className="follow-up-date">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <strong>Follow-up Date:</strong> {formatDate(formData.followUpDate)}
-                {!isEditingFollowUp && (
-                  <>
-                    <br />
-                    <small>(Automatically set to {CONFIG.FOLLOW_UP_DAYS} business days ahead)</small>
-                  </>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsEditingFollowUp(!isEditingFollowUp)}
-                style={{
-                  background: '#2e7d32',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '6px 12px',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: '600'
-                }}
-              >
-                {isEditingFollowUp ? 'Cancel' : 'Edit'}
-              </button>
-            </div>
-            {isEditingFollowUp && (
-              <div style={{ marginTop: '10px' }}>
-                <input
-                  type="date"
-                  value={formData.followUpDate.split('-').reverse().join('-')}
-                  onChange={(e) => {
-                    const [year, month, day] = e.target.value.split('-');
-                    setFormData(prev => ({
-                      ...prev,
-                      followUpDate: `${day}-${month}-${year}`
-                    }));
-                    setIsEditingFollowUp(false);
-                  }}
+          {needsFollowUp && (
+            <div className="follow-up-date">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <strong>Follow-up Date:</strong> {formatDate(formData.followUpDate)}
+                  {!isEditingFollowUp && (
+                    <>
+                      <br />
+                      <small>(Automatically set to {CONFIG.FOLLOW_UP_DAYS} business days ahead)</small>
+                    </>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingFollowUp(!isEditingFollowUp)}
                   style={{
-                    width: '100%',
-                    padding: '8px',
-                    fontSize: '14px',
-                    border: '1px solid #2e7d32',
+                    background: '#2e7d32',
+                    color: 'white',
+                    border: 'none',
                     borderRadius: '4px',
-                    marginTop: '5px'
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: '600'
                   }}
-                />
-                <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
-                  Select a new follow-up date
-                </small>
+                >
+                  {isEditingFollowUp ? 'Cancel' : 'Edit'}
+                </button>
               </div>
-            )}
-          </div>
+              {isEditingFollowUp && (
+                <div style={{ marginTop: '10px' }}>
+                  <input
+                    type="date"
+                    value={formData.followUpDate.split('-').reverse().join('-')}
+                    onChange={(e) => {
+                      const [year, month, day] = e.target.value.split('-');
+                      setFormData(prev => ({
+                        ...prev,
+                        followUpDate: `${day}-${month}-${year}`
+                      }));
+                      setIsEditingFollowUp(false);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      fontSize: '14px',
+                      border: '1px solid #2e7d32',
+                      borderRadius: '4px',
+                      marginTop: '5px'
+                    }}
+                  />
+                  <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
+                    Select a new follow-up date
+                  </small>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="form-actions">
             <button type="button" onClick={handleCloseWithWarning} className="btn btn-secondary">
