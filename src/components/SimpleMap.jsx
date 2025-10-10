@@ -144,7 +144,9 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
             phone: place.nationalPhoneNumber || '',
             website: place.websiteURI || '',
             googleMapsUrl: place.googleMapsURI || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName)}`,
-            placeId: event.placeId
+            placeId: event.placeId,
+            lat: place.location?.lat() || null,
+            lng: place.location?.lng() || null
           });
         } catch (error) {
           console.error('Places API error:', error);
@@ -224,47 +226,58 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
         color = '#4caf50'; // Green
       }
 
-      // Extract Place ID or coordinates from DirectLink
-      let placeId = null;
+      // Extract coordinates or Place ID from DirectLink
       if (location.directLink) {
-        // Check if it's a Place ID directly (starts with ChIJ)
-        if (location.directLink.startsWith('ChIJ')) {
-          placeId = location.directLink;
-        } else if (location.directLink.includes('place_id:')) {
-          // Extract from URL like: ...?q=place_id:ChIJ...
-          const match = location.directLink.match(/place_id[=:]([^&\s]+)/);
-          if (match) placeId = match[1];
-        } else if (location.directLink.includes('/@')) {
-          // Extract coordinates from URL like: /@52.520,13.405,17z
+        // Priority 1: Check for our custom format "LAT,LNG|PLACE_ID"
+        if (location.directLink.match(/^-?\d+\.\d+,-?\d+\.\d+/)) {
+          const parts = location.directLink.split('|');
+          const [lat, lng] = parts[0].split(',').map(parseFloat);
+          console.log(`✅ Using saved coordinates for ${location.locationName}: ${lat}, ${lng}`);
+          createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count);
+          return;
+        }
+
+        // Priority 2: Extract coordinates from URL like /@52.520,13.405,17z
+        if (location.directLink.includes('/@')) {
           const match = location.directLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
           if (match) {
             const lat = parseFloat(match[1]);
             const lng = parseFloat(match[2]);
+            console.log(`✅ Using URL coordinates for ${location.locationName}: ${lat}, ${lng}`);
             createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count);
             return;
           }
         }
-      }
 
-      // Try to get coordinates from Place ID if available
-      if (placeId) {
-        try {
-          const { Place } = await window.google.maps.importLibrary("places");
-          const place = new Place({ id: placeId });
-          await place.fetchFields({ fields: ['location'] });
-
-          if (place.location) {
-            createCustomMarker(place.location, color, count);
-          }
-        } catch (error) {
-          console.error('Error fetching place location:', error);
-          // Fallback to geocoding with address
-          geocodeAndCreateMarker(location.businessAddress, color, count);
+        // Priority 3: Try Place ID
+        let placeId = null;
+        if (location.directLink.startsWith('ChIJ')) {
+          placeId = location.directLink;
+        } else if (location.directLink.includes('place_id:')) {
+          const match = location.directLink.match(/place_id[=:]([^&\s]+)/);
+          if (match) placeId = match[1];
         }
-      } else {
-        // Fallback to geocoding with address
-        geocodeAndCreateMarker(location.businessAddress, color, count);
+
+        if (placeId) {
+          try {
+            const { Place } = await window.google.maps.importLibrary("places");
+            const place = new Place({ id: placeId });
+            await place.fetchFields({ fields: ['location'] });
+
+            if (place.location) {
+              console.log(`✅ Using Place ID coordinates for ${location.locationName}`);
+              createCustomMarker(place.location, color, count);
+              return;
+            }
+          } catch (error) {
+            console.error('Error fetching place location:', error);
+          }
+        }
       }
+
+      // Last resort: Geocode the address
+      console.log(`⚠️ Geocoding address for ${location.locationName}: ${location.businessAddress}`);
+      geocodeAndCreateMarker(location.businessAddress, color, count);
     });
   }, [visitedLocations]);
 

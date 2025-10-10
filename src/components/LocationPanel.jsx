@@ -159,17 +159,19 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         combinedNotes = dateStamp + ' ' + (newNotes || formData.visitNotes);
       }
 
-      // Save Place ID as DirectLink (best for markers)
-      // But if we have the Google Maps URL, use that (it contains coordinates)
+      // Save coordinates directly in DirectLink for reliable marker placement
       let directLink = '';
-      if (location.placeId) {
-        // Save Place ID directly - most reliable
+      if (location.lat && location.lng) {
+        // Best: Save coordinates directly as "LAT,LNG|PLACE_ID"
+        directLink = `${location.lat},${location.lng}|${location.placeId || ''}`;
+      } else if (location.placeId) {
+        // Fallback: Save Place ID only
         directLink = location.placeId;
       } else if (location.googleMapsUrl) {
-        // Use the Google Maps URL from the place data (has coordinates)
+        // Fallback: Use the Google Maps URL
         directLink = location.googleMapsUrl;
       } else {
-        // Fallback to search by address
+        // Last resort: search by address
         directLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.businessAddress)}`;
       }
 
