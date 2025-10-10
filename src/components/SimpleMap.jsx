@@ -172,15 +172,23 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
 
   // Add custom markers for visited locations
   useEffect(() => {
-    console.log('SimpleMap received visitedLocations:', visitedLocations);
-    if (!mapInstanceRef.current || !window.google || visitedLocations.length === 0) {
-      console.log('Skipping marker creation:', {
+    console.log('🗺️ SimpleMap received visitedLocations:', visitedLocations);
+    console.log('📊 Number of locations to display:', visitedLocations.length);
+
+    if (!mapInstanceRef.current || !window.google) {
+      console.log('⚠️ Skipping marker creation - map not ready:', {
         hasMap: !!mapInstanceRef.current,
-        hasGoogle: !!window.google,
-        locationCount: visitedLocations.length
+        hasGoogle: !!window.google
       });
       return;
     }
+
+    if (visitedLocations.length === 0) {
+      console.log('⚠️ No visited locations to display on map');
+      return;
+    }
+
+    console.log('✅ Creating markers for', visitedLocations.length, 'locations');
 
     // Clear existing overlay markers
     overlayMarkersRef.current.forEach(marker => {
@@ -450,6 +458,23 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
         >
           📍
         </button>
+
+        {/* Location Counter */}
+        <div style={{
+          position: 'absolute',
+          top: '20px',
+          left: '20px',
+          background: 'white',
+          padding: '12px 16px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#333',
+          zIndex: 100
+        }}>
+          📍 Visited: <span style={{ color: '#1a73e8' }}>{visitedLocations.length}</span> location{visitedLocations.length !== 1 ? 's' : ''}
+        </div>
       </div>
     </>
   );
