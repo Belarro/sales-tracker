@@ -172,7 +172,15 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
 
   // Add custom markers for visited locations
   useEffect(() => {
-    if (!mapInstanceRef.current || !window.google || visitedLocations.length === 0) return;
+    console.log('SimpleMap received visitedLocations:', visitedLocations);
+    if (!mapInstanceRef.current || !window.google || visitedLocations.length === 0) {
+      console.log('Skipping marker creation:', {
+        hasMap: !!mapInstanceRef.current,
+        hasGoogle: !!window.google,
+        locationCount: visitedLocations.length
+      });
+      return;
+    }
 
     // Clear existing overlay markers
     overlayMarkersRef.current.forEach(marker => {

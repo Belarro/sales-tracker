@@ -57,8 +57,10 @@ function App() {
   const loadVisitedLocations = async () => {
     try {
       const locations = await getAllLocations();
+      console.log('Loaded locations from Google Sheet:', locations);
       // Filter out archived locations
       const activeLocations = locations.filter(loc => loc.archived !== 'YES');
+      console.log('Active locations (after filtering archived):', activeLocations);
       setVisitedLocations(activeLocations);
     } catch (err) {
       console.error('Error loading visited locations:', err);
