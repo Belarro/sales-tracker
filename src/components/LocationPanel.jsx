@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
 import { calculateFollowUpDate, formatDate } from '../utils/dateUtils.js';
-import { saveLocationData, getLocationHistory, checkLocationExists, archiveLocation } from '../utils/googleSheets.js';
+import { saveLocationData, getLocationHistory, checkLocationExists, archiveLocation, deleteLocation } from '../utils/googleSheets.js';
 
 const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -253,6 +253,42 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       }
     } catch (error) {
       console.error('Error archiving location:', error);
+      setMessage({ type: 'error', text: '❌ An error occurred. Please try again.' });
+    }
+
+    setLoading(false);
+  };
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `⚠️ PERMANENTLY DELETE "${formData.locationName}"?\n\n` +
+      'This will remove the location from the Data sheet.\n' +
+      'Visit history will be preserved.\n\n' +
+      'This action CANNOT be undone!\n\n' +
+      'Are you absolutely sure?'
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const success = await deleteLocation(formData.locationName, formData.businessAddress);
+
+      if (success) {
+        setMessage({ type: 'success', text: '✅ Location deleted successfully!' });
+
+        // Wait a moment to show the success message
+        setTimeout(() => {
+          if (onSave) onSave(); // Refresh the map
+          onClose(); // Close the panel
+        }, 1500);
+      } else {
+        setMessage({ type: 'error', text: '❌ Failed to delete location. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error deleting location:', error);
       setMessage({ type: 'error', text: '❌ An error occurred. Please try again.' });
     }
 
@@ -705,6 +741,41 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               textAlign: 'center'
             }}>
               Archived locations are hidden from the map but remain in the Google Sheet
+            </small>
+
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#d32f2f',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginTop: '12px'
+              }}
+            >
+              🗑️ Delete this location
+            </button>
+            <small style={{
+              display: 'block',
+              marginTop: '8px',
+              color: '#d32f2f',
+              fontSize: '12px',
+              textAlign: 'center',
+              fontWeight: '600'
+            }}>
+              ⚠️ Permanent deletion - cannot be undone!
             </small>
           </div>
         )}

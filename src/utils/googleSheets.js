@@ -247,6 +247,12 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       locationData.businessAddress
     );
 
+    console.log('🔍 Checking location:', {
+      name: locationData.locationName,
+      address: locationData.businessAddress,
+      existingLocation: existingLocation
+    });
+
     const values = [[
       timestamp,
       userName,
@@ -269,6 +275,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
 
     if (existingLocation) {
       // Update existing row
+      console.log('📝 Updating existing location in Data sheet');
       const locations = await getAllLocations();
       const rowIndex = locations.findIndex(
         loc => loc.locationName === locationData.locationName &&
@@ -276,6 +283,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       );
 
       if (rowIndex !== -1) {
+        console.log(`✅ Updating row ${rowIndex + 2} in Data sheet`);
         await window.gapi.client.sheets.spreadsheets.values.update({
           spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
           range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:Q${rowIndex + 2}`,
@@ -285,6 +293,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       }
     } else {
       // Add new row
+      console.log('➕ Adding new location to Data sheet');
       await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
         range: `${CONFIG.SHEETS.DATA}!A:Q`,
@@ -406,6 +415,48 @@ export const unarchiveLocation = async (locationName, businessAddress) => {
     return true;
   } catch (error) {
     console.error('Error unarchiving location:', error);
+    return false;
+  }
+};
+
+/**
+ * Delete a location from the Data sheet
+ * @param {string} locationName - Name of the location
+ * @param {string} businessAddress - Address of the location
+ * @returns {Promise<boolean>} Success status
+ */
+export const deleteLocation = async (locationName, businessAddress) => {
+  try {
+    const locations = await getAllLocations();
+    const rowIndex = locations.findIndex(
+      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
+    );
+
+    if (rowIndex === -1) {
+      console.error('Location not found');
+      return false;
+    }
+
+    // Delete the row (rowIndex + 2 because: +1 for 0-index, +1 for header row)
+    await window.gapi.client.sheets.spreadsheets.batchUpdate({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      resource: {
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: 0, // Assumes Data sheet is the first sheet (ID 0)
+              dimension: 'ROWS',
+              startIndex: rowIndex + 1, // +1 for header
+              endIndex: rowIndex + 2
+            }
+          }
+        }]
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting location:', error);
     return false;
   }
 };
