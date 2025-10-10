@@ -13,6 +13,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
   const markersRef = useRef([]);
   const overlayMarkersRef = useRef([]);
   const [showHint, setShowHint] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -170,15 +171,20 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
     });
 
     console.log('✅ Map ready! Click any business on the map to add visit notes.');
+
+    // Set map ready state to trigger marker creation
+    setMapReady(true);
   };
 
   // Add custom markers for visited locations
   useEffect(() => {
     console.log('🗺️ SimpleMap received visitedLocations:', visitedLocations);
     console.log('📊 Number of locations to display:', visitedLocations.length);
+    console.log('🗺️ Map ready state:', mapReady);
 
-    if (!mapInstanceRef.current || !window.google) {
+    if (!mapReady || !mapInstanceRef.current || !window.google) {
       console.log('⚠️ Skipping marker creation - map not ready:', {
+        mapReady,
         hasMap: !!mapInstanceRef.current,
         hasGoogle: !!window.google
       });
@@ -283,7 +289,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
       console.log(`⚠️ Geocoding address for ${location.locationName}: ${location.businessAddress}`);
       geocodeAndCreateMarker(location.businessAddress, color, count);
     });
-  }, [visitedLocations]);
+  }, [visitedLocations, mapReady]);
 
   const geocodeAndCreateMarker = (address, color, count) => {
     if (!window.google) {
