@@ -38,6 +38,13 @@ const Login = ({ onLogin }) => {
               .then(userInfo => {
                 // Store user info and show name input
                 setTempUserInfo(userInfo);
+
+                // Check if user has saved name in localStorage
+                const savedName = localStorage.getItem(`salesTracker_userName_${userInfo.email}`);
+                if (savedName) {
+                  setUserName(savedName);
+                }
+
                 setShowNameInput(true);
               })
               .catch(err => {
@@ -76,6 +83,9 @@ const Login = ({ onLogin }) => {
   const handleNameSubmit = (e) => {
     e.preventDefault();
     if (userName.trim() && tempUserInfo) {
+      // Save name to localStorage for future logins
+      localStorage.setItem(`salesTracker_userName_${tempUserInfo.email}`, userName.trim());
+
       onLogin({
         email: tempUserInfo.email,
         name: userName.trim()
@@ -106,7 +116,7 @@ const Login = ({ onLogin }) => {
           </>
         ) : (
           <form onSubmit={handleNameSubmit}>
-            <p>Welcome! Please enter your name:</p>
+            <p>Welcome! {userName ? 'Confirm your name:' : 'Please enter your name:'}</p>
             {error && <p style={{ color: '#ea4335', marginBottom: '15px' }}>{error}</p>}
             <input
               type="text"
@@ -117,7 +127,7 @@ const Login = ({ onLogin }) => {
                 width: '100%',
                 padding: '12px',
                 fontSize: '16px',
-                marginBottom: '15px',
+                marginBottom: '8px',
                 border: '1px solid #ddd',
                 borderRadius: '4px',
                 boxSizing: 'border-box'
@@ -125,6 +135,16 @@ const Login = ({ onLogin }) => {
               autoFocus
               required
             />
+            {userName && (
+              <small style={{
+                display: 'block',
+                marginBottom: '12px',
+                color: '#666',
+                fontSize: '13px'
+              }}>
+                ✓ Name saved - you can edit it if needed
+              </small>
+            )}
             <button
               type="submit"
               className="btn btn-primary"
