@@ -135,7 +135,7 @@ export const getAllLocations = async () => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.DATA}!A2:P`
+      range: `${CONFIG.SHEETS.DATA}!A2:Q`
     });
 
     const rows = response.result.values || [];
@@ -155,7 +155,8 @@ export const getAllLocations = async () => {
       businessTypes: row[12] || '',
       interestLevel: row[13] || '',
       visitNotes: row[14] || '',
-      followUpDate: row[15] || ''
+      followUpDate: row[15] || '',
+      archived: row[16] || ''
     }));
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -262,7 +263,8 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       locationData.businessTypes || '',
       locationData.interestLevel || '',
       locationData.visitNotes || '',
-      locationData.followUpDate || ''
+      locationData.followUpDate || '',
+      locationData.archived || ''
     ]];
 
     if (existingLocation) {
@@ -276,7 +278,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       if (rowIndex !== -1) {
         await window.gapi.client.sheets.spreadsheets.values.update({
           spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:P${rowIndex + 2}`,
+          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:Q${rowIndex + 2}`,
           valueInputOption: 'USER_ENTERED',
           resource: { values }
         });
@@ -285,7 +287,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       // Add new row
       await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-        range: `${CONFIG.SHEETS.DATA}!A:P`,
+        range: `${CONFIG.SHEETS.DATA}!A:Q`,
         valueInputOption: 'USER_ENTERED',
         resource: { values }
       });
@@ -335,5 +337,75 @@ export const getLocationHistory = async (locationName, businessAddress) => {
   } catch (error) {
     console.error('Error fetching location history:', error);
     return [];
+  }
+};
+
+/**
+ * Archive a location by setting archived flag to 'YES'
+ * @param {string} locationName - Name of the location
+ * @param {string} businessAddress - Address of the location
+ * @returns {Promise<boolean>} Success status
+ */
+export const archiveLocation = async (locationName, businessAddress) => {
+  try {
+    const locations = await getAllLocations();
+    const rowIndex = locations.findIndex(
+      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
+    );
+
+    if (rowIndex === -1) {
+      console.error('Location not found');
+      return false;
+    }
+
+    // Update only the archived column (column Q)
+    await window.gapi.client.sheets.spreadsheets.values.update({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.DATA}!Q${rowIndex + 2}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [['YES']]
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error archiving location:', error);
+    return false;
+  }
+};
+
+/**
+ * Unarchive a location by clearing archived flag
+ * @param {string} locationName - Name of the location
+ * @param {string} businessAddress - Address of the location
+ * @returns {Promise<boolean>} Success status
+ */
+export const unarchiveLocation = async (locationName, businessAddress) => {
+  try {
+    const locations = await getAllLocations();
+    const rowIndex = locations.findIndex(
+      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
+    );
+
+    if (rowIndex === -1) {
+      console.error('Location not found');
+      return false;
+    }
+
+    // Clear the archived column
+    await window.gapi.client.sheets.spreadsheets.values.update({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.DATA}!Q${rowIndex + 2}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [['']]
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error unarchiving location:', error);
+    return false;
   }
 };

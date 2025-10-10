@@ -57,7 +57,9 @@ function App() {
   const loadVisitedLocations = async () => {
     try {
       const locations = await getAllLocations();
-      setVisitedLocations(locations);
+      // Filter out archived locations
+      const activeLocations = locations.filter(loc => loc.archived !== 'YES');
+      setVisitedLocations(activeLocations);
     } catch (err) {
       console.error('Error loading visited locations:', err);
     }

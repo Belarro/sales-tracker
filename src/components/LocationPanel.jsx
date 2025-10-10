@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
 import { calculateFollowUpDate, formatDate } from '../utils/dateUtils.js';
-import { saveLocationData, getLocationHistory, checkLocationExists } from '../utils/googleSheets.js';
+import { saveLocationData, getLocationHistory, checkLocationExists, archiveLocation } from '../utils/googleSheets.js';
 
 const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -224,6 +224,39 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     }
     setHasUnsavedChanges(false);
     onClose();
+  };
+
+  const handleArchive = async () => {
+    const confirmed = window.confirm(
+      `Are you sure you want to archive "${formData.locationName}"?\n\n` +
+      'This location will be hidden from the map but can be unarchived later from the Google Sheet.'
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const success = await archiveLocation(formData.locationName, formData.businessAddress);
+
+      if (success) {
+        setMessage({ type: 'success', text: '✅ Location archived successfully!' });
+
+        // Wait a moment to show the success message
+        setTimeout(() => {
+          if (onSave) onSave(); // Refresh the map
+          onClose(); // Close the panel
+        }, 1500);
+      } else {
+        setMessage({ type: 'error', text: '❌ Failed to archive location. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error archiving location:', error);
+      setMessage({ type: 'error', text: '❌ An error occurred. Please try again.' });
+    }
+
+    setLoading(false);
   };
 
   const handleTouchStart = (e) => {
@@ -632,6 +665,47 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {isRevisit && (
+          <div style={{
+            marginTop: '20px',
+            paddingTop: '20px',
+            borderTop: '2px solid #ddd'
+          }}>
+            <button
+              type="button"
+              onClick={handleArchive}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#f57c00',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              📦 Archive this location
+            </button>
+            <small style={{
+              display: 'block',
+              marginTop: '8px',
+              color: '#666',
+              fontSize: '12px',
+              textAlign: 'center'
+            }}>
+              Archived locations are hidden from the map but remain in the Google Sheet
+            </small>
           </div>
         )}
       </div>
