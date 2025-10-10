@@ -153,6 +153,7 @@ function App() {
         <div className="map-container">
           <SimpleMap
             onLocationSelect={handleLocationSelect}
+            visitedLocations={visitedLocations}
           />
         </div>
 

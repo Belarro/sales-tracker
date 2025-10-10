@@ -5,11 +5,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '../config.js';
+import { getLocationHistory } from '../utils/googleSheets.js';
 
-const SimpleMap = ({ onLocationSelect }) => {
+const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
+  const overlayMarkersRef = useRef([]);
   const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
@@ -166,6 +168,163 @@ const SimpleMap = ({ onLocationSelect }) => {
     });
 
     console.log('✅ Map ready! Click any business on the map to add visit notes.');
+  };
+
+  // Add custom markers for visited locations
+  useEffect(() => {
+    if (!mapInstanceRef.current || !window.google || visitedLocations.length === 0) return;
+
+    // Clear existing overlay markers
+    overlayMarkersRef.current.forEach(marker => {
+      if (marker.setMap) marker.setMap(null);
+    });
+    overlayMarkersRef.current = [];
+
+    // Group locations by place to count visits
+    const locationVisits = {};
+    visitedLocations.forEach(loc => {
+      const key = `${loc.locationName}|${loc.businessAddress}`;
+      if (!locationVisits[key]) {
+        locationVisits[key] = {
+          count: 0,
+          location: loc,
+          interestLevel: loc.interestLevel
+        };
+      }
+      locationVisits[key].count++;
+      // Use the most recent interest level
+      locationVisits[key].interestLevel = loc.interestLevel;
+    });
+
+    // Create overlay markers for each visited location
+    Object.values(locationVisits).forEach(async ({ count, location, interestLevel }) => {
+      // Determine color based on interest level
+      let color = '#9e9e9e'; // Gray - default/unvisited
+      if (interestLevel === 'Not Interested') {
+        color = '#f44336'; // Red
+      } else if (interestLevel === 'Follow Up' || interestLevel === 'Pending') {
+        color = '#ffc107'; // Yellow
+      } else if (interestLevel === 'Interested' || interestLevel === 'Closed Deal') {
+        color = '#4caf50'; // Green
+      }
+
+      // Extract Place ID or coordinates from DirectLink
+      let placeId = null;
+      if (location.directLink) {
+        // Check if it's a Place ID directly (starts with ChIJ)
+        if (location.directLink.startsWith('ChIJ')) {
+          placeId = location.directLink;
+        } else if (location.directLink.includes('place_id:')) {
+          // Extract from URL like: ...?q=place_id:ChIJ...
+          const match = location.directLink.match(/place_id[=:]([^&\s]+)/);
+          if (match) placeId = match[1];
+        } else if (location.directLink.includes('/@')) {
+          // Extract coordinates from URL like: /@52.520,13.405,17z
+          const match = location.directLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+          if (match) {
+            const lat = parseFloat(match[1]);
+            const lng = parseFloat(match[2]);
+            createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count);
+            return;
+          }
+        }
+      }
+
+      // Try to get coordinates from Place ID if available
+      if (placeId) {
+        try {
+          const { Place } = await window.google.maps.importLibrary("places");
+          const place = new Place({ id: placeId });
+          await place.fetchFields({ fields: ['location'] });
+
+          if (place.location) {
+            createCustomMarker(place.location, color, count);
+          }
+        } catch (error) {
+          console.error('Error fetching place location:', error);
+          // Fallback to geocoding with address
+          geocodeAndCreateMarker(location.businessAddress, color, count);
+        }
+      } else {
+        // Fallback to geocoding with address
+        geocodeAndCreateMarker(location.businessAddress, color, count);
+      }
+    });
+  }, [visitedLocations]);
+
+  const geocodeAndCreateMarker = (address, color, count) => {
+    if (!window.google) return;
+
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        createCustomMarker(results[0].geometry.location, color, count);
+      }
+    });
+  };
+
+  const createCustomMarker = (position, color, count) => {
+    if (!mapInstanceRef.current) return;
+
+    // Create custom HTML marker
+    const markerDiv = document.createElement('div');
+    markerDiv.style.position = 'relative';
+    markerDiv.style.width = '36px';
+    markerDiv.style.height = '36px';
+    markerDiv.style.cursor = 'pointer';
+
+    // Circular background
+    const circle = document.createElement('div');
+    circle.style.width = '36px';
+    circle.style.height = '36px';
+    circle.style.borderRadius = '50%';
+    circle.style.backgroundColor = color;
+    circle.style.border = '3px solid white';
+    circle.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+    circle.style.display = 'flex';
+    circle.style.alignItems = 'center';
+    circle.style.justifyContent = 'center';
+    circle.style.fontWeight = 'bold';
+    circle.style.color = 'white';
+    circle.style.fontSize = '14px';
+    circle.textContent = count > 1 ? count : '';
+
+    markerDiv.appendChild(circle);
+
+    // Create overlay view
+    class CustomOverlay extends window.google.maps.OverlayView {
+      constructor(position, content) {
+        super();
+        this.position = position;
+        this.content = content;
+      }
+
+      onAdd() {
+        this.div = this.content;
+        const panes = this.getPanes();
+        panes.overlayMouseTarget.appendChild(this.div);
+      }
+
+      draw() {
+        const projection = this.getProjection();
+        const pos = projection.fromLatLngToDivPixel(this.position);
+        if (pos) {
+          this.div.style.left = (pos.x - 18) + 'px'; // Center the 36px marker
+          this.div.style.top = (pos.y - 18) + 'px';
+          this.div.style.position = 'absolute';
+        }
+      }
+
+      onRemove() {
+        if (this.div && this.div.parentNode) {
+          this.div.parentNode.removeChild(this.div);
+        }
+      }
+    }
+
+    const overlay = new CustomOverlay(position, markerDiv);
+    overlay.setMap(mapInstanceRef.current);
+    overlayMarkersRef.current.push(overlay);
   };
 
   const dismissHint = () => {

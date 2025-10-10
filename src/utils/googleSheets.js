@@ -135,7 +135,7 @@ export const getAllLocations = async () => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.DATA}!A2:O`
+      range: `${CONFIG.SHEETS.DATA}!A2:P`
     });
 
     const rows = response.result.values || [];
@@ -144,17 +144,18 @@ export const getAllLocations = async () => {
       salesRep: row[1] || '',
       locationName: row[2] || '',
       businessAddress: row[3] || '',
-      businessPhone: row[4] || '',
-      businessEmail: row[5] || '',
-      businessWebsite: row[6] || '',
-      contactPerson: row[7] || '',
-      contactTitle: row[8] || '',
-      directPhone: row[9] || '',
-      directEmail: row[10] || '',
-      businessTypes: row[11] || '',
-      interestLevel: row[12] || '',
-      visitNotes: row[13] || '',
-      followUpDate: row[14] || ''
+      directLink: row[4] || '',
+      businessPhone: row[5] || '',
+      businessEmail: row[6] || '',
+      businessWebsite: row[7] || '',
+      contactPerson: row[8] || '',
+      contactTitle: row[9] || '',
+      directPhone: row[10] || '',
+      directEmail: row[11] || '',
+      businessTypes: row[12] || '',
+      interestLevel: row[13] || '',
+      visitNotes: row[14] || '',
+      followUpDate: row[15] || ''
     }));
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -186,6 +187,7 @@ export const addVisitToHistory = async (visitData) => {
       visitData.salesRep,
       visitData.locationName,
       visitData.businessAddress,
+      visitData.directLink || '',
       visitData.businessPhone || '',
       visitData.businessEmail || '',
       visitData.businessWebsite || '',
@@ -201,7 +203,7 @@ export const addVisitToHistory = async (visitData) => {
 
     await window.gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:O`,
+      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:P`,
       valueInputOption: 'USER_ENTERED',
       resource: { values }
     });
@@ -216,10 +218,11 @@ export const addVisitToHistory = async (visitData) => {
 /**
  * Save or update location data
  * @param {Object} locationData - Complete location information
- * @param {string} userEmail - Email of the user saving the data
+ * @param {string} userName - Name of the user saving the data
+ * @param {string} userEmail - Email of the user (for reference)
  * @returns {Promise<boolean>} Success status
  */
-export const saveLocationData = async (locationData, userEmail) => {
+export const saveLocationData = async (locationData, userName, userEmail) => {
   try {
     // Check if gapi client is initialized
     if (!window.gapi || !window.gapi.client || !window.gapi.client.sheets) {
@@ -230,7 +233,7 @@ export const saveLocationData = async (locationData, userEmail) => {
     const timestamp = getCurrentTimestamp();
     const visitData = {
       timestamp,
-      salesRep: userEmail,
+      salesRep: userName,
       ...locationData
     };
 
@@ -245,9 +248,10 @@ export const saveLocationData = async (locationData, userEmail) => {
 
     const values = [[
       timestamp,
-      userEmail,
+      userName,
       locationData.locationName,
       locationData.businessAddress,
+      locationData.directLink || '',
       locationData.businessPhone || '',
       locationData.businessEmail || '',
       locationData.businessWebsite || '',
@@ -272,7 +276,7 @@ export const saveLocationData = async (locationData, userEmail) => {
       if (rowIndex !== -1) {
         await window.gapi.client.sheets.spreadsheets.values.update({
           spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:O${rowIndex + 2}`,
+          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:P${rowIndex + 2}`,
           valueInputOption: 'USER_ENTERED',
           resource: { values }
         });
@@ -281,7 +285,7 @@ export const saveLocationData = async (locationData, userEmail) => {
       // Add new row
       await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-        range: `${CONFIG.SHEETS.DATA}!A:O`,
+        range: `${CONFIG.SHEETS.DATA}!A:P`,
         valueInputOption: 'USER_ENTERED',
         resource: { values }
       });
@@ -304,7 +308,7 @@ export const getLocationHistory = async (locationName, businessAddress) => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A2:O`
+      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A2:P`
     });
 
     const rows = response.result.values || [];
@@ -315,17 +319,18 @@ export const getLocationHistory = async (locationName, businessAddress) => {
         salesRep: row[1] || '',
         locationName: row[2] || '',
         businessAddress: row[3] || '',
-        businessPhone: row[4] || '',
-        businessEmail: row[5] || '',
-        businessWebsite: row[6] || '',
-        contactPerson: row[7] || '',
-        contactTitle: row[8] || '',
-        directPhone: row[9] || '',
-        directEmail: row[10] || '',
-        businessTypes: row[11] || '',
-        interestLevel: row[12] || '',
-        visitNotes: row[13] || '',
-        followUpDate: row[14] || ''
+        directLink: row[4] || '',
+        businessPhone: row[5] || '',
+        businessEmail: row[6] || '',
+        businessWebsite: row[7] || '',
+        contactPerson: row[8] || '',
+        contactTitle: row[9] || '',
+        directPhone: row[10] || '',
+        directEmail: row[11] || '',
+        businessTypes: row[12] || '',
+        interestLevel: row[13] || '',
+        visitNotes: row[14] || '',
+        followUpDate: row[15] || ''
       }));
   } catch (error) {
     console.error('Error fetching location history:', error);

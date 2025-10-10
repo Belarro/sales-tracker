@@ -8,6 +8,9 @@ import { CONFIG } from '../config.js';
 
 const Login = ({ onLogin }) => {
   const [error, setError] = useState('');
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [tempUserInfo, setTempUserInfo] = useState(null);
 
   useEffect(() => {
     // Load Google Identity Services
@@ -33,10 +36,9 @@ const Login = ({ onLogin }) => {
             })
               .then(res => res.json())
               .then(userInfo => {
-                onLogin({
-                  email: userInfo.email,
-                  name: userInfo.name
-                });
+                // Store user info and show name input
+                setTempUserInfo(userInfo);
+                setShowNameInput(true);
               })
               .catch(err => {
                 console.error('Failed to get user info:', err);
@@ -71,22 +73,71 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  const handleNameSubmit = (e) => {
+    e.preventDefault();
+    if (userName.trim() && tempUserInfo) {
+      onLogin({
+        email: tempUserInfo.email,
+        name: userName.trim()
+      });
+    } else {
+      setError('Please enter your name');
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-box">
         <h1>Sales Tracker</h1>
-        <p>Sign in with your Google account to continue</p>
-        {error && <p style={{ color: '#ea4335', marginBottom: '15px' }}>{error}</p>}
-        <button
-          onClick={handleSignIn}
-          className="btn btn-primary"
-          style={{
-            padding: '12px 24px',
-            fontSize: '16px'
-          }}
-        >
-          Sign in with Google
-        </button>
+        {!showNameInput ? (
+          <>
+            <p>Sign in with your Google account to continue</p>
+            {error && <p style={{ color: '#ea4335', marginBottom: '15px' }}>{error}</p>}
+            <button
+              onClick={handleSignIn}
+              className="btn btn-primary"
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px'
+              }}
+            >
+              Sign in with Google
+            </button>
+          </>
+        ) : (
+          <form onSubmit={handleNameSubmit}>
+            <p>Welcome! Please enter your name:</p>
+            {error && <p style={{ color: '#ea4335', marginBottom: '15px' }}>{error}</p>}
+            <input
+              type="text"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="Enter your full name"
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '16px',
+                marginBottom: '15px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                boxSizing: 'border-box'
+              }}
+              autoFocus
+              required
+            />
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px',
+                width: '100%'
+              }}
+            >
+              Continue
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

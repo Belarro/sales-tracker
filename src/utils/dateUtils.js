@@ -5,7 +5,7 @@
 
 /**
  * Calculate follow-up date (4 days ahead, skipping weekends)
- * @returns {string} Follow-up date in YYYY-MM-DD format
+ * @returns {string} Follow-up date in DD-MM-YYYY format
  */
 export const calculateFollowUpDate = (daysAhead = 4) => {
   const today = new Date();
@@ -24,28 +24,46 @@ export const calculateFollowUpDate = (daysAhead = 4) => {
     followUpDate.setDate(followUpDate.getDate() + 1);
   }
 
-  return followUpDate.toISOString().split('T')[0];
+  return formatDateDDMMYYYY(followUpDate);
+};
+
+/**
+ * Format date to DD-MM-YYYY
+ * @param {Date|string} date - Date object or date string
+ * @returns {string} Date in DD-MM-YYYY format
+ */
+export const formatDateDDMMYYYY = (date) => {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
 };
 
 /**
  * Format date for display
- * @param {string} dateString - Date in YYYY-MM-DD format
+ * @param {string} dateString - Date in any format
  * @returns {string} Formatted date
  */
 export const formatDate = (dateString) => {
   if (!dateString) return '';
+  // If already in DD-MM-YYYY format, return as is
+  if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+    return dateString;
+  }
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
+  return formatDateDDMMYYYY(date);
 };
 
 /**
- * Get current timestamp
- * @returns {string} Current timestamp in ISO format
+ * Get current timestamp in DD-MM-YYYY HH:MM format
+ * @returns {string} Current timestamp
  */
 export const getCurrentTimestamp = () => {
-  return new Date().toISOString();
+  const now = new Date();
+  const date = formatDateDDMMYYYY(now);
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${date} ${hours}:${minutes}`;
 };

@@ -414,6 +414,42 @@ body {
   color: #2e7d32;
 }
 
+/* Interest Level Colors */
+.interest-level-select {
+  font-weight: 600;
+}
+
+.interest-level-select.interest-interested {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #28a745;
+}
+
+.interest-level-select.interest-not-interested {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #dc3545;
+}
+
+.interest-level-select.interest-follow-up {
+  background-color: #fff3cd;
+  color: #856404;
+  border-color: #ffc107;
+}
+
+.interest-level-select.interest-pending {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border-color: #17a2b8;
+}
+
+.interest-level-select.interest-closed-deal {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #28a745;
+  font-weight: 700;
+}
+
 .form-actions {
   display: flex;
   gap: 10px;
@@ -521,12 +557,27 @@ body {
 }
 
 .success-message {
-  background: #e8f5e9;
-  color: #2e7d32;
-  padding: 12px 20px;
-  border-radius: 4px;
+  background: #4caf50;
+  color: white;
+  padding: 16px 20px;
+  border-radius: 8px;
   margin-bottom: 15px;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border: 2px solid #388e3c;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ============================================
