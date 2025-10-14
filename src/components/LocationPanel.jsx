@@ -159,17 +159,18 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         combinedNotes = dateStamp + ' ' + (newNotes || formData.visitNotes);
       }
 
-      // Save coordinates directly in DirectLink for reliable marker placement
+      // Save Google Maps URL with coordinates embedded for both clicking and markers
       let directLink = '';
       if (location.lat && location.lng) {
-        // Best: Save coordinates directly as "LAT,LNG|PLACE_ID"
-        directLink = `${location.lat},${location.lng}|${location.placeId || ''}`;
-      } else if (location.placeId) {
-        // Fallback: Save Place ID only
-        directLink = location.placeId;
+        // Best: Create Google Maps URL with coordinates
+        // Format: https://www.google.com/maps/@LAT,LNG,17z
+        directLink = `https://www.google.com/maps/@${location.lat},${location.lng},17z`;
       } else if (location.googleMapsUrl) {
-        // Fallback: Use the Google Maps URL
+        // Use the Google Maps URL from the place data
         directLink = location.googleMapsUrl;
+      } else if (location.placeId) {
+        // Create URL from Place ID
+        directLink = `https://www.google.com/maps/place/?q=place_id:${location.placeId}`;
       } else {
         // Last resort: search by address
         directLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.businessAddress)}`;
@@ -185,7 +186,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const success = await saveLocationData(dataToSave, user.name, user.email);
 
       if (success) {
-        setMessage({ type: 'success', text: '✅ Visit saved successfully! You can now close this panel or add another visit.' });
+        setMessage({ type: 'success', text: '✅ Visit saved successfully! Closing panel in 2 seconds...' });
         setHasUnsavedChanges(false);
 
         // Reload the data to show updated info
@@ -199,12 +200,16 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         setNewNotes('');
         setNotesCharCount(0);
 
-        // Keep the panel open so user can see success message
         // Auto-scroll to top to see the success message
         const panelContent = document.querySelector('.panel-content');
         if (panelContent) {
           panelContent.scrollTop = 0;
         }
+
+        // Auto-close panel after 2 seconds
+        setTimeout(() => {
+          onClose();
+        }, 2000);
       } else {
         setMessage({ type: 'error', text: '❌ Failed to save visit. Please try again.' });
       }
