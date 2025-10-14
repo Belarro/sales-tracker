@@ -39,6 +39,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [newNotes, setNewNotes] = useState('');
   const [isRevisit, setIsRevisit] = useState(false);
   const [needsFollowUp, setNeedsFollowUp] = useState(true);
+  const [showCustomBusinessType, setShowCustomBusinessType] = useState(false);
+  const [customBusinessType, setCustomBusinessType] = useState('');
 
   useEffect(() => {
     if (location) {
@@ -108,6 +110,17 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Handle "Other" selection for business type
+    if (name === 'businessTypes' && value === 'Other') {
+      setShowCustomBusinessType(true);
+      setFormData(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -480,17 +493,88 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
 
           <div className="form-group">
             <label>Business Type *</label>
-            <select
-              name="businessTypes"
-              value={formData.businessTypes}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select business type</option>
-              {CONFIG.BUSINESS_TYPES.map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
+            {!showCustomBusinessType ? (
+              <select
+                name="businessTypes"
+                value={formData.businessTypes}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select business type</option>
+                {CONFIG.BUSINESS_TYPES.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+                <option value="Other">Other (Custom)</option>
+              </select>
+            ) : (
+              <div>
+                <input
+                  type="text"
+                  value={customBusinessType}
+                  onChange={(e) => setCustomBusinessType(e.target.value)}
+                  placeholder="Enter custom business type"
+                  required
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    fontSize: '14px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    marginBottom: '8px'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (customBusinessType.trim()) {
+                        setFormData(prev => ({
+                          ...prev,
+                          businessTypes: customBusinessType.trim()
+                        }));
+                        setShowCustomBusinessType(false);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      background: '#4caf50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    ✓ Use This Type
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCustomBusinessType(false);
+                      setCustomBusinessType('');
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      background: '#666',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <small style={{ display: 'block', marginTop: '8px', color: '#666', fontSize: '12px' }}>
+                  This new type will be saved with this location
+                </small>
+              </div>
+            )}
           </div>
 
           <div className="form-group">
