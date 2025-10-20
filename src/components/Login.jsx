@@ -1,7 +1,7 @@
 // ============================================
 // LOGIN COMPONENT
 // ============================================
-// Handles Google sign-in using Google Identity Services (newer library)
+// Handles Google sign-in using OAuth 2.0 Implicit Flow (redirect-based, no COOP issues)
 
 import { useEffect, useState } from 'react';
 import { CONFIG } from '../config.js';
@@ -11,75 +11,64 @@ const Login = ({ onLogin }) => {
   const [showNameInput, setShowNameInput] = useState(false);
   const [userName, setUserName] = useState('');
   const [tempUserInfo, setTempUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load Google Identity Services
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+    // Check if we're returning from OAuth redirect
+    const handleOAuthCallback = async () => {
+      // Check for access token in URL hash (Implicit Flow returns token in hash)
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get('access_token');
 
-    script.onload = () => {
-      // Initialize the Google Sign-In client
-      const client = window.google.accounts.oauth2.initTokenClient({
-        client_id: CONFIG.GOOGLE_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/spreadsheets',
-        ux_mode: 'redirect',
-        redirect_uri: window.location.origin,
-        callback: (response) => {
-          if (response.access_token) {
-            // Store the access token for Sheets API
-            window.googleAccessToken = response.access_token;
+      if (accessToken) {
+        try {
+          // Store the access token for Sheets API
+          window.googleAccessToken = accessToken;
 
-            // Get user info from the token
-            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-              headers: { Authorization: `Bearer ${response.access_token}` }
-            })
-              .then(res => res.json())
-              .then(userInfo => {
-                // Store user info and show name input
-                setTempUserInfo(userInfo);
+          // Get user info
+          const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
 
-                // Check if user has saved name in localStorage
-                const savedName = localStorage.getItem(`salesTracker_userName_${userInfo.email}`);
-                if (savedName) {
-                  setUserName(savedName);
-                }
+          const userInfo = await userInfoResponse.json();
+          setTempUserInfo(userInfo);
 
-                setShowNameInput(true);
-              })
-              .catch(err => {
-                console.error('Failed to get user info:', err);
-                setError('Failed to get user information. Please try again.');
-              });
+          // Check if user has saved name
+          const savedName = localStorage.getItem(`salesTracker_userName_${userInfo.email}`);
+          if (savedName) {
+            setUserName(savedName);
           }
-        },
-        error_callback: (error) => {
-          console.error('OAuth error:', error);
-          if (error.type !== 'popup_closed') {
-            setError('Failed to sign in. Please try again.');
-          }
+
+          setShowNameInput(true);
+
+          // Clean up URL hash
+          window.history.replaceState(null, document.title, window.location.pathname);
+        } catch (err) {
+          console.error('OAuth callback error:', err);
+          setError('Failed to complete sign-in. Please try again.');
         }
-      });
-
-      window.googleTokenClient = client;
-    };
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
       }
+
+      setLoading(false);
     };
-  }, [onLogin]);
+
+    handleOAuthCallback();
+  }, []);
 
   const handleSignIn = () => {
     setError('');
-    if (window.googleTokenClient) {
-      window.googleTokenClient.requestAccessToken();
-    } else {
-      setError('Sign-in not ready. Please wait a moment and try again.');
-    }
+
+    // Build OAuth URL for Implicit Flow (returns token directly, works with redirect)
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.append('client_id', CONFIG.GOOGLE_CLIENT_ID);
+    authUrl.searchParams.append('redirect_uri', window.location.origin + window.location.pathname);
+    authUrl.searchParams.append('response_type', 'token');
+    authUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile');
+    authUrl.searchParams.append('prompt', 'select_account');
+
+    // Redirect to Google OAuth
+    window.location.href = authUrl.toString();
   };
 
   const handleNameSubmit = (e) => {
@@ -96,6 +85,17 @@ const Login = ({ onLogin }) => {
       setError('Please enter your name');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="login-container">
+        <div className="login-box">
+          <h1>Sales Tracker</h1>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-container">
