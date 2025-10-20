@@ -62,7 +62,8 @@ const Login = ({ onLogin }) => {
     // Build OAuth URL for Implicit Flow (returns token directly, works with redirect)
     const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     authUrl.searchParams.append('client_id', CONFIG.GOOGLE_CLIENT_ID);
-    authUrl.searchParams.append('redirect_uri', window.location.origin + window.location.pathname);
+    // Use only origin without trailing slash (Google OAuth doesn't allow trailing slashes)
+    authUrl.searchParams.append('redirect_uri', window.location.origin);
     authUrl.searchParams.append('response_type', 'token');
     authUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile');
     authUrl.searchParams.append('prompt', 'select_account');
