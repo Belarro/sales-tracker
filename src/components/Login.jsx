@@ -25,6 +25,8 @@ const Login = ({ onLogin }) => {
       const client = window.google.accounts.oauth2.initTokenClient({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/spreadsheets',
+        ux_mode: 'redirect',
+        redirect_uri: window.location.origin,
         callback: (response) => {
           if (response.access_token) {
             // Store the access token for Sheets API
