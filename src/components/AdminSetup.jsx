@@ -43,9 +43,10 @@ const AdminSetup = ({ onComplete, user }) => {
 
     const success = await addAuthorizedUser(newUserEmail);
     if (success) {
-      setAuthorizedUsers([...authorizedUsers, newUserEmail]);
       setNewUserEmail('');
       setMessage({ type: 'success', text: `${newUserEmail} has been authorized` });
+      // Reload the list from Google Sheets to ensure it's in sync
+      await loadAuthorizedUsers();
     } else {
       setMessage({ type: 'error', text: 'Failed to add user. Please try again.' });
     }
@@ -58,8 +59,9 @@ const AdminSetup = ({ onComplete, user }) => {
 
     const success = await removeAuthorizedUser(email);
     if (success) {
-      setAuthorizedUsers(authorizedUsers.filter(u => u !== email));
       setMessage({ type: 'success', text: `${email} has been removed` });
+      // Reload the list from Google Sheets to ensure it's in sync
+      await loadAuthorizedUsers();
     } else {
       setMessage({ type: 'error', text: 'Failed to remove user. Please try again.' });
     }
@@ -80,7 +82,17 @@ const AdminSetup = ({ onComplete, user }) => {
       )}
 
       <div className="user-management">
-        <h3>Authorized Users</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>Authorized Users</h3>
+          <button
+            onClick={loadAuthorizedUsers}
+            className="btn btn-secondary"
+            type="button"
+            style={{ padding: '8px 16px', fontSize: '14px' }}
+          >
+            🔄 Refresh List
+          </button>
+        </div>
 
         <form onSubmit={handleAddUser} className="add-user-form">
           <input
