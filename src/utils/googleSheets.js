@@ -103,25 +103,21 @@ export const removeAuthorizedUser = async (email) => {
     const rows = response.result.values || [];
     const rowIndex = rows.findIndex(row => row[0] === email);
 
-    if (rowIndex === -1) return false;
+    if (rowIndex === -1) {
+      console.log('❌ User not found in sheet:', email);
+      return false;
+    }
 
-    // Delete the row (rowIndex + 2 because of header and 0-based index)
-    await window.gapi.client.sheets.spreadsheets.batchUpdate({
+    // Clear the cell value (rowIndex + 2 because: +1 for header, +1 for 0-based index)
+    const actualRow = rowIndex + 2;
+    console.log(`🗑️ Removing user from row ${actualRow}:`, email);
+
+    await window.gapi.client.sheets.spreadsheets.values.clear({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      resource: {
-        requests: [{
-          deleteDimension: {
-            range: {
-              sheetId: 0, // Adjust if needed
-              dimension: 'ROWS',
-              startIndex: rowIndex + 1,
-              endIndex: rowIndex + 2
-            }
-          }
-        }]
-      }
+      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A${actualRow}`
     });
 
+    console.log('✅ User removed successfully');
     return true;
   } catch (error) {
     console.error('Error removing authorized user:', error);
