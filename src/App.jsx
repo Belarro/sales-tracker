@@ -40,6 +40,10 @@ function App() {
 
       // Check if user is in authorized list
       const authorizedUsers = await getAuthorizedUsers();
+      console.log('🔍 Checking authorization for:', userInfo.email);
+      console.log('📋 Authorized users list:', authorizedUsers);
+      console.log('✅ Is authorized?', authorizedUsers.includes(userInfo.email));
+
       if (authorizedUsers.includes(userInfo.email)) {
         setAuthorized(true);
         await loadVisitedLocations();

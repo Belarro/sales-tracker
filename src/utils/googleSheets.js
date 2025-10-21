@@ -58,7 +58,9 @@ export const getAuthorizedUsers = async () => {
     });
 
     const rows = response.result.values || [];
-    return rows.map(row => row[0]).filter(email => email);
+    const emails = rows.map(row => row[0]).filter(email => email);
+    console.log('📋 Authorized users from sheet:', emails);
+    return emails;
   } catch (error) {
     console.error('Error fetching authorized users:', error);
     return [];
