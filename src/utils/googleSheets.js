@@ -101,23 +101,37 @@ export const removeAuthorizedUser = async (email) => {
     });
 
     const rows = response.result.values || [];
-    const rowIndex = rows.findIndex(row => row[0] === email);
+    const emails = rows.map(row => row[0]).filter(e => e);
 
-    if (rowIndex === -1) {
+    console.log('📋 Current users:', emails);
+    console.log('🗑️ Removing:', email);
+
+    // Filter out the user to remove
+    const updatedEmails = emails.filter(e => e !== email);
+
+    if (emails.length === updatedEmails.length) {
       console.log('❌ User not found in sheet:', email);
       return false;
     }
 
-    // Clear the cell value (rowIndex + 2 because: +1 for header, +1 for 0-based index)
-    const actualRow = rowIndex + 2;
-    console.log(`🗑️ Removing user from row ${actualRow}:`, email);
-
+    // Clear all current data
     await window.gapi.client.sheets.spreadsheets.values.clear({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A${actualRow}`
+      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A2:A`
     });
 
-    console.log('✅ User removed successfully');
+    // Write back the updated list (without gaps)
+    if (updatedEmails.length > 0) {
+      const values = updatedEmails.map(e => [e]);
+      await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+        range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A2`,
+        valueInputOption: 'RAW',
+        resource: { values }
+      });
+    }
+
+    console.log('✅ User removed successfully. Remaining users:', updatedEmails);
     return true;
   } catch (error) {
     console.error('Error removing authorized user:', error);
