@@ -216,12 +216,19 @@ export const addVisitToHistory = async (visitData) => {
       visitData.sampleGiven || ''
     ]];
 
-    await window.gapi.client.sheets.spreadsheets.values.append({
+    const appendResponse = await window.gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
       range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:Q`,
       valueInputOption: 'USER_ENTERED',
       resource: { values }
     });
+
+    // Get the row number that was just added
+    const updatedRange = appendResponse.result.updates.updatedRange;
+    const rowNum = parseInt(updatedRange.match(/\d+$/)[0]);
+
+    // Set font size to 13 for the new row in Visit History
+    await setRowFontSizeVisitHistory(rowNum);
 
     return true;
   } catch (error) {
@@ -305,16 +312,26 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
           valueInputOption: 'USER_ENTERED',
           resource: { values }
         });
+
+        // Set font size to 13 for the updated row
+        await setRowFontSize(rowIndex + 2);
       }
     } else {
       // Add new row
       console.log('➕ Adding new location to Data sheet');
-      await window.gapi.client.sheets.spreadsheets.values.append({
+      const appendResponse = await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
         range: `${CONFIG.SHEETS.DATA}!A:R`,
         valueInputOption: 'USER_ENTERED',
         resource: { values }
       });
+
+      // Get the row number that was just added
+      const updatedRange = appendResponse.result.updates.updatedRange;
+      const rowNum = parseInt(updatedRange.match(/\d+$/)[0]);
+
+      // Set font size to 13 for the new row
+      await setRowFontSize(rowNum);
     }
 
     return true;
@@ -569,6 +586,116 @@ export const removeNoteTemplate = async (template) => {
     return true;
   } catch (error) {
     console.error('Error removing note template:', error);
+    return false;
+  }
+};
+
+/**
+ * Set font size to 13 for a specific row in the Data sheet
+ * @param {number} rowNumber - Row number (1-based)
+ * @returns {Promise<boolean>} Success status
+ */
+const setRowFontSize = async (rowNumber) => {
+  try {
+    // Get sheet ID for Data sheet (usually 0, but we'll be safe)
+    const spreadsheet = await window.gapi.client.sheets.spreadsheets.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID
+    });
+
+    const dataSheet = spreadsheet.result.sheets.find(
+      sheet => sheet.properties.title === CONFIG.SHEETS.DATA
+    );
+
+    if (!dataSheet) {
+      console.error('Data sheet not found');
+      return false;
+    }
+
+    const sheetId = dataSheet.properties.sheetId;
+
+    // Format the row with font size 13
+    await window.gapi.client.sheets.spreadsheets.batchUpdate({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      resource: {
+        requests: [{
+          repeatCell: {
+            range: {
+              sheetId: sheetId,
+              startRowIndex: rowNumber - 1, // 0-based
+              endRowIndex: rowNumber,
+              startColumnIndex: 0, // Column A
+              endColumnIndex: 18 // Column R (0-based, so 18 means up to column R)
+            },
+            cell: {
+              userEnteredFormat: {
+                textFormat: {
+                  fontSize: 13
+                }
+              }
+            },
+            fields: 'userEnteredFormat.textFormat.fontSize'
+          }
+        }]
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error setting font size:', error);
+    return false;
+  }
+};
+
+/**
+ * Set font size to 13 for a specific row in the Visit History sheet
+ * @param {number} rowNumber - Row number (1-based)
+ * @returns {Promise<boolean>} Success status
+ */
+const setRowFontSizeVisitHistory = async (rowNumber) => {
+  try {
+    const spreadsheet = await window.gapi.client.sheets.spreadsheets.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID
+    });
+
+    const visitHistorySheet = spreadsheet.result.sheets.find(
+      sheet => sheet.properties.title === CONFIG.SHEETS.VISIT_HISTORY
+    );
+
+    if (!visitHistorySheet) {
+      console.error('Visit History sheet not found');
+      return false;
+    }
+
+    const sheetId = visitHistorySheet.properties.sheetId;
+
+    await window.gapi.client.sheets.spreadsheets.batchUpdate({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      resource: {
+        requests: [{
+          repeatCell: {
+            range: {
+              sheetId: sheetId,
+              startRowIndex: rowNumber - 1,
+              endRowIndex: rowNumber,
+              startColumnIndex: 0,
+              endColumnIndex: 17 // Column Q (0-based)
+            },
+            cell: {
+              userEnteredFormat: {
+                textFormat: {
+                  fontSize: 13
+                }
+              }
+            },
+            fields: 'userEnteredFormat.textFormat.fontSize'
+          }
+        }]
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error setting font size for Visit History:', error);
     return false;
   }
 };
