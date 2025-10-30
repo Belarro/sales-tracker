@@ -168,8 +168,8 @@ export const getAllLocations = async () => {
       interestLevel: row[13] || '',
       visitNotes: row[14] || '',
       followUpDate: row[15] || '',
-      archived: row[16] || '',
-      sampleGiven: row[17] || ''
+      sampleGiven: row[16] || '',
+      archived: row[17] || ''
     }));
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -284,8 +284,8 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       locationData.interestLevel || '',
       locationData.visitNotes || '',
       locationData.followUpDate || '',
-      locationData.archived || '',
-      locationData.sampleGiven || ''
+      locationData.sampleGiven || '',
+      locationData.archived || ''
     ]];
 
     if (existingLocation) {
@@ -383,10 +383,10 @@ export const archiveLocation = async (locationName, businessAddress) => {
       return false;
     }
 
-    // Update only the archived column (column Q)
+    // Update only the archived column (column R)
     await window.gapi.client.sheets.spreadsheets.values.update({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.DATA}!Q${rowIndex + 2}`,
+      range: `${CONFIG.SHEETS.DATA}!R${rowIndex + 2}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [['YES']]
@@ -421,7 +421,7 @@ export const unarchiveLocation = async (locationName, businessAddress) => {
     // Clear the archived column
     await window.gapi.client.sheets.spreadsheets.values.update({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.DATA}!Q${rowIndex + 2}`,
+      range: `${CONFIG.SHEETS.DATA}!R${rowIndex + 2}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [['']]
