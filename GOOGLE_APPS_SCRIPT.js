@@ -107,13 +107,13 @@ function colorFollowUpDates() {
     rowsToColor.push({ row: i + 2, color: color });
   }
 
-  // Apply colors to column Q (Sample Given column - column 17)
+  // Apply colors to column P (Follow-up Date column - column 16)
   for (var j = 0; j < rowsToColor.length; j++) {
     var rowNum = rowsToColor[j].row;
     var color = rowsToColor[j].color;
 
-    // Color only column Q (column 17)
-    var cell = dataSheet.getRange(rowNum, 17, 1, 1);
+    // Color only column P (column 16)
+    var cell = dataSheet.getRange(rowNum, 16, 1, 1);
     cell.setBackground(color);
   }
 
