@@ -1,0 +1,13 @@
+{
+  "name": "EventMarketer",
+  "description": "Agent EventMarketer",
+  "capabilities": [],
+  "created_at": "2025-06-13T18:41:11.876461+00:00",
+  "last_used": "2025-06-13T18:41:11.876471+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/EventMarketer",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/EventMarketer/EventMarketer_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/EventMarketer/ContinuousLearning.md",
+  "attributes": {}
+}

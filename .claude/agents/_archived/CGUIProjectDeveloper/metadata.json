@@ -1,0 +1,13 @@
+{
+  "name": "CGUIProjectDeveloper",
+  "description": "Agent CGUIProjectDeveloper",
+  "capabilities": [],
+  "created_at": "2025-08-02T14:02:09.514592+00:00",
+  "last_used": "2025-08-03T01:27:12.661334+00:00",
+  "usage_count": 3,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CGUIProjectDeveloper",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CGUIProjectDeveloper/CGUIProjectDeveloper_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CGUIProjectDeveloper/ContinuousLearning.md",
+  "attributes": {}
+}

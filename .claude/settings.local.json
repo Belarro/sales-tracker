@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git tag:*)"
+      "Bash(git tag:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix OAuth COOP errors by allowing popups\n\nAdded Cross-Origin-Opener-Policy headers to amplify.yml to fix\nGoogle OAuth sign-in issues. This allows OAuth popups to work\nproperly on sales.novabauer.com.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(claude --version)",
+      "Bash(powershell -Command \"Get-ExecutionPolicy\")"
     ],
     "deny": [],
     "ask": []

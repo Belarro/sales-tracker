@@ -147,7 +147,7 @@ export const getAllLocations = async () => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.DATA}!A2:Q`
+      range: `${CONFIG.SHEETS.DATA}!A2:R`
     });
 
     const rows = response.result.values || [];
@@ -168,7 +168,8 @@ export const getAllLocations = async () => {
       interestLevel: row[13] || '',
       visitNotes: row[14] || '',
       followUpDate: row[15] || '',
-      archived: row[16] || ''
+      archived: row[16] || '',
+      sampleGiven: row[17] || ''
     }));
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -211,12 +212,13 @@ export const addVisitToHistory = async (visitData) => {
       visitData.businessTypes || '',
       visitData.interestLevel || '',
       visitData.visitNotes || '',
-      visitData.followUpDate || ''
+      visitData.followUpDate || '',
+      visitData.sampleGiven || ''
     ]];
 
     await window.gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:P`,
+      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:Q`,
       valueInputOption: 'USER_ENTERED',
       resource: { values }
     });
@@ -282,7 +284,8 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       locationData.interestLevel || '',
       locationData.visitNotes || '',
       locationData.followUpDate || '',
-      locationData.archived || ''
+      locationData.archived || '',
+      locationData.sampleGiven || ''
     ]];
 
     if (existingLocation) {
@@ -298,7 +301,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
         console.log(`✅ Updating row ${rowIndex + 2} in Data sheet`);
         await window.gapi.client.sheets.spreadsheets.values.update({
           spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:Q${rowIndex + 2}`,
+          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:R${rowIndex + 2}`,
           valueInputOption: 'USER_ENTERED',
           resource: { values }
         });
@@ -308,7 +311,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       console.log('➕ Adding new location to Data sheet');
       await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-        range: `${CONFIG.SHEETS.DATA}!A:Q`,
+        range: `${CONFIG.SHEETS.DATA}!A:R`,
         valueInputOption: 'USER_ENTERED',
         resource: { values }
       });
@@ -331,7 +334,7 @@ export const getLocationHistory = async (locationName, businessAddress) => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A2:P`
+      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A2:Q`
     });
 
     const rows = response.result.values || [];
@@ -353,7 +356,8 @@ export const getLocationHistory = async (locationName, businessAddress) => {
         businessTypes: row[12] || '',
         interestLevel: row[13] || '',
         visitNotes: row[14] || '',
-        followUpDate: row[15] || ''
+        followUpDate: row[15] || '',
+        sampleGiven: row[16] || ''
       }));
   } catch (error) {
     console.error('Error fetching location history:', error);
@@ -469,6 +473,102 @@ export const deleteLocation = async (locationName, businessAddress) => {
     return true;
   } catch (error) {
     console.error('Error deleting location:', error);
+    return false;
+  }
+};
+
+/**
+ * Get all note templates from sheet
+ * @returns {Promise<Array>} List of note templates
+ */
+export const getNoteTemplates = async () => {
+  try {
+    const response = await window.gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.NOTE_TEMPLATES}!A2:A`
+    });
+
+    const rows = response.result.values || [];
+    const templates = rows.map(row => row[0]).filter(template => template);
+
+    // If no templates found, return defaults
+    if (templates.length === 0) {
+      return CONFIG.DEFAULT_NOTE_TEMPLATES;
+    }
+
+    return templates;
+  } catch (error) {
+    console.error('Error fetching note templates:', error);
+    // Return defaults if sheet doesn't exist yet
+    return CONFIG.DEFAULT_NOTE_TEMPLATES;
+  }
+};
+
+/**
+ * Add a new note template
+ * @param {string} template - Template text
+ * @returns {Promise<boolean>} Success status
+ */
+export const addNoteTemplate = async (template) => {
+  try {
+    await window.gapi.client.sheets.spreadsheets.values.append({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.NOTE_TEMPLATES}!A:A`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [[template]]
+      }
+    });
+    return true;
+  } catch (error) {
+    console.error('Error adding note template:', error);
+    return false;
+  }
+};
+
+/**
+ * Remove a note template
+ * @param {string} template - Template text to remove
+ * @returns {Promise<boolean>} Success status
+ */
+export const removeNoteTemplate = async (template) => {
+  try {
+    const response = await window.gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.NOTE_TEMPLATES}!A2:A`
+    });
+
+    const rows = response.result.values || [];
+    const templates = rows.map(row => row[0]).filter(t => t);
+
+    // Filter out the template to remove
+    const updatedTemplates = templates.filter(t => t !== template);
+
+    if (templates.length === updatedTemplates.length) {
+      console.log('Template not found:', template);
+      return false;
+    }
+
+    // Clear all current data
+    await window.gapi.client.sheets.spreadsheets.values.clear({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.NOTE_TEMPLATES}!A2:A`
+    });
+
+    // Write back the updated list
+    if (updatedTemplates.length > 0) {
+      const values = updatedTemplates.map(t => [t]);
+      await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+        range: `${CONFIG.SHEETS.NOTE_TEMPLATES}!A2`,
+        valueInputOption: 'RAW',
+        resource: { values }
+      });
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error removing note template:', error);
     return false;
   }
 };

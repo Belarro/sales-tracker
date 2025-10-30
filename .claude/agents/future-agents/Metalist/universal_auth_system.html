@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Access - *.nuru.tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .auth-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 60px 40px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+        
+        .logo-section {
+            margin-bottom: 30px;
+        }
+        
+        .apple-logo {
+            font-size: 4em;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.1));
+        }
+        
+        .site-name {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+        
+        .subdomain-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 40px;
+            font-size: 15px;
+            font-weight: 400;
+        }
+        
+        .auth-section {
+            margin-bottom: 30px;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+            border: none;
+            color: white;
+            padding: 18px 32px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+            font-family: inherit;
+        }
+        
+        .primary-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+            background: linear-gradient(135deg, #0056CC 0%, #007AFF 100%);
+        }
+        
+        .primary-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .primary-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 16px 32px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .icon {
+            font-size: 1.3em;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+        
+        .status {
+            margin-top: 30px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .status.success {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border-color: rgba(52, 199, 89, 0.2);
+        }
+        
+        .status.error {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+            border-color: rgba(255, 59, 48, 0.2);
+        }
+        
+        .status.info {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            border-color: rgba(0, 122, 255, 0.2);
+        }
+        
+        .feature-list {
+            margin-top: 40px;
+            text-align: left;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .feature-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #34C759;
+            font-weight: bold;
+        }
+        
+        .device-check {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .subdomain-info {
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid rgba(0, 122, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .subdomain-info strong {
+            color: #007AFF;
+        }
+        
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 40px 30px;
+                margin: 20px;
+                border-radius: 20px;
+            }
+            
+            .apple-logo {
+                font-size: 3.5em;
+            }
+            
+            .site-name {
+                font-size: 1.6em;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .7;
+            }
+        }
+
+        .access-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            padding: 12px;
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.2);
+            border-radius: 10px;
+            font-size: 13px;
+            color: #34C759;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo-section">
+            <div class="apple-logo">🍎</div>
+            <div class="subdomain-badge" id="subdomainBadge">Universal</div>
+            <h1 class="site-name">*.nuru.tools</h1>
+            <div class="subtitle">Universal biometric access for all subdomains</div>
+        </div>
+
+        <div class="subdomain-info">
+            Accessing: <strong id="currentSubdomain">nuru.tools</strong><br>
+            Your authentication will work across all *.nuru.tools subdomains
+        </div>
+        
+        <div class="auth-section">
+            <button id="registerBtn" class="primary-btn">
+                <span class="icon">🔐</span>
+                <span>Set Up Universal Access</span>
+            </button>
+            
+            <button id="authenticateBtn" class="secondary-btn" style="display: none;">
+                <span class="icon">✨</span>
+                <span>Sign In with Biometrics</span>
+            </button>
+        </div>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div class="device-check" id="deviceInfo">
+            Checking device compatibility...
+        </div>
+        
+        <ul class="feature-list">
+            <li>Works across all *.nuru.tools subdomains</li>
+            <li>Single sign-on for entire ecosystem</li>
+            <li>Apple Keychain synchronized access</li>
+            <li>Zero data stored on servers</li>
+            <li>Enterprise-grade security</li>
+        </ul>
+    </div>
+
+    <script>
+        class UniversalNuruAuth {
+            constructor() {
+                this.domain = '.nuru.tools';  // Root domain for universal access
+                this.currentSubdomain = window.location.hostname;
+                this.isRegistered = false;
+                this.init();
+            }
+            
+            async init() {
+                this.updateSubdomainInfo();
+                await this.checkDeviceCompatibility();
+                await this.checkExistingCredentials();
+                this.setupEventListeners();
+            }
+
+            updateSubdomainInfo() {
+                document.getElementById('currentSubdomain').textContent = this.currentSubdomain;
+                
+                // Extract subdomain for badge
+                const parts = this.currentSubdomain.split('.');
+                if (parts.length > 2) {
+                    const subdomain = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+                    document.getElementById('subdomainBadge').textContent = subdomain;
+                } else {
+                    document.getElementById('subdomainBadge').textContent = 'Main';
+                }
+            }
+            
+            async checkDeviceCompatibility() {
+                const deviceInfo = document.getElementById('deviceInfo');
+                
+                if (!window.PublicKeyCredential) {
+                    deviceInfo.innerHTML = '❌ WebAuthn not supported on this device';
+                    deviceInfo.style.color = '#FF3B30';
+                    this.disableAllButtons();
+                    return;
+                }
+                
+                try {
+                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                    if (!available) {
+                        deviceInfo.innerHTML = '❌ Biometric authentication not available';
+                        deviceInfo.style.color = '#FF3B30';
+                        this.disableAllButtons();
+                        return;
+                    }
+                    
+                    const isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+                    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                    
+                    if (isApple && isSafari) {
+                        deviceInfo.innerHTML = '✅ Apple device with Safari - optimal experience';
+                        deviceInfo.style.color = '#34C759';
+                    } else if (isApple) {
+                        deviceInfo.innerHTML = '⚠️ Apple device detected - Safari recommended for best universal access';
+                        deviceInfo.style.color = '#FF9500';
+                    } else {
+                        deviceInfo.innerHTML = '⚠️ Universal access available but optimized for Apple devices';
+                        deviceInfo.style.color = '#FF9500';
+                    }
+                } catch (error) {
+                    deviceInfo.innerHTML = '❌ Error checking biometric support';
+                    deviceInfo.style.color = '#FF3B30';
+                    this.disableAllButtons();
+                }
+            }
+            
+            async checkExistingCredentials() {
+                try {
+                    // Check for universal token that works across all subdomains
+                    const token = localStorage.getItem('nuru_universal_token') || 
+                                 this.getCookieValue('nuru_universal_auth');
+                    
+                    if (token && await this.validateUniversalToken(token)) {
+                        this.showAuthenticateButton();
+                        this.isRegistered = true;
+                        this.showAccessIndicator();
+                    } else {
+                        this.showRegisterButton();
+                    }
+                } catch (error) {
+                    this.showRegisterButton();
+                }
+            }
+
+            getCookieValue(name) {
+                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return match ? match[2] : null;
+            }
+
+            setUniversalCookie(name, value, days = 365) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+                
+                // Set cookie for all *.nuru.tools subdomains
+                document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; domain=${this.domain}; SameSite=Strict; Secure`;
+            }
+            
+            setupEventListeners() {
+                document.getElementById('registerBtn').addEventListener('click', () => this.registerUniversalBiometrics());
+                document.getElementById('authenticateBtn').addEventListener('click', () => this.authenticateUniversal());
+            }
+            
+            async registerUniversalBiometrics() {
+                try {
+                    this.showStatus('Preparing universal biometric registration...', 'info');
+                    
+                    // Get registration challenge from universal auth endpoint
+                    const challengeResponse = await fetch('/api/universal-auth/register/challenge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            domain: this.domain,
+                            subdomain: this.currentSubdomain 
+                        })
+                    });
+                    
+                    if (!challengeResponse.ok) {
+                        throw new Error('Failed to get universal registration challenge');
+                    }
+                    
+                    const { challenge, user } = await challengeResponse.json();
+                    
+                    this.showStatus('Touch your biometric sensor to enable universal access...', 'info');
+                    
+                    // Create credential with universal domain settings
+                    const credential = await navigator.credentials.create({
+                        publicKey: {
+                            challenge: new Uint8Array(challenge),
+                            rp: {
+                                name: "nuru.tools Universal Access",
+                                id: "nuru.tools"  // Root domain for universal access
+                            },
+                            user: {
+                                id: new Uint8Array(user.id),
+                                name: user.name,
+                                displayName: `${user.displayName} (Universal Access)`
+                            },
+                            pubKeyCredParams: [
+                                { alg: -7, type: "public-key" },  // ES256
+                                { alg: -257, type: "public-key" } // RS256
+                            ],
+                            authenticatorSelection: {
+                                authenticatorAttachment: "platform",
+                                userVerification: "required",
+                                requireResidentKey: true
+                            },
+                            timeout: 60000,
+                            attestation: "direct",
+                            extensions: {
+                                // Enable Apple-specific extensions for better integration
+                                appid: "https://nuru.tools"
+                            }
+                        }
+                    });
+                    
+                    // Send credential to universal auth server
+                    const registerResponse = await fetch('/api/universal-auth/register/complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: credential.id,
+                            rawId: Array.from(new Uint8Array(credential.rawId)),
+                            response: {
+                                clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
+                                attestationObject: Array.from(new Uint8Array(credential.response.attestationObject))
+                            },
+                            domain: this.domain,
+                            subdomain: this.currentSubdomain
+                        })
+                    });
+                    
+                    const result = await registerResponse.json();
+                    
+                    if (result.success) {
+                        // Store token both in localStorage and universal cookie
+                        localStorage.setItem('nuru_universal_token', result.token);
+                        this.setUniversalCookie('nuru_universal_auth', result.token);
+                        
+                        this.showStatus('Universal access enabled! Works across all *.nuru.tools subdomains', 'success');
+                        this.showAccessIndicator();
+                        
+                        setTimeout(() => this.redirectToDestination(), 3000);
+                    } else {
+                        throw new Error(result.error || 'Universal registration failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Universal registration error:', error);
+                    this.showStatus(`Registration failed: ${error.message}`, 'error');
+                }
+            }
+            
+            async authenticateUniversal() {
+                try {
+                    this.showStatus('Preparing universal authentication...', 'info');
+                    
+                    // Get authentication challenge from universal endpoint
+                    const challengeResponse = await fetch('/api/universal-auth/authenticate/challenge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            domain: this.domain,
+                            subdomain: this.currentSubdomain 
+                        })
+                    });
+                    
+                    if (!challengeResponse.ok) {
+                        throw new Error('Failed to get universal authentication challenge');
+                    }
+                    
+                    const { challenge, allowCredentials } = await challengeResponse.json();
+                    
+                    this.showStatus('Touch your biometric sensor for universal access...', 'info');
+                    
+                    // Authenticate with universal credential
+                    const assertion = await navigator.credentials.get({
+                        publicKey: {
+                            challenge: new Uint8Array(challenge),
+                            rpId: "nuru.tools",  // Root domain
+                            allowCredentials: allowCredentials.map(cred => ({
+                                id: new Uint8Array(cred.id),
+                                type: 'public-key',
+                                transports: cred.transports || ['internal']
+                            })),
+                            timeout: 60000,
+                            userVerification: 'required'
+                        }
+                    });
+                    
+                    // Send assertion to universal auth server
+                    const verifyResponse = await fetch('/api/universal-auth/authenticate/complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: assertion.id,
+                            rawId: Array.from(new Uint8Array(assertion.rawId)),
+                            response: {
+                                authenticatorData: Array.from(new Uint8Array(assertion.response.authenticatorData)),
+                                clientDataJSON: Array.from(new Uint8Array(assertion.response.clientDataJSON)),
+                                signature: Array.from(new Uint8Array(assertion.response.signature)),
+                                userHandle: assertion.response.userHandle ? Array.from(new Uint8Array(assertion.response.userHandle)) : null
+                            },
+                            domain: this.domain,
+                            subdomain: this.currentSubdomain
+                        })
+                    });
+                    
+                    const result = await verifyResponse.json();
+                    
+                    if (result.success) {
+                        // Update universal tokens
+                        localStorage.setItem('nuru_universal_token', result.token);
+                        this.setUniversalCookie('nuru_universal_auth', result.token);
+                        
+                        this.showStatus('Universal authentication successful! Redirecting...', 'success');
+                        setTimeout(() => this.redirectToDestination(), 2000);
+                    } else {
+                        throw new Error(result.error || 'Universal authentication failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Universal authentication error:', error);
+                    this.showStatus(`Authentication failed: ${error.message}`, 'error');
+                }
+            }
+            
+            async validateUniversalToken(token) {
+                try {
+                    const response = await fetch('/api/universal-auth/validate', {
+                        method: 'POST',
+                        headers: { 
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            domain: this.domain,
+                            subdomain: this.currentSubdomain 
+                        })
+                    });
+                    return response.ok;
+                } catch (error) {
+                    return false;
+                }
+            }
+            
+            showRegisterButton() {
+                document.getElementById('registerBtn').style.display = 'flex';
+                document.getElementById('authenticateBtn').style.display = 'none';
+            }
+            
+            showAuthenticateButton() {
+                document.getElementById('registerBtn').style.display = 'none';
+                document.getElementById('authenticateBtn').style.display = 'flex';
+            }
+
+            showAccessIndicator() {
+                // Create access indicator if not exists
+                let indicator = document.getElementById('accessIndicator');
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'accessIndicator';
+                    indicator.className = 'access-indicator';
+                    indicator.innerHTML = '🔓 Universal access active for all *.nuru.tools';
+                    
+                    const authSection = document.querySelector('.auth-section');
+                    authSection.parentNode.insertBefore(indicator, authSection.nextSibling);
+                }
+            }
+            
+            disableAllButtons() {
+                document.getElementById('registerBtn').disabled = true;
+                document.getElementById('authenticateBtn').disabled = true;
+            }
+            
+            redirectToDestination() {
+                // Check if there's a specific destination
+                const urlParams = new URLSearchParams(window.location.search);
+                const returnTo = urlParams.get('returnTo');
+                
+                if (returnTo && this.isValidReturnUrl(returnTo)) {
+                    window.location.href = returnTo;
+                } else {
+                    // Redirect to main dashboard or home
+                    window.location.href = '/main';
+                }
+            }
+
+            isValidReturnUrl(url) {
+                try {
+                    const parsed = new URL(url, window.location.origin);
+                    // Only allow redirects within *.nuru.tools domain
+                    return parsed.hostname.endsWith('.nuru.tools') || parsed.hostname === 'nuru.tools';
+                } catch {
+                    return false;
+                }
+            }
+            
+            showStatus(message, type) {
+                const statusEl = document.getElementById('status');
+                statusEl.textContent = message;
+                statusEl.className = `status ${type}`;
+                statusEl.style.display = 'block';
+                
+                if (type === 'info') {
+                    statusEl.classList.add('pulse');
+                } else {
+                    statusEl.classList.remove('pulse');
+                }
+            }
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => new UniversalNuruAuth());
+        } else {
+            new UniversalNuruAuth();
+        }
+    </script>
+</body>
+</html>

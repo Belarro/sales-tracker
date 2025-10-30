@@ -1,0 +1,13 @@
+{
+  "name": "Reactor",
+  "description": "Agent Reactor",
+  "capabilities": [],
+  "created_at": "2025-08-06T00:50:00.289907+00:00",
+  "last_used": "2025-08-20T23:58:41.058047+00:00",
+  "usage_count": 13,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Reactor",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Reactor/Reactor_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Reactor/ContinuousLearning.md",
+  "attributes": {}
+}

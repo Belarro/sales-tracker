@@ -1,0 +1,13 @@
+{
+  "name": "IIILanguageAgent",
+  "description": "Agent IIILanguageAgent",
+  "capabilities": [],
+  "created_at": "2025-06-15T18:10:38.977042+00:00",
+  "last_used": "2025-06-21T16:18:44.736312+00:00",
+  "usage_count": 17,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/IIILanguageAgent",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/IIILanguageAgent/IIILanguageAgent_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/IIILanguageAgent/ContinuousLearning.md",
+  "attributes": {}
+}

@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
 import { calculateFollowUpDate, formatDate } from '../utils/dateUtils.js';
-import { saveLocationData, getLocationHistory, checkLocationExists, archiveLocation, deleteLocation } from '../utils/googleSheets.js';
+import { saveLocationData, getLocationHistory, checkLocationExists, archiveLocation, deleteLocation, getNoteTemplates } from '../utils/googleSheets.js';
 
 const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -22,7 +22,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     businessTypes: '',
     interestLevel: '',
     visitNotes: '',
-    followUpDate: calculateFollowUpDate(CONFIG.FOLLOW_UP_DAYS)
+    followUpDate: calculateFollowUpDate(CONFIG.FOLLOW_UP_DAYS),
+    sampleGiven: false
   });
 
   const [visitHistory, setVisitHistory] = useState([]);
@@ -41,14 +42,26 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [needsFollowUp, setNeedsFollowUp] = useState(true);
   const [showCustomBusinessType, setShowCustomBusinessType] = useState(false);
   const [customBusinessType, setCustomBusinessType] = useState('');
+  const [noteTemplates, setNoteTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState('');
 
   useEffect(() => {
     if (location) {
       // Load visit history first
       loadVisitHistory(location.name, location.address);
       loadExistingData(location.name, location.address);
+      loadNoteTemplates();
     }
   }, [location]);
+
+  const loadNoteTemplates = async () => {
+    try {
+      const templates = await getNoteTemplates();
+      setNoteTemplates(templates);
+    } catch (error) {
+      console.error('Error loading note templates:', error);
+    }
+  };
 
   const loadExistingData = async (name, address) => {
     try {
@@ -149,6 +162,26 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     }
   };
 
+  const handleTemplateSelect = (e) => {
+    const template = e.target.value;
+    setSelectedTemplate(template);
+
+    if (template) {
+      // Replace notes with selected template
+      if (isRevisit) {
+        setNewNotes(template);
+        setNotesCharCount(template.length);
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          visitNotes: template
+        }));
+        setNotesCharCount(template.length);
+      }
+      setHasUnsavedChanges(true);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -193,7 +226,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         ...formData,
         visitNotes: combinedNotes,
         directLink,
-        followUpDate: needsFollowUp ? formData.followUpDate : ''
+        followUpDate: needsFollowUp ? formData.followUpDate : '',
+        sampleGiven: formData.sampleGiven ? 'YES' : ''
       };
 
       const success = await saveLocationData(dataToSave, user.name, user.email);
@@ -657,6 +691,33 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 ({notesCharCount} characters)
               </span>
             </label>
+
+            {/* Note Templates Dropdown */}
+            {noteTemplates.length > 0 && (
+              <div style={{ marginBottom: '10px' }}>
+                <select
+                  value={selectedTemplate}
+                  onChange={handleTemplateSelect}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    backgroundColor: '#f8f9fa',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="">Select a note template (optional)</option>
+                  {noteTemplates.map((template, index) => (
+                    <option key={index} value={template}>
+                      {template.substring(0, 60)}{template.length > 60 ? '...' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <textarea
               value={isRevisit ? newNotes : formData.visitNotes}
               onChange={isRevisit ? handleNewNotesChange : handleChange}
@@ -674,6 +735,26 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 : 'Tip: Include details about the conversation, menu items discussed, pricing, and next steps.'
               }
             </small>
+          </div>
+
+          {/* Sample Given Checkbox */}
+          <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
+            <input
+              type="checkbox"
+              id="sampleGiven"
+              name="sampleGiven"
+              checked={formData.sampleGiven}
+              onChange={(e) => setFormData(prev => ({ ...prev, sampleGiven: e.target.checked }))}
+              style={{
+                width: '20px',
+                height: '20px',
+                cursor: 'pointer',
+                margin: '0'
+              }}
+            />
+            <label htmlFor="sampleGiven" style={{ margin: '0', cursor: 'pointer', fontSize: '16px', fontWeight: '600' }}>
+              Sample Given
+            </label>
           </div>
 
           {needsFollowUp && (
@@ -782,6 +863,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                       <strong>Interest Level:</strong> {visit.interestLevel}<br />
                       <strong>Business Type:</strong> {visit.businessTypes}<br />
                       <strong>Notes:</strong> {visit.visitNotes}<br />
+                      {visit.sampleGiven === 'YES' && (
+                        <>
+                          <strong style={{ color: '#34a853' }}>✓ Sample Given</strong><br />
+                        </>
+                      )}
                       {visit.followUpDate && (
                         <>
                           <strong>Follow-up Date:</strong> {formatDate(visit.followUpDate)}

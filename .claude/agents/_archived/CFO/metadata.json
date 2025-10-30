@@ -1,0 +1,30 @@
+{
+  "name": "CFO",
+  "description": "Chief Financial Officer Agent - Advanced financial planning, fundraising strategy, runway analysis, and capital allocation specialist",
+  "capabilities": [
+    "financial_modeling",
+    "fundraising_optimization",
+    "runway_analysis",
+    "risk_assessment",
+    "capital_allocation",
+    "scenario_planning",
+    "cash_flow_management",
+    "unit_economics",
+    "investor_relations",
+    "financial_controls"
+  ],
+  "created_at": "2025-08-05T20:30:000.000000+00:00",
+  "last_used": "2025-08-05T21:04:38.876770+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CFO",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CFO/CFO_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CFO/ContinuousLearning.md",
+  "attributes": {
+    "analytical_depth": "comprehensive",
+    "decision_authority": "high",
+    "stakeholder_focus": "investors_board_management",
+    "risk_tolerance": "conservative_growth",
+    "experience_level": "executive"
+  }
+}

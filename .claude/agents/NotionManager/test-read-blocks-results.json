@@ -1,0 +1,5852 @@
+{
+  "metadata": {
+    "object": "page",
+    "id": "29660b6e-8d18-8144-a36f-f8857827dc73",
+    "created_time": "2025-10-24T12:56:00.000Z",
+    "last_edited_time": "2025-10-24T12:56:00.000Z",
+    "created_by": {
+      "object": "user",
+      "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+    },
+    "last_edited_by": {
+      "object": "user",
+      "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+    },
+    "cover": null,
+    "icon": null,
+    "parent": {
+      "type": "page_id",
+      "page_id": "29560b6e-8d18-818d-ae51-d9863f47f42a"
+    },
+    "archived": false,
+    "in_trash": false,
+    "is_locked": false,
+    "properties": {
+      "title": {
+        "id": "title",
+        "type": "title",
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "MEMORY",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "MEMORY",
+            "href": null
+          }
+        ]
+      }
+    },
+    "url": "https://www.notion.so/MEMORY-29660b6e8d188144a36ff8857827dc73",
+    "public_url": null,
+    "request_id": "901dba80-7522-4f76-b7d6-44383f87d606"
+  },
+  "blocks": [
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81aa-92ec-d1df5f14bd30",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_1",
+      "heading_1": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "NotionManager Agent Memory",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "NotionManager Agent Memory",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8113-a9b7-cde47e7bb540",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Agent Identity",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Agent Identity",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81ee-93d4-c125599edaeb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Name",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Name",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": NotionManager",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": NotionManager",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8135-abcc-f0d92c3bab65",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Role",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Role",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Notion workspace management specialist",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Notion workspace management specialist",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-815d-8cc8-dd07d662948d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Phase",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Phase",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Phase 1 - Official MCP Integration",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Phase 1 - Official MCP Integration",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81a8-91ed-d627c9f74af6",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Created",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Created",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": 2025-10-23",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": 2025-10-23",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818e-ae0f-eac2695757cf",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Mission",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Mission",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-811f-a9fe-c8a1ffc63ace",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Provide seamless Notion integration for CollaborativeIntelligence project:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Provide seamless Notion integration for CollaborativeIntelligence project:",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e9-be6b-d94c24b9a4e0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Create, read, and update Notion pages and databases",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Create, read, and update Notion pages and databases",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-817f-9b33-d74b8bd4a504",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Sync agent memory (MEMORY.md) to Notion",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Sync agent memory (MEMORY.md) to Notion",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d2-ad06-e8f28aa69330",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Export session notes to Notion databases",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Export session notes to Notion databases",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8135-87f6-fea0dc311bb3",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Maintain CI dashboard in Notion",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Maintain CI dashboard in Notion",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8142-8a3c-c32f55e00366",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Enable bidirectional knowledge flow (Git ↔ Notion)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Enable bidirectional knowledge flow (Git ↔ Notion)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81c4-903c-d4c002ade17a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Implementation Status",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Implementation Status",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8137-9b58-d5def54937ca",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Phase 1: Direct API Integration ✅ COMPLETE",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Phase 1: Direct API Integration ✅ COMPLETE",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8199-af12-e8b1c32847f4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Status",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Status",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Completed 2025-10-23",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Completed 2025-10-23",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-810b-be64-c0fe41cb811d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Goal",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Goal",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Deploy working agent using direct @notionhq/client API",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Deploy working agent using direct @notionhq/client API",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-815d-ad5e-e5a7d746ae15",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "#### Deliverables - All Complete ✅",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "#### Deliverables - All Complete ✅",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8104-893a-df0730da7dcd",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Project structure created",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Project structure created",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81dc-ac93-fcc67905f650",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Metadata defined",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Metadata defined",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8183-bcff-c1ee122266e4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Package.json with dependencies (@notionhq/client, dotenv)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Package.json with dependencies (@notionhq/client, dotenv)",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81df-8c45-fa77f0a5122d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Environment configuration (.env with API token + database IDs)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Environment configuration (.env with API token + database IDs)",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8180-966b-c93c82b05aae",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "CI workspace infrastructure (Dashboard + 3 databases)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "CI workspace infrastructure (Dashboard + 3 databases)",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-817d-b3ef-e7cba566f847",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Agent memory sync (48/49 agents synced successfully)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Agent memory sync (48/49 agents synced successfully)",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-815a-aa4e-cecd3eabf2ad",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Session tracking system",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Session tracking system",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8143-8d02-e94069e0417e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Rich text formatting parser (TokenHunter pattern)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Rich text formatting parser (TokenHunter pattern)",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8192-ad6f-e94d7315cc27",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Service API for other agents",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Service API for other agents",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8138-bd89-ed1f633885f0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "to_do",
+      "to_do": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Comprehensive documentation suite",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Comprehensive documentation suite",
+            "href": null
+          }
+        ],
+        "checked": true,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8184-aea2-f3147ca71576",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "#### Success Criteria - All Met ✅",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "#### Success Criteria - All Met ✅",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81af-9373-cbad6159fdc4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "✅ Agent creates Notion pages (98% success rate - 48/49 agents)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "✅ Agent creates Notion pages (98% success rate - 48/49 agents)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81cf-be30-fc32c4c3f6b4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "✅ Error handling clear and actionable (TROUBLESHOOTING.md)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "✅ Error handling clear and actionable (TROUBLESHOOTING.md)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-816a-b3cb-f160ca978e85",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "✅ Rate limiting automatic (600ms delays, TokenHunter pattern)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "✅ Rate limiting automatic (600ms delays, TokenHunter pattern)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d1-93a6-dfefa77ba447",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "✅ Cost per operation <$0.005 (Notion API is FREE, only Claude costs)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "✅ Cost per operation <$0.005 (Notion API is FREE, only Claude costs)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81b8-93d5-e434c2b7d1ab",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Key Achievement",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Key Achievement",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Rich text formatting working - markdown (",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Rich text formatting working - markdown (",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "**bold**",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": true,
+              "color": "default"
+            },
+            "plain_text": "**bold**",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ", ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ", ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "*italic*",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": true,
+              "color": "default"
+            },
+            "plain_text": "*italic*",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ", `",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ", `",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": true,
+              "color": "default"
+            },
+            "plain_text": " ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "code",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "code",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": true,
+              "color": "default"
+            },
+            "plain_text": " ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "`) properly renders in Notion",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "`) properly renders in Notion",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8181-8f50-fa448a3ea0fb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Phase 2: Enhanced Features (Future)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Phase 2: Enhanced Features (Future)",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-814a-b563-e9096aa2b9af",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Status",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Status",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Not Started",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Not Started",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e6-b471-c2e8ade131fa",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Goal",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Goal",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Bidirectional sync, advanced queries, real-time updates",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Bidirectional sync, advanced queries, real-time updates",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-811d-b79d-ec25805a0abe",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Phase 3: Custom MCP Server (Optional)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Phase 3: Custom MCP Server (Optional)",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8119-ad77-dbdad47dad08",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Status",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Status",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Not Started",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Not Started",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81bd-90eb-cf41a62f49d0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Goal",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Goal",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Build custom MCP if needed for advanced use cases",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Build custom MCP if needed for advanced use cases",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81ab-bfb2-c15e1a8f9547",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Core Capabilities",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Core Capabilities",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8123-bbb2-c725cbd35ff4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "1. Page Management",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "1. Page Management",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8196-823c-eeae2bf85402",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Create pages with rich formatting",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Create pages with rich formatting",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8163-b597-d3c6007f0111",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Read pages with nested block recursion",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Read pages with nested block recursion",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8165-a340-ea259e87100a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Update page properties and content",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Update page properties and content",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8125-b126-fc4bb4a32fdb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Archive pages with confirmation",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Archive pages with confirmation",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8180-a2c0-c853b946d283",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "2. Database Operations",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "2. Database Operations",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8113-8a2f-e883d94b9576",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Query databases with filters and sorts",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Query databases with filters and sorts",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8159-9c37-f2b84455b638",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Retrieve database schemas",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Retrieve database schemas",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81c7-b9b2-cb6390095c64",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Create database entries",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Create database entries",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8133-ba22-cbb1829eb17b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Batch updates",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Batch updates",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81c4-9983-efdb5da34e9d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "3. Search & Discovery",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "3. Search & Discovery",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d6-b4ff-e164f5015a98",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Full-text workspace search",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Full-text workspace search",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8155-af27-e71ffe741084",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Filter by object type (page/database)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Filter by object type (page/database)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81f8-8011-fe3dcc9b8985",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Sort by last edited time",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Sort by last edited time",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818a-ad5e-e5df4b433817",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Pagination support",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Pagination support",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8131-a68a-ef9962072bc6",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "4. CI Integration",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "4. CI Integration",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e5-8a75-e018017d10cb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Sync AGENTS/*/MEMORY.md to Notion",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Sync AGENTS/*/MEMORY.md to Notion",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81b3-b351-fd6a6b801b59",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Export session notes to databases",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Export session notes to databases",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8168-be0e-e4659b793a9f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Create file catalog tables",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Create file catalog tables",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8165-8ccf-c66c07a555dd",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Update CI dashboard",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Update CI dashboard",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81db-81a3-f331bc7fbf9b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Learning & Evolution",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Learning & Evolution",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8195-b7ef-f8b5d2415035",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "2025-10-23: Initial Setup",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "2025-10-23: Initial Setup",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e4-8e2f-fd2ba1f819ff",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Source",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Source",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Team synthesis (Athena, Analyst, SDK Expert)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Team synthesis (Athena, Analyst, SDK Expert)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8111-93bb-e7545e3b2c01",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Key Insights",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Key Insights",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ":",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ":",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-812c-b014-c5d4fe59ef3a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "TokenHunter Lesson",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "TokenHunter Lesson",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " (Athena): Direct API gives full control but takes weeks. They needed custom markdown parsing.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " (Athena): Direct API gives full control but takes weeks. They needed custom markdown parsing.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8117-bafc-e67cabdd1e18",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "MCP Ecosystem",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "MCP Ecosystem",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " (Analyst): Official @notionhq/notion-mcp-server is now production-ready. Wasn't available when TokenHunter built.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " (Analyst): Official @notionhq/notion-mcp-server is now production-ready. Wasn't available when TokenHunter built.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818f-a526-faa51a7f09e9",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Architecture",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Architecture",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " (SDK Expert): Two-phase strategy balances speed (official MCP) with flexibility (custom MCP later).",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " (SDK Expert): Two-phase strategy balances speed (official MCP) with flexibility (custom MCP later).",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8156-b5a0-ca56a40c95b2",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Decision",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Decision",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Start with official MCP, migrate to custom MCP in Phase 2.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Start with official MCP, migrate to custom MCP in Phase 2.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e4-a96f-db47e8a64c1e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Reusable Patterns from TokenHunter",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Reusable Patterns from TokenHunter",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ":",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ":",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8161-aa8a-f1f59d0860a6",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Rich text: ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Rich text: ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "**bold**",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": true,
+              "color": "default"
+            },
+            "plain_text": "**bold**",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " → Notion annotations (no asterisks)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " → Notion annotations (no asterisks)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818b-8ad0-e0454a4f6136",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Markdown tables → Native Notion table blocks",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Markdown tables → Native Notion table blocks",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81cc-8da8-c5c2a6d459cc",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Mermaid code blocks for diagrams",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Mermaid code blocks for diagrams",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8125-ad93-d77287d1f8b4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Batch processing: 100 initial + 50 per batch",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Batch processing: 100 initial + 50 per batch",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81ab-b5c0-ccefdb2d173e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Rate limiting: 600ms between all calls (conservative)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Rate limiting: 600ms between all calls (conservative)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8137-bf54-f96bc04bc073",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Known Limitations",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Known Limitations",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8146-b2f8-e7ecf56f931b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Phase 1 (Official MCP)",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Phase 1 (Official MCP)",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ":",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ":",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8131-a0ed-eab496a6574e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Limited customization of request/response format",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Limited customization of request/response format",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-814b-a88e-e571d24bbf5f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "May not support all TokenHunter patterns",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "May not support all TokenHunter patterns",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81a4-8631-e7db45b49161",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Dependent on official server updates",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Dependent on official server updates",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8175-b112-d290f25bb1bd",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Mitigation",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Mitigation",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Phase 2 custom MCP server planned",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Phase 2 custom MCP server planned",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81f8-b9e3-cccf5769a2e2",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Configuration",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Configuration",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81eb-bb61-fd79438d25a9",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Environment Variables",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Environment Variables",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81f1-ac55-edfcc3efd0f4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "code",
+      "code": {
+        "caption": [],
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "# Required\nNOTION_API_TOKEN=secret_xxxxxxxxxxxxx\n\n# Optional (for Phase 2)\nNOTION_WORKSPACE_ID=xxxxxxxxxxxxx\nNOTION_CI_AGENTS_DB_ID=xxxxxxxxxxxxx\nNOTION_CI_SESSIONS_DB_ID=xxxxxxxxxxxxx",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "# Required\nNOTION_API_TOKEN=secret_xxxxxxxxxxxxx\n\n# Optional (for Phase 2)\nNOTION_WORKSPACE_ID=xxxxxxxxxxxxx\nNOTION_CI_AGENTS_DB_ID=xxxxxxxxxxxxx\nNOTION_CI_SESSIONS_DB_ID=xxxxxxxxxxxxx",
+            "href": null
+          }
+        ],
+        "language": "shell"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8119-a065-fe4a9a8e93aa",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Rate Limiting",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Rate Limiting",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e0-8595-c773c61ae8a1",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Notion API: 3 requests/second",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Notion API: 3 requests/second",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818c-ac51-fcea09c09d4f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Our implementation: 600ms between calls (TokenHunter pattern)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Our implementation: 600ms between calls (TokenHunter pattern)",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818d-8b5d-fbc69f87b92b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Exponential backoff on rate_limited errors",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Exponential backoff on rate_limited errors",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81b2-9a12-d73fc3104276",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Cost Tracking",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Cost Tracking",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8113-9559-f7932b3c801e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Expected cost: <$1/day for typical CI usage",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Expected cost: <$1/day for typical CI usage",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81dc-87b5-db0af2a81868",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Simple create/read: $0.001 - $0.003",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Simple create/read: $0.001 - $0.003",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e2-94a8-c433be786675",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Complex query: $0.005 - $0.010",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Complex query: $0.005 - $0.010",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8108-bb43-c90d31387ce1",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Batch operations: $0.020 - $0.050",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Batch operations: $0.020 - $0.050",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8154-9b03-fcb8b4b0936d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Integration Points",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Integration Points",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8171-a5d2-f4c330f8536d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "With CollaborativeIntelligence",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "With CollaborativeIntelligence",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81f7-b302-fcfb1959d44e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Athena",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Athena",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Memory system knowledge for optimal sync strategy",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Memory system knowledge for optimal sync strategy",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8195-af4f-d07c2f22f78a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Developer",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Developer",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Implementation of sync scripts and automation",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Implementation of sync scripts and automation",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d5-b3d1-f2458093214b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Automator",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Automator",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": PostToolUse hooks for automatic syncing",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": PostToolUse hooks for automatic syncing",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8104-ae2e-d734c009800f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "ClaudeCodeIntegrator",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "ClaudeCodeIntegrator",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": File catalog export to Notion",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": File catalog export to Notion",
+            "href": null
+          }
+        ],
+        "color": "default"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d1-9b73-e6414e35db09",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+      },
+      "created_time": "2025-10-24T12:56:00.000Z",
+      "last_edited_time": "2025-10-24T12:56:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "With Git",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "With Git",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      }
+    }
+  ],
+  "blockAnalysis": {
+    "typeCounts": {
+      "heading_1": 1,
+      "heading_2": 7,
+      "bulleted_list_item": 43,
+      "paragraph": 16,
+      "numbered_list_item": 8,
+      "heading_3": 14,
+      "to_do": 10,
+      "code": 1
+    },
+    "samples": {
+      "heading_1": {
+        "object": "block",
+        "id": "29660b6e-8d18-81aa-92ec-d1df5f14bd30",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "heading_1",
+        "heading_1": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "NotionManager Agent Memory",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "NotionManager Agent Memory",
+              "href": null
+            }
+          ],
+          "is_toggleable": false,
+          "color": "default"
+        }
+      },
+      "heading_2": {
+        "object": "block",
+        "id": "29660b6e-8d18-8113-a9b7-cde47e7bb540",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "heading_2",
+        "heading_2": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Agent Identity",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Agent Identity",
+              "href": null
+            }
+          ],
+          "is_toggleable": false,
+          "color": "default"
+        }
+      },
+      "bulleted_list_item": {
+        "object": "block",
+        "id": "29660b6e-8d18-81ee-93d4-c125599edaeb",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "bulleted_list_item",
+        "bulleted_list_item": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Name",
+                "link": null
+              },
+              "annotations": {
+                "bold": true,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Name",
+              "href": null
+            },
+            {
+              "type": "text",
+              "text": {
+                "content": ": NotionManager",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": ": NotionManager",
+              "href": null
+            }
+          ],
+          "color": "default"
+        }
+      },
+      "paragraph": {
+        "object": "block",
+        "id": "29660b6e-8d18-811f-a9fe-c8a1ffc63ace",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "paragraph",
+        "paragraph": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Provide seamless Notion integration for CollaborativeIntelligence project:",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Provide seamless Notion integration for CollaborativeIntelligence project:",
+              "href": null
+            }
+          ],
+          "color": "default"
+        }
+      },
+      "numbered_list_item": {
+        "object": "block",
+        "id": "29660b6e-8d18-81e9-be6b-d94c24b9a4e0",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "numbered_list_item",
+        "numbered_list_item": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Create, read, and update Notion pages and databases",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Create, read, and update Notion pages and databases",
+              "href": null
+            }
+          ],
+          "color": "default"
+        }
+      },
+      "heading_3": {
+        "object": "block",
+        "id": "29660b6e-8d18-8137-9b58-d5def54937ca",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "heading_3",
+        "heading_3": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Phase 1: Direct API Integration ✅ COMPLETE",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Phase 1: Direct API Integration ✅ COMPLETE",
+              "href": null
+            }
+          ],
+          "is_toggleable": false,
+          "color": "default"
+        }
+      },
+      "to_do": {
+        "object": "block",
+        "id": "29660b6e-8d18-8104-893a-df0730da7dcd",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "to_do",
+        "to_do": {
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Project structure created",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Project structure created",
+              "href": null
+            }
+          ],
+          "checked": true,
+          "color": "default"
+        }
+      },
+      "code": {
+        "object": "block",
+        "id": "29660b6e-8d18-81f1-ac55-edfcc3efd0f4",
+        "parent": {
+          "type": "page_id",
+          "page_id": "29660b6e-8d18-8144-a36f-f8857827dc73"
+        },
+        "created_time": "2025-10-24T12:56:00.000Z",
+        "last_edited_time": "2025-10-24T12:56:00.000Z",
+        "created_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "last_edited_by": {
+          "object": "user",
+          "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+        },
+        "has_children": false,
+        "archived": false,
+        "in_trash": false,
+        "type": "code",
+        "code": {
+          "caption": [],
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "# Required\nNOTION_API_TOKEN=secret_xxxxxxxxxxxxx\n\n# Optional (for Phase 2)\nNOTION_WORKSPACE_ID=xxxxxxxxxxxxx\nNOTION_CI_AGENTS_DB_ID=xxxxxxxxxxxxx\nNOTION_CI_SESSIONS_DB_ID=xxxxxxxxxxxxx",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "# Required\nNOTION_API_TOKEN=secret_xxxxxxxxxxxxx\n\n# Optional (for Phase 2)\nNOTION_WORKSPACE_ID=xxxxxxxxxxxxx\nNOTION_CI_AGENTS_DB_ID=xxxxxxxxxxxxx\nNOTION_CI_SESSIONS_DB_ID=xxxxxxxxxxxxx",
+              "href": null
+            }
+          ],
+          "language": "shell"
+        }
+      }
+    }
+  },
+  "annotations": [
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Name",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Role",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Phase",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Created",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Status",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Goal",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Key Achievement",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "**bold**",
+      "annotations": {
+        "bold": false,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": true,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "*italic*",
+      "annotations": {
+        "bold": false,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": true,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": " ",
+      "annotations": {
+        "bold": false,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": true,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": " ",
+      "annotations": {
+        "bold": false,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": true,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Status",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Goal",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Status",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Goal",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Source",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Key Insights",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "numbered_list_item",
+      "text": "TokenHunter Lesson",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "numbered_list_item",
+      "text": "MCP Ecosystem",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "numbered_list_item",
+      "text": "Architecture",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Decision",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Reusable Patterns from TokenHunter",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "**bold**",
+      "annotations": {
+        "bold": false,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": true,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Phase 1 (Official MCP)",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "paragraph",
+      "text": "Mitigation",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Athena",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Developer",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "Automator",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    },
+    {
+      "blockType": "bulleted_list_item",
+      "text": "ClaudeCodeIntegrator",
+      "annotations": {
+        "bold": true,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "href": null
+    }
+  ],
+  "nestedBlocks": [],
+  "tables": [],
+  "changeDetection": {
+    "created": "2025-10-24T12:56:00.000Z",
+    "lastEdited": "2025-10-24T12:56:00.000Z",
+    "isRecentlyEdited": true
+  },
+  "rateLimits": [
+    338,
+    371,
+    378,
+    1322,
+    484,
+    375,
+    414,
+    393,
+    370,
+    322
+  ]
+}

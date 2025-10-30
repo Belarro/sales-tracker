@@ -1,0 +1,24 @@
+{
+  "project_name": "WebAppPrototype",
+  "workspace_path": "/tmp/prototype-workspace",
+  "discovery_agents": [
+    "RepoScout",
+    "TechAnalyst", 
+    "RequirementsAnalyst",
+    "SecurityAnalyst",
+    "UIDesigner"
+  ],
+  "implementation_agents": [
+    "Architect",
+    "FrontendDeveloper", 
+    "BackendDeveloper",
+    "DatabaseDesigner",
+    "Tester",
+    "SecurityValidator",
+    "Documentor"
+  ],
+  "auto_accept_patterns": [
+    "/tmp/prototype-workspace"
+  ],
+  "timeout_minutes": 180
+}

@@ -1,0 +1,559 @@
+{
+  "progressive_disclosure_hierarchy": {
+    "metadata": {
+      "design_date": "2025-10-03",
+      "total_documents": 87,
+      "hierarchy_levels": 4,
+      "principle": "Surface essential information first, provide paths to deeper knowledge"
+    },
+
+    "level_1_quick_start": {
+      "name": "Quick Start (2-5 minute read)",
+      "audience": "New users, developers getting started",
+      "goal": "Get running in under 5 minutes",
+      "documents": [
+        {
+          "file": "docs/integration/CLAUDE_CODE_QUICK_START.md",
+          "priority": "PRIMARY",
+          "lines": 75,
+          "size": "2.3KB",
+          "why": "2-3 minute read for beginners, production ready status",
+          "key_content": [
+            "18KB+ specialized knowledge auto-loaded per agent",
+            "Production Ready (Phases 1-3 Complete)",
+            "Quick access to core features"
+          ]
+        },
+        {
+          "file": "docs/guides/QuickStart.md",
+          "priority": "PRIMARY",
+          "lines": 89,
+          "size": "2.6KB",
+          "why": "Instant access commands, CI integration basics",
+          "key_content": [
+            "Type 'Athena' to activate memory expert",
+            "CI init/integrate commands",
+            "Natural language activation"
+          ]
+        },
+        {
+          "file": "docs/guides/README.md",
+          "priority": "SUPPORTING",
+          "lines": 73,
+          "size": "3.4KB",
+          "why": "Guide directory overview with quick access matrix",
+          "key_content": [
+            "12 documents organized by category",
+            "Quick access guide showing audience and purpose",
+            "Clear pathways to detailed docs"
+          ]
+        }
+      ],
+      "next_steps": [
+        "Level 2: Installation & Setup for detailed configuration",
+        "Level 3: User Guides for specific workflows"
+      ]
+    },
+
+    "level_2_installation_setup": {
+      "name": "Installation & Setup (15-30 minute read)",
+      "audience": "Developers setting up projects, system administrators",
+      "goal": "Complete installation and configuration",
+      "documents": [
+        {
+          "file": "docs/integration/CLAUDE_CODE_INSTALLATION_GUIDE.md",
+          "priority": "PRIMARY",
+          "lines": 172,
+          "size": "4.2KB",
+          "status": "OUTDATED - needs symlink architecture update",
+          "why": "Step-by-step installation guide",
+          "key_content": [
+            "claude-init for new projects",
+            "integrate-ci.sh for existing projects",
+            "Agent activation patterns"
+          ]
+        },
+        {
+          "file": "docs/architecture/CI_INTEGRATION_QUICK_REFERENCE.md",
+          "priority": "PRIMARY",
+          "lines": 424,
+          "size": "14KB",
+          "why": "Quick decision guide with integration patterns",
+          "key_content": [
+            "1-minute understanding section",
+            "Quick decision matrix (do I need CI?)",
+            "3 integration patterns (simple, CI CLI, symlink)"
+          ]
+        },
+        {
+          "file": "docs/guides/KNOWLEDGE_ORGANIZATION_REFERENCE_GUIDE.md",
+          "priority": "SUPPORTING",
+          "lines": 199,
+          "size": "6.9KB",
+          "why": "Document organization standards",
+          "key_content": [
+            "Permanent (/docs/) vs Temporary (/working/) vs Archive",
+            "Document lifecycle: Creation → Development → Evaluation → Placement",
+            "Quality gates for promotion"
+          ]
+        },
+        {
+          "file": "docs/integration/unified-workflow-guide.md",
+          "priority": "SUPPORTING",
+          "lines": 473,
+          "size": "12KB",
+          "why": "Complete workflows for common scenarios",
+          "key_content": [
+            "New project workflow (4 steps)",
+            "Existing project integration",
+            "Agent collaboration workflow",
+            "Bug fixing workflow"
+          ]
+        },
+        {
+          "file": "QUICK_FIX_GUIDE.md",
+          "priority": "SUPPORTING",
+          "lines": 219,
+          "size": "5.5KB",
+          "why": "30-minute memory divergence fix",
+          "key_content": [
+            "Quick fix for common memory issues",
+            "Symlink setup if needed"
+          ]
+        }
+      ],
+      "next_steps": [
+        "Level 3: Detailed user guides for specific features",
+        "Level 4: Architecture deep dive for understanding internals"
+      ]
+    },
+
+    "level_3_user_guides": {
+      "name": "User Guides & Workflows (1-2 hour read per topic)",
+      "audience": "Active users, feature developers, power users",
+      "goal": "Master specific features and workflows",
+      "categories": {
+        "agent_usage": {
+          "documents": [
+            {
+              "file": "docs/guides/AGENT_USAGE_GUIDE.md",
+              "lines": 184,
+              "size": "5.8KB",
+              "why": "Comprehensive agent usage patterns",
+              "topics": [
+                "160 agents available",
+                "High-priority agents (core, development, business)",
+                "Domain-specific agents (technical, creative, business)",
+                "Multi-agent workflows"
+              ]
+            }
+          ]
+        },
+        "cli_reference": {
+          "documents": [
+            {
+              "file": "docs/cli/CLI.md",
+              "lines": 119,
+              "size": "2.7KB",
+              "why": "CLI command reference",
+              "topics": [
+                "init, integrate, status, fix, verify commands",
+                "Command patterns and usage"
+              ]
+            },
+            {
+              "file": "docs/cli/claudeCliIntegration.md",
+              "lines": 98,
+              "size": "2.7KB",
+              "why": "Integration architecture and troubleshooting",
+              "topics": [
+                "Chain of references (CLAUDE.md → CI system → agents)",
+                "Verification and troubleshooting",
+                "Common issues and solutions"
+              ]
+            }
+          ]
+        },
+        "specialized_features": {
+          "documents": [
+            {
+              "file": "docs/guides/README_VOICE_MODE.md",
+              "lines": 81,
+              "size": "2.1KB",
+              "why": "Voice mode and auto-accept features",
+              "topics": [
+                "ci agent voice AGENT_NAME",
+                "Auto-accept configuration",
+                "Command comparison table"
+              ]
+            },
+            {
+              "file": "docs/guides/claude-md-protection.md",
+              "lines": 106,
+              "size": "3.9KB",
+              "why": "CLAUDE.md protection system",
+              "topics": [
+                "Multi-layered protection (backup, protected files, automation)",
+                "Recovery hierarchy",
+                "Manual recovery procedures"
+              ]
+            }
+          ]
+        },
+        "integration_status": {
+          "documents": [
+            {
+              "file": "docs/integration/KNOWN_ISSUES.md",
+              "lines": 293,
+              "size": "7.9KB",
+              "why": "Current issues and workarounds",
+              "topics": [
+                "0 critical issues",
+                "2 resolved issues (SubagentStop fixes)",
+                "1 workaround (memory file bloat)"
+              ]
+            },
+            {
+              "file": "docs/integration/ci-cli-claude-integration-progress.md",
+              "lines": 666,
+              "size": "29KB",
+              "status": "OUTDATED - pre-Oct 1 fixes",
+              "why": "Integration progress tracking",
+              "topics": [
+                "Rating: 4.8/5 (up from 2.2/5)",
+                "Functional memory integration complete"
+              ]
+            }
+          ]
+        },
+        "troubleshooting": {
+          "documents": [
+            {
+              "file": "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md",
+              "lines": 379,
+              "size": "12KB",
+              "why": "SubagentStop troubleshooting index",
+              "topics": [
+                "4 investigation documents indexed",
+                "100% reliability achieved (Oct 1)",
+                "JSONL parsing fix, duplicate entries fix"
+              ]
+            }
+          ]
+        }
+      },
+      "next_steps": [
+        "Level 4: Architecture and deep technical understanding"
+      ]
+    },
+
+    "level_4_architecture_deep_dive": {
+      "name": "Architecture & Technical Deep Dive (4+ hours)",
+      "audience": "System architects, contributors, troubleshooters",
+      "goal": "Complete understanding of system internals",
+      "categories": {
+        "core_architecture": {
+          "documents": [
+            {
+              "file": "docs/architecture/CI_COLLABORATIVEINTELLIGENCE_INTEGRATION_ARCHITECTURE.md",
+              "lines": 1056,
+              "size": "41KB",
+              "priority": "PRIMARY",
+              "why": "Complete integration architecture (✅ IMPLEMENTED Sep 30, 2025)",
+              "topics": [
+                "CI and CollaborativeIntelligence NOT separate but execution + intelligence layers",
+                "Symlink architecture implementation",
+                "Three-tier memory architecture",
+                "Commits: CI 1d52fe7, CollaborativeIntelligence e7844bf"
+              ]
+            },
+            {
+              "file": "docs/architecture/decisions/ADR-001-MEMORY-UNIFICATION-SYMLINK-APPROACH.md",
+              "lines": 457,
+              "size": "14KB",
+              "priority": "PRIMARY",
+              "why": "Architecture decision record for memory unification",
+              "topics": [
+                "Decision: Symlink architecture for memory unification",
+                "95% confidence, production-ready",
+                "CI/AGENTS → ../CollaborativeIntelligence/AGENTS"
+              ]
+            },
+            {
+              "file": "docs/analysis/CLAUDE_CODE_AGENT_ARCHITECTURE.md",
+              "lines": 416,
+              "size": "11KB",
+              "priority": "SUPPORTING",
+              "why": "Agent storage and integration patterns",
+              "topics": [
+                "Three-tier storage hierarchy (Global/Project/Source)",
+                "AGENTS/ is source of truth",
+                ".claude/agents/ contains lightweight activation configs",
+                "Migration to native Claude Code memory in progress"
+              ]
+            }
+          ]
+        },
+        "technical_analysis": {
+          "documents": [
+            {
+              "file": "docs/analysis/CLAUDE_CODE_CONFIGURATION_INVESTIGATION.md",
+              "lines": 291,
+              "size": "8.6KB",
+              "why": "Configuration hierarchy investigation",
+              "topics": [
+                "Three-tier configuration: Global (~/.claude) → Project (.claude) → CI System (AGENTS/)",
+                "Configuration precedence and loading order"
+              ]
+            },
+            {
+              "file": "AGENTS/Debugger/CLAUDE_CODE_HOOKS_TECHNICAL_ANALYSIS.md",
+              "lines": 146,
+              "size": "3.7KB",
+              "why": "Hook system deep dive",
+              "topics": [
+                "No internal Claude processing - pure bash scripts",
+                "Performance: With API 2-5s/$0.001-0.01, Without API instant/$0/low quality"
+              ]
+            },
+            {
+              "file": "AGENTS/Developer/CLAUDE_CODE_INTEGRATION_DISCOVERY.md",
+              "lines": 181,
+              "size": "5.3KB",
+              "why": "**MAJOR BREAKTHROUGH** - transcript path discovery",
+              "topics": [
+                "Claude Code passes transcript paths automatically in hook data",
+                "Zero-cost intelligent updates without API key",
+                "session_id, transcript_path, tool data via stdin"
+              ]
+            }
+          ]
+        },
+        "sprint_documentation": {
+          "sprint_005_memory_crisis": {
+            "overview": {
+              "file": "docs/development/sprints/sprint-005/README.md",
+              "lines": 282,
+              "size": "11KB",
+              "why": "Sprint 005 overview - completed same day (90% faster)",
+              "achievement": "73% agents stale → 100% functional with 96% noise reduction"
+            },
+            "breakthrough_discovery": {
+              "file": "docs/development/sprints/sprint-005/MEMORY_SYSTEM_TRUTH.md",
+              "lines": 313,
+              "size": "9.6KB",
+              "why": "Definitive memory system implementation (3-agent investigation)",
+              "breakthrough": "Transcript access enables zero-cost intelligent updates"
+            },
+            "paradigm_shift": {
+              "file": "docs/development/sprints/sprint-005/AGENT_DRIVEN_MEMORY_SYSTEM.md",
+              "lines": 254,
+              "size": "8.1KB",
+              "why": "Agent-driven memory paradigm",
+              "shift": "Automated extraction (96% templates) → Agent-driven (100% meaningful)"
+            },
+            "completion": {
+              "file": "docs/development/sprints/sprint-005/FINAL_COMPLETION_REPORT.md",
+              "lines": 257,
+              "size": "8.8KB",
+              "why": "Sprint completion report",
+              "result": "96% noise reduction, $0.00 cost, 113+ daily updates"
+            },
+            "followup": {
+              "file": "docs/development/sprints/sprint-005/POST_COMPLETION_FOLLOWUP.md",
+              "lines": 387,
+              "size": "14KB",
+              "why": "Post-sprint memory fragmentation resolution",
+              "resolution": "Symlinks implemented Sep 30 (commits 1d52fe7, e7844bf)"
+            },
+            "verification": {
+              "file": "docs/development/sprints/sprint-005/MEMORY_UNIFICATION_VERIFICATION.md",
+              "lines": 659,
+              "size": "17KB",
+              "why": "Comprehensive testing and verification",
+              "result": "✅ PASSED - 95% confidence, production-ready"
+            }
+          },
+          "sprint_004_hooks": {
+            "file": "docs/development/sprints/sprint-004/README.md",
+            "lines": 186,
+            "size": "7.3KB",
+            "status": "Day 0 Complete, deferred to Sprint 006",
+            "finding": "PreToolUse pattern works (95%) but undocumented"
+          },
+          "sprint_001_metadata": {
+            "file": "docs/development/sprints/sprint-001/README.md",
+            "lines": 183,
+            "size": "5.2KB",
+            "why": "Agent metadata standardization",
+            "discovery": "133 agents total, 89 with metadata (67%), 44 without (33%)"
+          }
+        },
+        "hook_fixes": {
+          "documents": [
+            {
+              "file": "HOOK_CONFIGURATION_FIX_SUMMARY.md",
+              "lines": 384,
+              "size": "11KB",
+              "why": "Complete hook configuration fix (3 components)",
+              "fixes": [
+                "CI config, CollaborativeIntelligence config, CI install.sh",
+                "Old string format → new array format with matcher/timeout",
+                "94-line local hooks → 200-line canonical hooks"
+              ]
+            },
+            {
+              "file": "SESSION_FILE_CREATION_FIX_COMPLETE.md",
+              "lines": 341,
+              "size": "10KB",
+              "why": "Session file creation fix",
+              "fix": "agent-session-manager forwarding to enhanced-memory-updater",
+              "result": "✅ Session files created automatically (Oct 1 14:15)"
+            }
+          ]
+        },
+        "archive_safety_evolution": {
+          "documents": [
+            {
+              "file": "docs/archive-safety/PROACTIVE_HOOK_DESIGN.md",
+              "lines": 1001,
+              "size": "30KB",
+              "why": "v3.0 Proactive paradigm design",
+              "innovation": "Use additionalContext field instead of blocking"
+            },
+            {
+              "file": "docs/archive-safety/V3.2_FINAL_UX_DESIGN.md",
+              "lines": 493,
+              "size": "12KB",
+              "why": "v3.2 Final design",
+              "principle": "Block Early, Guide Clearly, Validate Strictly"
+            },
+            {
+              "file": "docs/archive-safety/ANTI_LAZINESS_VALIDATION.md",
+              "lines": 501,
+              "size": "12KB",
+              "why": "v3.1 Anti-laziness validation",
+              "validation": "Multi-layer validation requiring explicit line count confirmation"
+            }
+          ]
+        },
+        "master_planning": {
+          "documents": [
+            {
+              "file": "docs/integration/claude-code-integration-plan.md",
+              "lines": 355,
+              "size": "11KB",
+              "status": "OUTDATED - inventory claims v3.1",
+              "why": "Master integration plan",
+              "actual_version": "v2.0"
+            },
+            {
+              "file": "management/plans/Plans/CLAUDE_CODE_SDK_INTEGRATION_HANDOFF.md",
+              "lines": 751,
+              "size": "27KB",
+              "status": "OUTDATED - needs completion status updates",
+              "why": "SDK integration handoff plan",
+              "targets": "<500ms activation, <500 bytes output, <30% context"
+            },
+            {
+              "file": "management/plans/Plans/CLAUDE_CODE_HOOKS_OPTIMIZATION_SPRINT.md",
+              "lines": 713,
+              "size": "22KB",
+              "why": "Hooks optimization sprint plan",
+              "status": "Day 0 validation COMPLETE, ready for Day 1"
+            }
+          ]
+        },
+        "trustwrapper_integration": {
+          "documents": [
+            {
+              "file": "docs/integration/TRUSTWRAPPER_INTEGRATION_STATUS.md",
+              "lines": 248,
+              "size": "9.3KB",
+              "why": "TrustWrapper operational status",
+              "status": "✅ FULLY OPERATIONAL - Sep 18, 2025"
+            },
+            {
+              "file": "docs/integration/ci-trustwrapper-integration.md",
+              "lines": 315,
+              "size": "13KB",
+              "why": "TrustWrapper integration documentation",
+              "purpose": "Wraps AI agents, detects hallucinations, provides trust scoring"
+            },
+            {
+              "file": "docs/integration/XAI_MVP_IMPLEMENTATION_PLAN.md",
+              "lines": 852,
+              "size": "41KB",
+              "why": "XAI deployment plan",
+              "status": "✅ ENTERPRISE FEATURES OPERATIONAL - Sep 15, 2025"
+            }
+          ]
+        }
+      }
+    },
+
+    "navigation_paths": {
+      "new_user_journey": [
+        "Level 1: CLAUDE_CODE_QUICK_START.md (2 min)",
+        "Level 2: CI_INTEGRATION_QUICK_REFERENCE.md (15 min)",
+        "Level 3: AGENT_USAGE_GUIDE.md (30 min)",
+        "Level 4: CI_COLLABORATIVEINTELLIGENCE_INTEGRATION_ARCHITECTURE.md (2 hours)"
+      ],
+      "troubleshooting_journey": [
+        "Level 1: KNOWN_ISSUES.md (quick scan)",
+        "Level 3: SUBAGENT_STOP_INDEX.md (if SubagentStop issue)",
+        "Level 4: Relevant sprint documentation or technical analysis"
+      ],
+      "contributor_journey": [
+        "Level 2: KNOWLEDGE_ORGANIZATION_REFERENCE_GUIDE.md (standards)",
+        "Level 4: ADR-001-MEMORY-UNIFICATION-SYMLINK-APPROACH.md (architecture decisions)",
+        "Level 4: Sprint 005 documentation (understanding recent changes)"
+      ],
+      "architect_journey": [
+        "Level 4: CI_COLLABORATIVEINTELLIGENCE_INTEGRATION_ARCHITECTURE.md (start here)",
+        "Level 4: ADR-001 (key decision)",
+        "Level 4: CLAUDE_CODE_AGENT_ARCHITECTURE.md (agent patterns)",
+        "Level 4: Sprint 005 MEMORY_SYSTEM_TRUTH.md (breakthrough discovery)"
+      ]
+    },
+
+    "recommended_entry_points": {
+      "by_role": {
+        "new_developer": "CLAUDE_CODE_QUICK_START.md",
+        "system_admin": "CLAUDE_CODE_INSTALLATION_GUIDE.md",
+        "power_user": "AGENT_USAGE_GUIDE.md",
+        "architect": "CI_COLLABORATIVEINTELLIGENCE_INTEGRATION_ARCHITECTURE.md",
+        "troubleshooter": "KNOWN_ISSUES.md",
+        "contributor": "KNOWLEDGE_ORGANIZATION_REFERENCE_GUIDE.md"
+      },
+      "by_task": {
+        "getting_started": "CLAUDE_CODE_QUICK_START.md → QuickStart.md",
+        "installing": "CLAUDE_CODE_INSTALLATION_GUIDE.md → CI_INTEGRATION_QUICK_REFERENCE.md",
+        "using_agents": "AGENT_USAGE_GUIDE.md → unified-workflow-guide.md",
+        "troubleshooting": "KNOWN_ISSUES.md → SUBAGENT_STOP_INDEX.md",
+        "understanding_architecture": "ADR-001 → CI_COLLABORATIVEINTELLIGENCE_INTEGRATION_ARCHITECTURE.md",
+        "understanding_memory_system": "Sprint 005 MEMORY_SYSTEM_TRUTH.md → AGENT_DRIVEN_MEMORY_SYSTEM.md",
+        "contributing": "KNOWLEDGE_ORGANIZATION_REFERENCE_GUIDE.md → Sprint documentation"
+      }
+    },
+
+    "implementation_notes": {
+      "index_file_suggestion": {
+        "location": "docs/integration/CLAUDE_CODE_DOCUMENTATION_INDEX.md",
+        "purpose": "Replace outdated inventory with progressive disclosure index",
+        "structure": [
+          "Level 1: Quick Start (3 files)",
+          "Level 2: Installation & Setup (5 files)",
+          "Level 3: User Guides & Workflows (by category)",
+          "Level 4: Architecture & Deep Dive (by topic)"
+        ]
+      },
+      "navigation_improvements": {
+        "add_level_indicators": "Add '📍 Level X' badges to each file",
+        "add_next_steps": "Add 'Next Steps' section to each level 1-3 document",
+        "add_related_docs": "Add 'Related Documentation' with level context",
+        "update_readmes": "Update directory READMEs with level context"
+      }
+    }
+  }
+}

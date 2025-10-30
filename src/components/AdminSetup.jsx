@@ -4,16 +4,19 @@
 // Admin interface for managing users
 
 import { useState, useEffect } from 'react';
-import { addAuthorizedUser, removeAuthorizedUser, getAuthorizedUsers } from '../utils/googleSheets.js';
+import { addAuthorizedUser, removeAuthorizedUser, getAuthorizedUsers, getNoteTemplates, addNoteTemplate, removeNoteTemplate } from '../utils/googleSheets.js';
 
 const AdminSetup = ({ onComplete, user }) => {
   const [authorizedUsers, setAuthorizedUsers] = useState([]);
   const [newUserEmail, setNewUserEmail] = useState('');
+  const [noteTemplates, setNoteTemplates] = useState([]);
+  const [newTemplate, setNewTemplate] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     loadAuthorizedUsers();
+    loadNoteTemplates();
   }, []);
 
   const loadAuthorizedUsers = async () => {
@@ -26,6 +29,15 @@ const AdminSetup = ({ onComplete, user }) => {
       setMessage({ type: 'error', text: 'Failed to load users. Check your Google Sheets setup.' });
     }
     setLoading(false);
+  };
+
+  const loadNoteTemplates = async () => {
+    try {
+      const templates = await getNoteTemplates();
+      setNoteTemplates(templates);
+    } catch (error) {
+      console.error('Error loading note templates:', error);
+    }
   };
 
   const handleAddUser = async (e) => {
@@ -64,6 +76,43 @@ const AdminSetup = ({ onComplete, user }) => {
       await loadAuthorizedUsers();
     } else {
       setMessage({ type: 'error', text: 'Failed to remove user. Please try again.' });
+    }
+  };
+
+  const handleAddTemplate = async (e) => {
+    e.preventDefault();
+
+    if (!newTemplate.trim()) {
+      setMessage({ type: 'error', text: 'Please enter a template' });
+      return;
+    }
+
+    if (noteTemplates.includes(newTemplate.trim())) {
+      setMessage({ type: 'error', text: 'This template already exists' });
+      return;
+    }
+
+    const success = await addNoteTemplate(newTemplate.trim());
+    if (success) {
+      setNewTemplate('');
+      setMessage({ type: 'success', text: 'Template added successfully' });
+      await loadNoteTemplates();
+    } else {
+      setMessage({ type: 'error', text: 'Failed to add template. Please try again.' });
+    }
+  };
+
+  const handleRemoveTemplate = async (template) => {
+    if (!confirm(`Remove this template?\n\n"${template}"`)) {
+      return;
+    }
+
+    const success = await removeNoteTemplate(template);
+    if (success) {
+      setMessage({ type: 'success', text: 'Template removed successfully' });
+      await loadNoteTemplates();
+    } else {
+      setMessage({ type: 'error', text: 'Failed to remove template. Please try again.' });
     }
   };
 
@@ -129,6 +178,48 @@ const AdminSetup = ({ onComplete, user }) => {
             )}
           </div>
         )}
+      </div>
+
+      {/* Note Templates Management */}
+      <div className="user-management" style={{ marginTop: '40px' }}>
+        <h3>Visit Note Templates</h3>
+        <p style={{ marginBottom: '15px', fontSize: '14px' }}>
+          Create pre-written note templates that sales reps can quickly select when adding visit notes.
+        </p>
+
+        <form onSubmit={handleAddTemplate} className="add-user-form">
+          <input
+            type="text"
+            value={newTemplate}
+            onChange={(e) => setNewTemplate(e.target.value)}
+            placeholder="Enter note template (e.g., Owner was not at the place, spoke with worker...)"
+            style={{ flex: 1 }}
+          />
+          <button type="submit" className="btn btn-primary">
+            Add Template
+          </button>
+        </form>
+
+        <div className="user-list">
+          {noteTemplates.length === 0 ? (
+            <div className="user-item">
+              <span>No templates added yet. Default templates will be used.</span>
+            </div>
+          ) : (
+            noteTemplates.map((template, index) => (
+              <div key={index} className="user-item" style={{ alignItems: 'flex-start' }}>
+                <span style={{ flex: 1, wordBreak: 'break-word' }}>{template}</span>
+                <button
+                  onClick={() => handleRemoveTemplate(template)}
+                  className="btn btn-danger btn-small"
+                  style={{ flexShrink: 0 }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       <div style={{ marginTop: '30px', textAlign: 'right' }}>

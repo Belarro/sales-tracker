@@ -1,0 +1,13 @@
+{
+  "name": "Benchmarker",
+  "description": "Agent Benchmarker",
+  "capabilities": [],
+  "created_at": "2025-08-07T20:38:48.295551+00:00",
+  "last_used": "2025-08-07T20:38:48.295695+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Benchmarker",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Benchmarker/Benchmarker_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Benchmarker/ContinuousLearning.md",
+  "attributes": {}
+}

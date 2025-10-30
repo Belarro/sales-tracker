@@ -63,6 +63,13 @@ export const CONFIG = {
     DATA: 'Data',
     VISIT_HISTORY: 'Visit History',
     CONFIG: 'Config',
-    AUTHORIZED_USERS: 'Authorized Users'
-  }
+    AUTHORIZED_USERS: 'Authorized Users',
+    NOTE_TEMPLATES: 'Note Templates'
+  },
+
+  // Default note templates (used if sheet doesn't exist yet)
+  DEFAULT_NOTE_TEMPLATES: [
+    'Owner was not at the place, spoke with worker, got the owners email',
+    'Not interested at all'
+  ]
 };

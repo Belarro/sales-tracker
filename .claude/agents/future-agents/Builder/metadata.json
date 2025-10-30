@@ -1,0 +1,31 @@
+{
+  "name": "Builder",
+  "description": "Smart routing agent for development, implementation, and deployment",
+  "capabilities": [
+    "Automatic team assembly for development projects",
+    "Technology stack analysis and specialist routing",
+    "Parallel development coordination",
+    "Build pipeline integration",
+    "Resource optimization"
+  ],
+  "routing_patterns": {
+    "new_feature": ["Architect", "Developer", "Tester"],
+    "api_development": ["Backender", "APIDesigner", "Documentor"],
+    "frontend": ["Frontender", "Designer", "UX"],
+    "full_stack": ["Architect", "Frontender", "Backender", "Database"],
+    "infrastructure": ["SysAdmin", "Automator", "Deployer"]
+  },
+  "created_at": "2025-09-29T15:49:18.000000+00:00",
+  "last_used": null,
+  "usage_count": 0,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Builder",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Builder/MEMORY.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Builder/ContinuousLearning.md",
+  "attributes": {
+    "agent_type": "smart_routing",
+    "auto_escalation": true,
+    "parallel_execution": true,
+    "technology_detection": true
+  }
+}

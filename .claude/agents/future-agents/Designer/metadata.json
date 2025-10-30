@@ -1,0 +1,13 @@
+{
+  "name": "Designer",
+  "description": "Agent Designer",
+  "capabilities": [],
+  "created_at": "2025-05-27T01:25:46.608374+00:00",
+  "last_used": "2025-08-25T19:08:14.566342+00:00",
+  "usage_count": 33,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Designer",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Designer/Designer_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Designer/ContinuousLearning.md",
+  "attributes": {}
+}
