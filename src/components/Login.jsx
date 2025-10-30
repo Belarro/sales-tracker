@@ -1,7 +1,7 @@
 // ============================================
 // LOGIN COMPONENT
 // ============================================
-// Handles Google sign-in using OAuth 2.0 Authorization Code Flow with PKCE
+// Handles Google sign-in using Google Identity Services with Token Model
 
 import { useEffect, useState } from 'react';
 import { CONFIG } from '../config.js';
@@ -13,129 +13,71 @@ const Login = ({ onLogin }) => {
   const [tempUserInfo, setTempUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Generate code verifier and challenge for PKCE
-  const generateCodeVerifier = () => {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => ('0' + byte.toString(16)).slice(-2)).join('');
-  };
-
-  const generateCodeChallenge = async (verifier) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(verifier);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return btoa(String.fromCharCode(...new Uint8Array(hash)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
-  };
-
   useEffect(() => {
-    // Check if we're returning from OAuth redirect
-    const handleOAuthCallback = async () => {
-      // Check for authorization code in URL query params
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-
-      if (code) {
-        try {
-          // Retrieve the code verifier from sessionStorage
-          const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
-          if (!codeVerifier) {
-            throw new Error('Code verifier not found. Please try signing in again.');
-          }
-
-          // Exchange authorization code for access token
-          const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-              code: code,
-              client_id: CONFIG.GOOGLE_CLIENT_ID,
-              redirect_uri: window.location.origin,
-              grant_type: 'authorization_code',
-              code_verifier: codeVerifier,
-            }),
-          });
-
-          if (!tokenResponse.ok) {
-            const errorData = await tokenResponse.json();
-            console.error('Token exchange error:', errorData);
-            throw new Error('Failed to exchange authorization code for token');
-          }
-
-          const tokenData = await tokenResponse.json();
-          const accessToken = tokenData.access_token;
-
-          // Store the access token for Sheets API
-          window.googleAccessToken = accessToken;
-
-          // Clean up code verifier
-          sessionStorage.removeItem('pkce_code_verifier');
-
-          // Get user info
-          const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
-
-          if (!userInfoResponse.ok) {
-            throw new Error('Failed to get user info');
-          }
-
-          const userInfo = await userInfoResponse.json();
-          setTempUserInfo(userInfo);
-
-          // Check if user has saved name
-          const savedName = localStorage.getItem(`salesTracker_userName_${userInfo.email}`);
-          if (savedName) {
-            setUserName(savedName);
-          }
-
-          setShowNameInput(true);
-
-          // Clean up URL
-          window.history.replaceState(null, document.title, window.location.pathname);
-        } catch (err) {
-          console.error('OAuth callback error:', err);
-          setError('Failed to complete sign-in. Please try again.');
-          sessionStorage.removeItem('pkce_code_verifier');
-        }
+    // Initialize Google Identity Services Token Client
+    const initTokenClient = () => {
+      if (!window.google?.accounts?.oauth2) {
+        setTimeout(initTokenClient, 100);
+        return;
       }
+
+      window.tokenClient = window.google.accounts.oauth2.initTokenClient({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+        callback: async (response) => {
+          if (response.error) {
+            console.error('Token error:', response);
+            setError('Failed to complete sign-in. Please try again.');
+            setLoading(false);
+            return;
+          }
+
+          try {
+            // Store the access token for Sheets API
+            window.googleAccessToken = response.access_token;
+
+            // Get user info
+            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${response.access_token}` }
+            });
+
+            if (!userInfoResponse.ok) {
+              throw new Error('Failed to get user info');
+            }
+
+            const userInfo = await userInfoResponse.json();
+            setTempUserInfo(userInfo);
+
+            // Check if user has saved name
+            const savedName = localStorage.getItem(`salesTracker_userName_${userInfo.email}`);
+            if (savedName) {
+              setUserName(savedName);
+            }
+
+            setShowNameInput(true);
+            setLoading(false);
+          } catch (err) {
+            console.error('Error getting user info:', err);
+            setError('Failed to get user information. Please try again.');
+            setLoading(false);
+          }
+        },
+      });
 
       setLoading(false);
     };
 
-    handleOAuthCallback();
+    initTokenClient();
   }, []);
 
-  const handleSignIn = async () => {
+  const handleSignIn = () => {
     setError('');
 
-    try {
-      // Generate PKCE code verifier and challenge
-      const codeVerifier = generateCodeVerifier();
-      const codeChallenge = await generateCodeChallenge(codeVerifier);
-
-      // Store code verifier for later use
-      sessionStorage.setItem('pkce_code_verifier', codeVerifier);
-
-      // Build OAuth URL for Authorization Code Flow with PKCE
-      const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-      authUrl.searchParams.append('client_id', CONFIG.GOOGLE_CLIENT_ID);
-      authUrl.searchParams.append('redirect_uri', window.location.origin);
-      authUrl.searchParams.append('response_type', 'code');
-      authUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile');
-      authUrl.searchParams.append('prompt', 'select_account');
-      authUrl.searchParams.append('code_challenge', codeChallenge);
-      authUrl.searchParams.append('code_challenge_method', 'S256');
-
-      // Redirect to Google OAuth
-      window.location.href = authUrl.toString();
-    } catch (err) {
-      console.error('Error initiating sign-in:', err);
-      setError('Failed to start sign-in process. Please try again.');
+    if (window.tokenClient) {
+      // Request access token
+      window.tokenClient.requestAccessToken({ prompt: 'select_account' });
+    } else {
+      setError('Google Sign-In not ready. Please refresh the page.');
     }
   };
 
