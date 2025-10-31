@@ -89,11 +89,46 @@ function App() {
   };
 
   const handleSignOut = () => {
+    console.log('🚪 Signing out user...');
+
+    // Revoke the Google token to properly sign out
+    if (window.googleAccessToken) {
+      // Revoke the token
+      fetch(`https://oauth2.googleapis.com/revoke?token=${window.googleAccessToken}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }).then(() => {
+        console.log('✅ Token revoked successfully');
+      }).catch((error) => {
+        console.error('❌ Error revoking token:', error);
+      });
+
+      // Clear the token and expiration
+      delete window.googleAccessToken;
+      delete window.tokenExpiresAt;
+    }
+
+    // Clear Google Identity Services session
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.disableAutoSelect();
+      console.log('✅ Google Identity Services session cleared');
+    }
+
+    // Clear local storage (but keep user names for convenience)
+    // We only clear session-related data, not user preferences
+    sessionStorage.clear();
+
     setUser(null);
     setAuthorized(false);
     setShowAdminSetup(false);
     setSelectedLocation(null);
     setVisitedLocations([]);
+
+    console.log('✅ User signed out, reloading app...');
+
+    // Reload to fully reset the app state
     window.location.reload();
   };
 

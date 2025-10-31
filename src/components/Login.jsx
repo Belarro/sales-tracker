@@ -33,8 +33,21 @@ const Login = ({ onLogin }) => {
           }
 
           try {
-            // Store the access token for Sheets API
+            console.log('✅ OAuth token received for new login');
+
+            // Clear any existing token first to avoid conflicts
+            if (window.googleAccessToken) {
+              console.log('⚠️ Clearing previous token');
+              delete window.googleAccessToken;
+            }
+
+            // Store the new access token for Sheets API
             window.googleAccessToken = response.access_token;
+
+            // Store token expiration time (tokens expire after 1 hour)
+            const expiresIn = response.expires_in || 3600; // Default 1 hour
+            window.tokenExpiresAt = Date.now() + (expiresIn * 1000);
+            console.log(`🔑 Token will expire in ${expiresIn} seconds`);
 
             // Get user info
             const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -46,6 +59,7 @@ const Login = ({ onLogin }) => {
             }
 
             const userInfo = await userInfoResponse.json();
+            console.log('👤 User info retrieved:', userInfo.email);
             setTempUserInfo(userInfo);
 
             // Check if user has saved name
@@ -74,8 +88,11 @@ const Login = ({ onLogin }) => {
     setError('');
 
     if (window.tokenClient) {
-      // Request access token
-      window.tokenClient.requestAccessToken({ prompt: 'select_account' });
+      // Request access token with forced account selection
+      // This ensures users can always choose which account to use
+      window.tokenClient.requestAccessToken({
+        prompt: 'select_account'  // Always show account picker
+      });
     } else {
       setError('Google Sign-In not ready. Please refresh the page.');
     }
