@@ -42,12 +42,22 @@ export const decodeJWT = (token) => {
 };
 
 /**
- * Check if user is admin
+ * Check if user is admin (from .env only - for immediate checks)
  * @param {string} email - User email
- * @returns {boolean} True if user is admin
+ * @returns {boolean} True if user is admin in .env
  */
 export const isAdmin = (email) => {
   return CONFIG.ADMIN_EMAILS.includes(email);
+};
+
+/**
+ * Check if user is admin (including Google Sheets admins)
+ * @param {string} email - User email
+ * @param {Array} sheetAdmins - List of admin emails from Google Sheets
+ * @returns {boolean} True if user is admin
+ */
+export const isAdminWithSheet = (email, sheetAdmins = []) => {
+  return CONFIG.ADMIN_EMAILS.includes(email) || sheetAdmins.includes(email);
 };
 
 /**

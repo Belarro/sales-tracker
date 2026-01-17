@@ -1,28 +1,24 @@
 // ============================================
 // CONFIGURATION FILE
 // ============================================
-// This is where you'll add your API keys after setting up Google Cloud
-// Follow the SETUP-GUIDE.md for detailed instructions
+// Configuration now uses environment variables from .env file
+// Copy .env.example to .env and fill in your values
 
 export const CONFIG = {
-  // Admin emails - these people have full access to setup and manage users
-  ADMIN_EMAILS: ['rbyinc@gmail.com', 'mintzer.elad@gmail.com'],
+  // Admin emails - loaded from environment variables
+  ADMIN_EMAILS: (import.meta.env.VITE_ADMIN_EMAILS || '').split(',').filter(Boolean),
 
-  // Google Maps API Key - Get this from Google Cloud Console
-  // Instructions in SETUP-GUIDE.md Part 1
-  GOOGLE_MAPS_API_KEY: 'AIzaSyDGE5vzppjbcnF7vbhlUvs-uTSQPeJcScI',
+  // Google Maps API Key
+  GOOGLE_MAPS_API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
 
-  // Google OAuth Client ID - Get this from Google Cloud Console
-  // Instructions in SETUP-GUIDE.md Part 1
-  GOOGLE_CLIENT_ID: '794302779341-uis3hrehssvi3iiaoev113t5k67h6cb7.apps.googleusercontent.com',
+  // Google OAuth Client ID
+  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
 
-  // Google Sheets API Key - Get this from Google Cloud Console
-  // Instructions in SETUP-GUIDE.md Part 1
-  GOOGLE_SHEETS_API_KEY: 'AIzaSyCOMwWjwW4dwQ7JhBAVCHg75XS46ot1bWg',
+  // Google Sheets API Key
+  GOOGLE_SHEETS_API_KEY: import.meta.env.VITE_GOOGLE_SHEETS_API_KEY || '',
 
-  // Your Google Sheet ID - Get this from your sheet URL
-  // Instructions in SETUP-GUIDE.md Part 2
-  GOOGLE_SHEET_ID: '1TCRdV8PMdElo2J6ZcM2rUQwRWV0RNDFcq0EXdl9lGaQ',
+  // Your Google Sheet ID
+  GOOGLE_SHEET_ID: import.meta.env.VITE_GOOGLE_SHEET_ID || '',
 
   // Business type options for the dropdown
   BUSINESS_TYPES: [
@@ -64,7 +60,8 @@ export const CONFIG = {
     VISIT_HISTORY: 'Visit History',
     CONFIG: 'Config',
     AUTHORIZED_USERS: 'Authorized Users',
-    NOTE_TEMPLATES: 'Note Templates'
+    NOTE_TEMPLATES: 'Note Templates',
+    ADMIN_EMAILS: 'Admin Emails'
   },
 
   // Default note templates (used if sheet doesn't exist yet)

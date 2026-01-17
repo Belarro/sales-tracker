@@ -4,7 +4,8 @@
 // Admin interface for managing users
 
 import { useState, useEffect } from 'react';
-import { addAuthorizedUser, removeAuthorizedUser, getAuthorizedUsers, getNoteTemplates, addNoteTemplate, removeNoteTemplate } from '../utils/googleSheets.js';
+import { addAuthorizedUser, removeAuthorizedUser, getAuthorizedUsers, getNoteTemplates, addNoteTemplate, removeNoteTemplate, getAdminEmails, addAdminEmail, removeAdminEmail } from '../utils/googleSheets.js';
+import { CONFIG } from '../config.js';
 
 const AdminSetup = ({ onComplete, user }) => {
   const [authorizedUsers, setAuthorizedUsers] = useState([]);
@@ -13,10 +14,13 @@ const AdminSetup = ({ onComplete, user }) => {
   const [newTemplate, setNewTemplate] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [adminEmails, setAdminEmails] = useState([]);
 
   useEffect(() => {
     loadAuthorizedUsers();
     loadNoteTemplates();
+    loadAdminEmails();
   }, []);
 
   const loadAuthorizedUsers = async () => {
@@ -37,6 +41,17 @@ const AdminSetup = ({ onComplete, user }) => {
       setNoteTemplates(templates);
     } catch (error) {
       console.error('Error loading note templates:', error);
+    }
+  };
+
+  const loadAdminEmails = async () => {
+    try {
+      const emails = await getAdminEmails();
+      setAdminEmails(emails);
+    } catch (error) {
+      console.error('Error loading admin emails:', error);
+      // Fallback to .env admins if sheet loading fails
+      setAdminEmails(CONFIG.ADMIN_EMAILS);
     }
   };
 
@@ -116,8 +131,53 @@ const AdminSetup = ({ onComplete, user }) => {
     }
   };
 
+  const handleAddAdminEmail = async (e) => {
+    e.preventDefault();
+
+    if (!newAdminEmail || !newAdminEmail.includes('@')) {
+      setMessage({ type: 'error', text: 'Please enter a valid email address' });
+      return;
+    }
+
+    if (adminEmails.includes(newAdminEmail)) {
+      setMessage({ type: 'error', text: 'This email is already an admin' });
+      return;
+    }
+
+    const success = await addAdminEmail(newAdminEmail);
+    if (success) {
+      setNewAdminEmail('');
+      setMessage({
+        type: 'success',
+        text: `${newAdminEmail} has been added as an admin!`
+      });
+      // Reload the list from Google Sheets
+      await loadAdminEmails();
+    } else {
+      setMessage({ type: 'error', text: 'Failed to add admin. Please try again.' });
+    }
+  };
+
+  const handleRemoveAdminEmail = async (email) => {
+    if (!confirm(`Remove ${email} from admin list?`)) {
+      return;
+    }
+
+    const success = await removeAdminEmail(email);
+    if (success) {
+      setMessage({
+        type: 'success',
+        text: `${email} has been removed from admins!`
+      });
+      // Reload the list from Google Sheets
+      await loadAdminEmails();
+    } else {
+      setMessage({ type: 'error', text: 'Failed to remove admin. Please try again.' });
+    }
+  };
+
   return (
-    <div className="admin-setup">
+    <div className="admin-setup" style={{ maxHeight: 'calc(100vh - 160px)', overflowY: 'auto' }}>
       <h2>Admin Setup</h2>
       <p>
         Welcome, Admin! Use this panel to manage who can access the Sales Tracker app.
@@ -130,7 +190,65 @@ const AdminSetup = ({ onComplete, user }) => {
         </div>
       )}
 
+      {/* Admin Email Management Section */}
       <div className="user-management">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>Admin Emails Management</h3>
+          <button
+            onClick={loadAdminEmails}
+            className="btn btn-secondary"
+            type="button"
+            style={{ padding: '8px 16px', fontSize: '14px' }}
+          >
+            🔄 Refresh List
+          </button>
+        </div>
+
+        <div className="warning-box" style={{
+          background: '#e3f2fd',
+          border: '1px solid #2196f3',
+          borderRadius: '4px',
+          padding: '15px',
+          marginBottom: '20px'
+        }}>
+          <strong>Info:</strong> Admin emails are now stored in Google Sheets. Changes take effect immediately!
+          Admins from your .env file are automatically included.
+        </div>
+
+        <form onSubmit={handleAddAdminEmail} className="add-user-form">
+          <input
+            type="email"
+            placeholder="Enter admin email address"
+            value={newAdminEmail}
+            onChange={(e) => setNewAdminEmail(e.target.value)}
+          />
+          <button type="submit" className="btn btn-primary">
+            Add Admin
+          </button>
+        </form>
+
+        <div className="user-list" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+          {adminEmails.length === 0 ? (
+            <div className="user-item">
+              <span>No admin emails configured. Add one above.</span>
+            </div>
+          ) : (
+            adminEmails.map((email) => (
+              <div key={email} className="user-item">
+                <span>{email}</span>
+                <button
+                  onClick={() => handleRemoveAdminEmail(email)}
+                  className="btn btn-danger btn-small"
+                >
+                  Remove
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="user-management" style={{ marginTop: '40px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3>Authorized Users</h3>
           <button
@@ -158,7 +276,7 @@ const AdminSetup = ({ onComplete, user }) => {
         {loading ? (
           <p>Loading users...</p>
         ) : (
-          <div className="user-list">
+          <div className="user-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
             {authorizedUsers.length === 0 ? (
               <div className="user-item">
                 <span>No users added yet. Add your first user above.</span>
@@ -200,7 +318,7 @@ const AdminSetup = ({ onComplete, user }) => {
           </button>
         </form>
 
-        <div className="user-list">
+        <div className="user-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
           {noteTemplates.length === 0 ? (
             <div className="user-item">
               <span>No templates added yet. Default templates will be used.</span>

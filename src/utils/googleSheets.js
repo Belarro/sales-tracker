@@ -54,7 +54,7 @@ export const getAuthorizedUsers = async () => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A2:A`
+      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!B2:B`
     });
 
     const rows = response.result.values || [];
@@ -75,7 +75,7 @@ export const addAuthorizedUser = async (email) => {
   try {
     await window.gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A:A`,
+      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!B:B`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [[email]]
@@ -97,7 +97,7 @@ export const removeAuthorizedUser = async (email) => {
     // Get all users
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A2:A`
+      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!B2:B`
     });
 
     const rows = response.result.values || [];
@@ -117,7 +117,7 @@ export const removeAuthorizedUser = async (email) => {
     // Clear all current data
     await window.gapi.client.sheets.spreadsheets.values.clear({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A2:A`
+      range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!B2:B`
     });
 
     // Write back the updated list (without gaps)
@@ -125,7 +125,7 @@ export const removeAuthorizedUser = async (email) => {
       const values = updatedEmails.map(e => [e]);
       await window.gapi.client.sheets.spreadsheets.values.update({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-        range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!A2`,
+        range: `${CONFIG.SHEETS.AUTHORIZED_USERS}!B2`,
         valueInputOption: 'RAW',
         resource: { values }
       });
@@ -586,6 +586,108 @@ export const removeNoteTemplate = async (template) => {
     return true;
   } catch (error) {
     console.error('Error removing note template:', error);
+    return false;
+  }
+};
+
+/**
+ * Get all admin emails from sheet
+ * @returns {Promise<Array>} List of admin email addresses
+ */
+export const getAdminEmails = async () => {
+  try {
+    const response = await window.gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.ADMIN_EMAILS}!A2:A`
+    });
+
+    const rows = response.result.values || [];
+    const emails = rows.map(row => row[0]).filter(email => email);
+    console.log('🔐 Admin emails from sheet:', emails);
+
+    // Merge with .env admin emails (removing duplicates)
+    const envAdmins = CONFIG.ADMIN_EMAILS || [];
+    const allAdmins = [...new Set([...envAdmins, ...emails])];
+
+    return allAdmins;
+  } catch (error) {
+    console.error('Error fetching admin emails:', error);
+    // Return .env admins as fallback
+    return CONFIG.ADMIN_EMAILS || [];
+  }
+};
+
+/**
+ * Add a new admin email
+ * @param {string} email - Admin email to add
+ * @returns {Promise<boolean>} Success status
+ */
+export const addAdminEmail = async (email) => {
+  try {
+    await window.gapi.client.sheets.spreadsheets.values.append({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.ADMIN_EMAILS}!A:A`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [[email]]
+      }
+    });
+    console.log('✅ Admin email added to sheet:', email);
+    return true;
+  } catch (error) {
+    console.error('Error adding admin email:', error);
+    return false;
+  }
+};
+
+/**
+ * Remove an admin email
+ * @param {string} email - Admin email to remove
+ * @returns {Promise<boolean>} Success status
+ */
+export const removeAdminEmail = async (email) => {
+  try {
+    // Get all admin emails from sheet
+    const response = await window.gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.ADMIN_EMAILS}!A2:A`
+    });
+
+    const rows = response.result.values || [];
+    const emails = rows.map(row => row[0]).filter(e => e);
+
+    console.log('🔐 Current admin emails in sheet:', emails);
+    console.log('🗑️ Removing admin:', email);
+
+    // Filter out the email to remove
+    const updatedEmails = emails.filter(e => e !== email);
+
+    if (emails.length === updatedEmails.length) {
+      console.log('❌ Admin email not found in sheet:', email);
+      return false;
+    }
+
+    // Clear all current data
+    await window.gapi.client.sheets.spreadsheets.values.clear({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.ADMIN_EMAILS}!A2:A`
+    });
+
+    // Write back the updated list
+    if (updatedEmails.length > 0) {
+      const values = updatedEmails.map(e => [e]);
+      await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+        range: `${CONFIG.SHEETS.ADMIN_EMAILS}!A2`,
+        valueInputOption: 'RAW',
+        resource: { values }
+      });
+    }
+
+    console.log('✅ Admin email removed successfully. Remaining admins:', updatedEmails);
+    return true;
+  } catch (error) {
+    console.error('Error removing admin email:', error);
     return false;
   }
 };
