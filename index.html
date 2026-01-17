@@ -14,7 +14,9 @@
         console.log('✅ Google Maps API loaded successfully');
       };
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGE5vzppjbcnF7vbhlUvs-uTSQPeJcScI&libraries=places&loading=async&callback=initGoogleMaps"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGE5vzppjbcnF7vbhlUvs-uTSQPeJcScI&libraries=places,marker&loading=async&callback=initGoogleMaps"></script>
+    <!-- MarkerClusterer library for grouping nearby markers -->
+    <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" defer></script>
     <!-- Google Sheets API -->

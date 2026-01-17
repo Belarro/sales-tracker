@@ -7,13 +7,15 @@ import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '../config.js';
 import { getLocationHistory } from '../utils/googleSheets.js';
 
-const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
+const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, searchQuery = '' }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
   const overlayMarkersRef = useRef([]);
   const [showHint, setShowHint] = useState(false);
   const [mapReady, setMapReady] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -105,6 +107,9 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
   };
 
   const createMap = (center) => {
+    // Store user location for Quick Add feature
+    setUserLocation(center);
+
     const map = new window.google.maps.Map(mapRef.current, {
       center: center,
       zoom: 14,
@@ -383,11 +388,12 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
     if (navigator.geolocation && mapInstanceRef.current) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const userLocation = {
+          const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          mapInstanceRef.current.setCenter(userLocation);
+          setUserLocation(newLocation);
+          mapInstanceRef.current.setCenter(newLocation);
           mapInstanceRef.current.setZoom(15);
         },
         (error) => {
@@ -395,6 +401,81 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
           alert('Unable to get your location. Please check your browser permissions.');
         }
       );
+    }
+  };
+
+  // Quick Add - find nearby places at current location
+  const handleQuickAdd = async () => {
+    if (!mapInstanceRef.current || !userLocation) {
+      alert('Map not ready. Please wait and try again.');
+      return;
+    }
+
+    setIsLocating(true);
+
+    try {
+      // Get fresh location
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const currentLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setUserLocation(currentLocation);
+          mapInstanceRef.current.setCenter(currentLocation);
+          mapInstanceRef.current.setZoom(17);
+
+          // Search for nearby restaurants/businesses
+          const { Place } = await window.google.maps.importLibrary("places");
+
+          const request = {
+            textQuery: 'restaurant OR cafe OR bar',
+            fields: ['displayName', 'formattedAddress', 'nationalPhoneNumber', 'websiteURI', 'googleMapsURI', 'location'],
+            locationBias: {
+              center: currentLocation,
+              radius: 50 // 50 meters
+            },
+            maxResultCount: 5
+          };
+
+          const { places } = await Place.searchByText(request);
+
+          if (places && places.length > 0) {
+            // Show the closest place
+            const nearestPlace = places[0];
+            onLocationSelect({
+              name: nearestPlace.displayName || 'Unknown Place',
+              address: nearestPlace.formattedAddress || 'Address not available',
+              phone: nearestPlace.nationalPhoneNumber || '',
+              website: nearestPlace.websiteURI || '',
+              googleMapsUrl: nearestPlace.googleMapsURI || '',
+              lat: nearestPlace.location?.lat() || currentLocation.lat,
+              lng: nearestPlace.location?.lng() || currentLocation.lng
+            });
+          } else {
+            // No nearby places found, create a generic entry
+            onLocationSelect({
+              name: 'New Location',
+              address: `Lat: ${currentLocation.lat.toFixed(6)}, Lng: ${currentLocation.lng.toFixed(6)}`,
+              phone: '',
+              website: '',
+              lat: currentLocation.lat,
+              lng: currentLocation.lng
+            });
+          }
+
+          setIsLocating(false);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          alert('Unable to get your location. Please check your browser permissions.');
+          setIsLocating(false);
+        },
+        { enableHighAccuracy: true }
+      );
+    } catch (error) {
+      console.error('Quick Add error:', error);
+      setIsLocating(false);
     }
   };
 
@@ -455,35 +536,21 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
           </div>
         )}
 
+        {/* Quick Add Button */}
+        <button
+          onClick={handleQuickAdd}
+          disabled={isLocating}
+          className="map-quick-add-btn"
+          title="Quick add - Find nearest restaurant"
+          aria-label="Quick add nearby location"
+        >
+          {isLocating ? '...' : '+'}
+        </button>
+
+        {/* My Location Button */}
         <button
           onClick={zoomToUserLocation}
-          style={{
-            position: 'absolute',
-            bottom: window.innerWidth < 768 ? '80px' : '120px',
-            right: window.innerWidth < 768 ? '16px' : '20px',
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            background: '#1a73e8',
-            color: 'white',
-            border: 'none',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '24px',
-            zIndex: 100,
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
-          }}
+          className="map-location-btn"
           title="Zoom to my location"
           aria-label="Zoom to my location"
         >
@@ -491,19 +558,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [] }) => {
         </button>
 
         {/* Location Counter */}
-        <div style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20px',
-          background: 'white',
-          padding: '12px 16px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          fontSize: '14px',
-          fontWeight: '600',
-          color: '#333',
-          zIndex: 100
-        }}>
+        <div className="map-counter">
           📍 Visited: <span style={{ color: '#1a73e8' }}>{visitedLocations.length}</span> location{visitedLocations.length !== 1 ? 's' : ''}
         </div>
       </div>
