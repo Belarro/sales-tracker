@@ -83,7 +83,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           businessTypes: existingLocation.businessTypes || '',
           interestLevel: existingLocation.interestLevel || '',
           visitNotes: '',
-          followUpDate: existingLocation.followUpDate || calculateFollowUpDate(CONFIG.FOLLOW_UP_DAYS)
+          followUpDate: existingLocation.followUpDate || calculateFollowUpDate(CONFIG.FOLLOW_UP_DAYS),
+          sampleGiven: existingLocation.sampleGiven === 'YES'
         });
         setExistingNotes(existingLocation.visitNotes || '');
       } else {
