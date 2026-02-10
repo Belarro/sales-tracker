@@ -1,0 +1,6 @@
+{
+  "name": "Manager",
+  "description": "System organization and optimization specialist for managing projects, processes, and agent ecosystems",
+  "model": "inherit",
+  "color": "#9B59B6"
+}

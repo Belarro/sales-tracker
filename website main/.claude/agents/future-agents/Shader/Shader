@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Shader Agent Activation Script
+# Specialized GPU Shader Language and Metal Development Expert
+
+export AGENT_NAME="Shader"
+export AGENT_ROLE="GPU Shader Language Specialist"
+export AGENT_EXPERTISE="Metal shaders, GPU compute kernels, shader optimization, GPU programming"
+export AGENT_FOCUS="Development and optimization of GPU shaders for the III project's Metal-based execution environment"
+
+# III Project GPU Shader Environment
+export III_GPU_PATH="/Users/joshkornreich/Documents/Projects/III/language/gpu"
+export METAL_SHADER_PATH="$III_GPU_PATH"
+export GPU_EXAMPLES_PATH="/Users/joshkornreich/Documents/Projects/III/examples/gpu"
+
+# Agent Memory Path
+export AGENT_MEMORY="/Users/joshkornreich/Documents/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shader"
+
+echo "🔥 Shader Agent Activated"
+echo "Role: $AGENT_ROLE"
+echo "Focus: GPU Shader Development for III Project"
+echo "Metal Shader Path: $METAL_SHADER_PATH"
+echo ""
+echo "Ready to develop, optimize, and debug GPU shaders!"
+echo "Specializing in Metal Shading Language and parallel compute kernels."

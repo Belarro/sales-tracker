@@ -1,0 +1,391 @@
+/* Business Pitch Deck CSS for Professional PDF Generation */
+/* Optimized for business presentations and investor materials */
+
+@page {
+    size: A4;
+    margin: 1.5cm 2cm 2cm 2cm;
+    
+    @bottom-center {
+        content: counter(page);
+        font-family: 'Helvetica', sans-serif;
+        font-size: 10pt;
+        color: #666;
+    }
+    
+    @top-center {
+        content: "TravelGuider AI - Business Pitch";
+        font-family: 'Helvetica', sans-serif;
+        font-size: 10pt;
+        color: #666;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 8pt;
+    }
+}
+
+@page :first {
+    @top-center {
+        content: none;
+    }
+    margin-top: 3cm;
+}
+
+/* Typography - Business focused */
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #333;
+    text-align: left;
+}
+
+/* Title and Main Headings */
+h1 {
+    font-size: 28pt;
+    font-weight: bold;
+    color: #1565c0;
+    text-align: center;
+    margin: 2em 0 1em 0;
+    page-break-after: avoid;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h2 {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #1976d2;
+    margin: 2em 0 1em 0;
+    padding: 0.5em 0;
+    border-bottom: 3px solid #1976d2;
+    page-break-before: always;
+    page-break-after: avoid;
+    text-align: center;
+}
+
+h3 {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #1976d2;
+    margin: 1.5em 0 0.8em 0;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #424242;
+    margin: 1.2em 0 0.6em 0;
+    page-break-after: avoid;
+}
+
+/* Subtitle styling */
+h2 + p {
+    font-size: 14pt;
+    font-style: italic;
+    color: #666;
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+/* Section breaks with horizontal rules */
+hr {
+    border: none;
+    border-top: 2px solid #1976d2;
+    margin: 2em 0;
+    page-break-after: avoid;
+}
+
+/* Executive Summary and Key Sections */
+.executive-summary {
+    background-color: #e3f2fd;
+    border: 2px solid #1976d2;
+    border-radius: 8px;
+    padding: 1.5em;
+    margin: 1.5em 0;
+    page-break-inside: avoid;
+}
+
+/* Emoji headings - common in pitch decks */
+h3[title*="📊"],
+h3[title*="🌍"],
+h3[title*="🎯"],
+h3[title*="💡"],
+h3[title*="📈"],
+h3[title*="💰"],
+h3[title*="🚀"] {
+    background-color: #f5f5f5;
+    border-left: 5px solid #1976d2;
+    padding: 0.5em 1em;
+    margin: 1.5em 0 1em 0;
+}
+
+/* Bold text styling for key metrics */
+strong {
+    color: #1565c0;
+    font-weight: bold;
+}
+
+/* Lists - Key points and bullet formatting */
+ul {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+li {
+    margin: 0.5em 0;
+    page-break-inside: avoid;
+    line-height: 1.6;
+}
+
+/* Numbered lists for structured content */
+ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+ol li {
+    margin: 0.8em 0;
+    font-weight: 500;
+    page-break-inside: avoid;
+}
+
+/* Tables - Financial data and metrics */
+table {
+    border-collapse: collapse;
+    margin: 1.5em auto;
+    width: 100%;
+    page-break-inside: avoid;
+    font-size: 10pt;
+    background-color: #fafafa;
+}
+
+th {
+    background-color: #1976d2;
+    color: white;
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11pt;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background-color: #f0f8ff;
+}
+
+/* Key metrics highlighting */
+.metric-highlight {
+    background-color: #fff3e0;
+    border: 2px solid #ff9800;
+    border-radius: 6px;
+    padding: 1em;
+    margin: 1em 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+/* Financial projections */
+.financial-data {
+    background-color: #e8f5e8;
+    border: 1px solid #4caf50;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+/* Call-to-action sections */
+.cta-section {
+    background-color: #fff9c4;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5em;
+    margin: 2em 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+/* Blockquotes for testimonials or important quotes */
+blockquote {
+    border-left: 4px solid #1976d2;
+    margin: 1.5em 0;
+    padding: 1em 1.5em;
+    background-color: #f8f9fa;
+    font-style: italic;
+    page-break-inside: avoid;
+    position: relative;
+}
+
+blockquote:before {
+    content: """;
+    font-size: 3em;
+    color: #1976d2;
+    position: absolute;
+    left: 0.2em;
+    top: -0.2em;
+}
+
+/* Paragraphs - Business content spacing */
+p {
+    margin: 1em 0;
+    text-align: justify;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Business-specific formatting */
+.business-model {
+    background-color: #f3e5f5;
+    border: 1px solid #9c27b0;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+.competitive-advantage {
+    background-color: #e0f2f1;
+    border: 1px solid #009688;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+/* Market data tables */
+.market-data {
+    font-size: 10pt;
+    background-color: #fff;
+    border: 1px solid #1976d2;
+}
+
+.market-data th {
+    background-color: #1976d2;
+    color: white;
+}
+
+.market-data td {
+    padding: 8px 12px;
+}
+
+/* Investment highlights */
+.investment-highlight {
+    background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+    color: white;
+    padding: 1.5em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+.investment-highlight h3 {
+    color: white;
+    margin-top: 0;
+}
+
+/* Revenue projections */
+.revenue-projection {
+    background-color: #e8f5e8;
+    border: 2px solid #4caf50;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 6px;
+    page-break-inside: avoid;
+}
+
+/* Risk assessment */
+.risk-section {
+    background-color: #fff3e0;
+    border: 1px solid #ff9800;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+/* Team section */
+.team-section {
+    background-color: #f3e5f5;
+    border: 1px solid #9c27b0;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+/* Technology stack */
+.tech-stack {
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+}
+
+/* Links */
+a {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Print optimizations */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    h1, h2, h3, h4 {
+        page-break-after: avoid;
+    }
+    
+    table, .metric-highlight, .financial-data, .cta-section {
+        page-break-inside: avoid;
+    }
+    
+    /* Ensure good contrast for printing */
+    .investment-highlight {
+        background: #1976d2 !important;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+/* Page numbering and footers */
+.page-footer {
+    position: fixed;
+    bottom: 1cm;
+    width: 100%;
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+}
+
+/* Appendix styling */
+.appendix {
+    font-size: 10pt;
+    margin-top: 2em;
+    border-top: 2px solid #ddd;
+    padding-top: 1em;
+}
+
+/* Contact information */
+.contact-info {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 1em;
+    margin: 2em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+    text-align: center;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Prodigy",
+  "description": "Agent Prodigy",
+  "capabilities": [],
+  "created_at": "2025-08-20T05:44:49.191499+00:00",
+  "last_used": "2025-08-22T15:51:34.580684+00:00",
+  "usage_count": 4,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Prodigy",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Prodigy/Prodigy_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Prodigy/ContinuousLearning.md",
+  "attributes": {}
+}

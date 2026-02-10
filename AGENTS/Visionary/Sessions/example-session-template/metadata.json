@@ -1,0 +1,26 @@
+{
+  "session_id": "example-template",
+  "title": "Example Session Template",
+  "started_at": "YYYY-MM-DD",
+  "completed_at": "YYYY-MM-DD",
+  "agent": "Visionary",
+  "category": "template",
+  "status": "template",
+  "participants": [
+    "Visionary"
+  ],
+  "concepts_generated": 0,
+  "concepts_validated": 0,
+  "key_outcomes": [
+    "Template for future sessions"
+  ],
+  "related_sessions": [],
+  "tools_used": [
+    "Ideation frameworks",
+    "Validation matrices",
+    "Impact analysis models"
+  ],
+  "follow_up_required": [
+    "None - this is a template"
+  ]
+}

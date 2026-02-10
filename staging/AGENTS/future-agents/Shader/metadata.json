@@ -1,0 +1,13 @@
+{
+  "name": "Shader",
+  "description": "Agent Shader",
+  "capabilities": [],
+  "created_at": "2025-08-19T06:33:37.254317+00:00",
+  "last_used": "2025-08-23T07:17:28.011087+00:00",
+  "usage_count": 12,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shader",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shader/Shader_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shader/ContinuousLearning.md",
+  "attributes": {}
+}

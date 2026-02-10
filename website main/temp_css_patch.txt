@@ -1,0 +1,10 @@
+.admin-setup {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}

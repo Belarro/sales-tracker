@@ -1,0 +1,40 @@
+{
+  "name": "notion-manager",
+  "description": "Manages Notion workspace - creates, reads, and edits pages and databases",
+  "model": "sonnet",
+  "color": "#000000",
+  "version": "1.0.0",
+  "type": "specialist",
+  "capabilities": [
+    "create_notion_pages",
+    "read_notion_pages",
+    "update_notion_pages",
+    "query_databases",
+    "search_workspace",
+    "sync_agent_memory",
+    "export_sessions"
+  ],
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.4.0",
+    "@notionhq/client": "^2.2.0",
+    "zod": "^3.22.0",
+    "p-limit": "^5.0.0"
+  },
+  "requirements": [
+    "NOTION_API_TOKEN environment variable",
+    "Notion workspace access",
+    "OAuth configured (for official MCP)"
+  ],
+  "constraints": {
+    "rate_limit": "3 requests per second",
+    "max_blocks": 1000,
+    "max_payload": "500KB",
+    "confirm_archive": true
+  },
+  "implementation_phase": "Phase 1 - Official MCP Integration",
+  "roadmap": {
+    "phase_1": "Official @notionhq/notion-mcp-server integration",
+    "phase_2": "Custom MCP server with TokenHunter patterns",
+    "phase_3": "Bidirectional sync and advanced features"
+  }
+}

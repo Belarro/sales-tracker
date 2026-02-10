@@ -1,0 +1,21 @@
+{
+  "session_id": "ScholarNotification_20250518",
+  "title": "Learning Protocol Failures Notification",
+  "date_created": "2025-05-18",
+  "status": "active",
+  "priority": "critical",
+  "categories": [
+    "protocol_compliance",
+    "learning_system",
+    "communication_protocol",
+    "system_integrity"
+  ],
+  "agents_involved": [
+    "Sage",
+    "Scholar"
+  ],
+  "requested_by": "User",
+  "response_required": true,
+  "response_deadline": "2025-05-19",
+  "outcomes": []
+}

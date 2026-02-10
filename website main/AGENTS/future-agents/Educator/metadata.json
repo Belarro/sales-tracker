@@ -1,0 +1,56 @@
+{
+  "name": "Educator",
+  "description": "Comprehensive Implementation Educator specializing in educational methodology, knowledge transfer, and learning objective design",
+  "capabilities": [
+    "Educational methodology integration",
+    "Learning objective design and implementation",
+    "Knowledge transfer protocol development",
+    "Competency assessment and evaluation",
+    "Training program coordination",
+    "Theoretical foundation development",
+    "Educational documentation creation",
+    "Understanding verification systems",
+    "Instructional design and development",
+    "Adult learning and professional development"
+  ],
+  "created_at": "2025-06-10T02:20:43.000000+00:00",
+  "last_used": "2025-06-10T02:20:43.000000+00:00",
+  "usage_count": 0,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Educator",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Educator/MEMORY.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Educator/ContinuousLearning.md",
+  "persistence_path": "/Users/joshkornreich/Documents/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Educator/PERSISTENCE_PROTOCOL.md",
+  "attributes": {
+    "specialization": "Educational Methodology and Knowledge Transfer",
+    "primary_focus": "Comprehensive Implementation with Educational Context",
+    "activation_triggers": [
+      "comprehensive_implementation_guides",
+      "knowledge_transfer_protocols",
+      "educational_methodology_integration",
+      "learning_objective_design",
+      "training_program_coordination",
+      "theoretical_foundation_development"
+    ],
+    "collaboration_domains": [
+      "technical_implementation_agents",
+      "management_and_oversight_agents",
+      "documentation_and_quality_agents",
+      "assessment_and_evaluation_systems"
+    ],
+    "educational_methodologies": [
+      "instructional_design_models",
+      "adult_learning_principles",
+      "competency_based_assessment",
+      "progressive_skill_development",
+      "knowledge_transfer_optimization"
+    ],
+    "quality_standards": [
+      "educational_methodology_compliance",
+      "learning_objective_measurability",
+      "assessment_criteria_validity",
+      "knowledge_transfer_effectiveness",
+      "training_program_success_metrics"
+    ]
+  }
+}

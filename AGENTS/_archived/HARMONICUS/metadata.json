@@ -1,0 +1,13 @@
+{
+  "name": "HARMONICUS",
+  "description": "Agent HARMONICUS",
+  "capabilities": [],
+  "created_at": "2025-07-26T23:23:29.196043+00:00",
+  "last_used": "2025-07-26T23:33:54.252776+00:00",
+  "usage_count": 2,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/HARMONICUS",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/HARMONICUS/HARMONICUS_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/HARMONICUS/ContinuousLearning.md",
+  "attributes": {}
+}

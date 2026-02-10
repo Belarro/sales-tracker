@@ -1,0 +1,693 @@
+{
+  "document_status_classification": {
+    "metadata": {
+      "classification_date": "2025-10-03",
+      "total_files": 87,
+      "classification_criteria": {
+        "current": "Active, accurate, reflects current state (as of Oct 2025)",
+        "historical": "Documents past events/decisions but still valuable for context",
+        "outdated": "Contains incorrect/superseded information, needs update or archival"
+      }
+    },
+
+    "current_documents": {
+      "count": 45,
+      "documents": [
+        {
+          "file": "docs/architecture/decisions/ADR-001-MEMORY-UNIFICATION-SYMLINK-APPROACH.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 12:16",
+            "implementation_date": "2025-09-30",
+            "verification": "95% confidence, production-ready",
+            "active_architecture": "Symlinks currently in use"
+          },
+          "reason": "Documents current production architecture"
+        },
+        {
+          "file": "docs/architecture/CI_INTEGRATION_QUICK_REFERENCE.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 12:42",
+            "updated": "After symlink implementation",
+            "references": "Current integration patterns"
+          },
+          "reason": "Quick reference reflects current setup"
+        },
+        {
+          "file": "docs/integration/KNOWN_ISSUES.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-02 13:03",
+            "issues": "0 critical, 2 resolved, 1 workaround",
+            "recent_fixes": "SubagentStop fixed Oct 1"
+          },
+          "reason": "Up-to-date issue tracking"
+        },
+        {
+          "file": "docs/integration/CLAUDE_CODE_QUICK_START.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-02 12:58",
+            "status_line": "Production Ready (Phases 1-3 Complete)"
+          },
+          "reason": "Current quick start guide"
+        },
+        {
+          "file": "HOOK_CONFIGURATION_FIX_SUMMARY.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 13:51",
+            "fixes": "All 3 components updated Oct 1",
+            "verification": "Production hooks use new format"
+          },
+          "reason": "Documents current hook configuration"
+        },
+        {
+          "file": "SESSION_FILE_CREATION_FIX_COMPLETE.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 14:18",
+            "status": "✅ VERIFIED AND WORKING",
+            "commit": "7896b87",
+            "test_date": "Oct 1 14:15"
+          },
+          "reason": "Documents current working solution"
+        },
+        {
+          "file": "ARCHIVE_HOOK_UX_FIXES.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-02 13:22",
+            "fixes": "Root archive detection fixed",
+            "status": "✅ Working correctly"
+          },
+          "reason": "Current archive safety behavior"
+        },
+        {
+          "file": "docs/archive-safety/V3.2_FINAL_UX_DESIGN.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 17:45",
+            "version": "3.2 (Final)",
+            "principle": "Block Early, Guide Clearly, Validate Strictly"
+          },
+          "reason": "Current version of archive safety"
+        },
+        {
+          "file": "docs/guides/AGENT_USAGE_GUIDE.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-25 17:15",
+            "agents": "160 available",
+            "note": "Up to date as of September 5, 2025"
+          },
+          "reason": "Current agent usage patterns"
+        },
+        {
+          "file": "docs/guides/QuickStart.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-25 17:18",
+            "commands": "Current CI integrate and agent activation"
+          },
+          "reason": "Current quick start procedures"
+        },
+        {
+          "file": "docs/guides/KNOWLEDGE_ORGANIZATION_REFERENCE_GUIDE.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-29 17:52",
+            "note": "Permanent reference document",
+            "lifecycle": "Working → Evaluation → Docs/Archive"
+          },
+          "reason": "Current organization standards"
+        },
+        {
+          "file": "docs/guides/claude-md-protection.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-26 19:45",
+            "mechanisms": "Backup, protected files, automated verification"
+          },
+          "reason": "Current protection system"
+        },
+        {
+          "file": "docs/guides/README_VOICE_MODE.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-25 17:15",
+            "features": "Voice mode, free mode flag, auto-accept"
+          },
+          "reason": "Current voice mode features"
+        },
+        {
+          "file": "docs/cli/CLI.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-25 17:18",
+            "commands": "init, integrate, status, fix, verify"
+          },
+          "reason": "Current CLI reference"
+        },
+        {
+          "file": "docs/cli/claudeCliIntegration.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-08-13 20:50",
+            "integration": "Current chain of references"
+          },
+          "reason": "Current integration architecture"
+        },
+        {
+          "file": "docs/cli/external-ci-architecture.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-26 20:04",
+            "status": "Complete - core architecture, key commands, QA validated"
+          },
+          "reason": "Current external CI design"
+        },
+        {
+          "file": "docs/integration/unified-workflow-guide.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-26 15:09",
+            "workflows": "New project, existing project, agent collaboration, bug fixing"
+          },
+          "reason": "Current workflow patterns"
+        },
+        {
+          "file": "docs/integration/README.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-02 16:02",
+            "project": "XAI MVP approved for development",
+            "status": "✅ APPROVED"
+          },
+          "reason": "Current integration projects"
+        },
+        {
+          "file": "docs/integration/TRUSTWRAPPER_INTEGRATION_STATUS.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 13:15",
+            "status": "✅ FULLY OPERATIONAL - September 18, 2025"
+          },
+          "reason": "Current TrustWrapper status"
+        },
+        {
+          "file": "docs/integration/ci-trustwrapper-integration.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-01 13:15",
+            "version": "2.0 (Corrected - Shows Real Purpose)",
+            "status": "Production deployment on 74.50.113.152"
+          },
+          "reason": "Current TrustWrapper integration"
+        },
+        {
+          "file": "docs/analysis/CLAUDE_CODE_AGENT_ARCHITECTURE.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-09-29 17:42",
+            "architecture": "Three-tier storage hierarchy",
+            "migration": "In progress (Sprint 004/005)"
+          },
+          "reason": "Current agent architecture"
+        },
+        {
+          "file": "AGENTS/Developer/SUBAGENT_DUPLICATE_ENTRIES_FIX_2025-10-01.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-02 16:02",
+            "fix": "CLAUDE_HOOK_TYPE environment variable",
+            "commit": "651be06",
+            "status": "✅ Working"
+          },
+          "reason": "Current fix documentation"
+        },
+        {
+          "file": "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md",
+          "status": "CURRENT",
+          "evidence": {
+            "date": "2025-10-02 19:16",
+            "corrected": "Updated from 14 to 4 documents",
+            "accurate": "Now reflects actual files"
+          },
+          "reason": "Recently corrected, now accurate"
+        }
+      ]
+    },
+
+    "historical_documents": {
+      "count": 32,
+      "description": "Documents past events/decisions that provide valuable context but describe completed work",
+      "documents": [
+        {
+          "file": "docs/development/sprints/sprint-005/FINAL_COMPLETION_REPORT.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 23:18",
+            "achievement": "96% noise reduction achieved",
+            "completion": "Sprint completed Sep 28"
+          },
+          "value": "Documents breakthrough achievement",
+          "reason": "Completed sprint report - historical record"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/POST_COMPLETION_FOLLOWUP.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-01 13:12",
+            "followup": "Memory fragmentation resolved Sept 30",
+            "commits": "1d52fe7, e7844bf"
+          },
+          "value": "Documents resolution of post-sprint issues",
+          "reason": "Follow-up work completed - historical"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/AGENT_DRIVEN_MEMORY_SYSTEM.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 22:59",
+            "paradigm_shift": "Automated → Agent-driven",
+            "result": "96% noise reduction"
+          },
+          "value": "Documents paradigm shift reasoning",
+          "reason": "Design decision made - now implemented"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/MEMORY_SYSTEM_TRUTH.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 21:48",
+            "discovery": "Transcript path breakthrough",
+            "investigation": "3-agent investigation"
+          },
+          "value": "Documents critical discovery process",
+          "reason": "Investigation complete - discovery documented"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/COMPLETION_REPORT.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 22:11",
+            "status": "✅ COMPLETE - 5 days",
+            "breakthrough": "Zero-cost intelligent updates"
+          },
+          "value": "Sprint completion metrics",
+          "reason": "Completed sprint - historical record"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/MEMORY_UNIFICATION_VERIFICATION.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-01 12:39",
+            "verification": "95% confidence, production-ready",
+            "commits": "1d52fe7, e7844bf tested"
+          },
+          "value": "Verification procedures and results",
+          "reason": "Verification completed - now in production"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/CONFLICT_RESOLUTION_SUMMARY.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 19:26",
+            "resolution": "Old Sprint 005 → Sprint 007",
+            "status": "✅ RESOLVED"
+          },
+          "value": "Documents sprint renumbering decision",
+          "reason": "Conflict resolved - historical context"
+        },
+        {
+          "file": "docs/development/sprints/SPRINT_RENUMBERING.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 19:23",
+            "change": "BRAIN Runtime moved to Sprint 007",
+            "rationale": "Memory crisis priority"
+          },
+          "value": "Explains sprint numbering change",
+          "reason": "Decision made - historical record"
+        },
+        {
+          "file": "docs/development/sprints/VERIFICATION_REPORT.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 19:34",
+            "verification": "✅ COMPLETE",
+            "verified_by": "Analyst Agent"
+          },
+          "value": "Sprint renumbering verification",
+          "reason": "Verification complete - historical"
+        },
+        {
+          "file": "AGENTS/Debugger/SUBAGENT_STOP_DATA_INVESTIGATION.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-01 14:32",
+            "finding": "SubagentStop doesn't read stdin data",
+            "resolution": "Fixed in subsequent work"
+          },
+          "value": "Investigation findings led to fix",
+          "reason": "Investigation complete - bug fixed"
+        },
+        {
+          "file": "AGENTS/Developer/SUBAGENT_CAPTURE_FIX_COMPLETE_2025-10-01.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-02 16:02",
+            "status": "CODE COMPLETE",
+            "commits": "d017498, 3a0eb11"
+          },
+          "value": "Fix implementation documented",
+          "reason": "Fix completed and deployed"
+        },
+        {
+          "file": "ARCHIVE_SAFETY_JSONL_FIX.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-02 12:51",
+            "fix": "JSONL parsing error resolved",
+            "test": "531 lines parsed successfully"
+          },
+          "value": "Bug fix documentation",
+          "reason": "Fix completed - historical record"
+        },
+        {
+          "file": "HOOK_FIX_COMPLETE.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-01 13:39",
+            "status": "✅ CONFIGURATION COMPLETE",
+            "note": "Requires session restart"
+          },
+          "value": "Hook configuration fix process",
+          "reason": "Fix completed - now in use"
+        },
+        {
+          "file": "INTEGRATION_EXECUTIVE_SUMMARY.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-10-01 12:07",
+            "status": "✅ RESOLVED",
+            "resolution_date": "2025-09-30",
+            "commits": "1d52fe7, e7844bf"
+          },
+          "value": "Memory fragmentation resolution",
+          "reason": "Problem resolved - historical"
+        },
+        {
+          "file": "INTEGRATION_VISUAL_DIAGRAM.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-30 20:45",
+            "shows": "Broken architecture vs fixed",
+            "fix_date": "Sep 30, 2025"
+          },
+          "value": "Visual representation of problem/solution",
+          "reason": "Before/after comparison - historical"
+        },
+        {
+          "file": "docs/integration/XAI_MVP_IMPLEMENTATION_PLAN.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-25 21:03",
+            "status": "✅ DEPLOYMENT COMPLETE",
+            "completion": "September 15, 2025"
+          },
+          "value": "XAI deployment record",
+          "reason": "Deployment completed - historical"
+        },
+        {
+          "file": "docs/integration/coordination/MESSAGE_TO_TRUSTWRAPPER_TEAM.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-25 21:03",
+            "subject": "XAI verification complete, bug identified",
+            "assessment": "85% excellent, async bug fix needed"
+          },
+          "value": "Team communication and bug report",
+          "reason": "Communication sent - historical record"
+        },
+        {
+          "file": "docs/development/sprints/sprint-001/README.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-27 00:08",
+            "sprint": "Agent Metadata Standardization",
+            "status": "IN PROGRESS"
+          },
+          "value": "Sprint planning documentation",
+          "reason": "Sprint plan - execution historical"
+        },
+        {
+          "file": "docs/development/sprints/sprint-001/metadata-schema.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-27 00:21",
+            "version": "1.0.0",
+            "created": "Sep 26, 2025"
+          },
+          "value": "Schema definition for metadata",
+          "reason": "Schema defined - now in use"
+        },
+        {
+          "file": "docs/development/sprints/sprint-004/README.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-27 00:36",
+            "status": "Day 0 complete",
+            "deferred": "To Sprint 006 per Sprint 005"
+          },
+          "value": "Sprint 004 investigation findings",
+          "reason": "Investigation complete - deferred"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/README.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-28 23:17",
+            "status": "🎉 COMPLETE WITH BREAKTHROUGH",
+            "completion": "Same day (90% faster)"
+          },
+          "value": "Sprint overview and achievements",
+          "reason": "Sprint completed - historical record"
+        },
+        {
+          "file": "docs/development/sprints/sprint-005/CI_INTEGRATION_CLEANUP_GUIDE.md",
+          "status": "HISTORICAL",
+          "evidence": {
+            "date": "2025-09-30 21:32",
+            "status": "READY FOR EXECUTION",
+            "note": "128 hardcoded references identified"
+          },
+          "value": "Cleanup planning and procedures",
+          "reason": "Cleanup executed - guide historical"
+        }
+      ]
+    },
+
+    "outdated_documents": {
+      "count": 10,
+      "description": "Documents containing incorrect, superseded, or conflicting information requiring updates",
+      "documents": [
+        {
+          "file": "CLAUDE_CODE_DOCUMENTATION_COMPREHENSIVE_INVENTORY.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-10-01 18:04",
+            "errors": [
+              "Master plan: claims v3.1 (792 lines) - actual v2.0 (355 lines)",
+              "Archive safety: claims 10 files - actual 5 files",
+              "SubagentStop: claimed 14 files - actual 4 files (corrected)"
+            ]
+          },
+          "severity": "CRITICAL",
+          "action_needed": "Complete inventory revalidation with actual file stats",
+          "reason": "Contains multiple hallucinated counts and versions"
+        },
+        {
+          "file": "docs/integration/claude-code-integration-plan.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-10-02 16:02",
+            "version": "v2.0",
+            "inventory_claim": "v3.1 with 792 lines",
+            "actual": "355 lines, needs compression per inventory"
+          },
+          "severity": "MEDIUM",
+          "action_needed": "Update to v3.0 with consolidated information or mark v2.0 as final",
+          "reason": "Version mismatch indicates update needed"
+        },
+        {
+          "file": "docs/integration/FINAL_INTEGRATION_STATUS.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-10-01 13:15",
+            "claim": "85% Complete - TrustWrapper integration pending",
+            "conflict": "TrustWrapper operational since Sep 15/18",
+            "discrepancy": "Status report dated after TrustWrapper deployment"
+          },
+          "severity": "HIGH",
+          "action_needed": "Update status to reflect TrustWrapper operational or clarify what 85% refers to",
+          "reason": "Contradicts other operational status reports"
+        },
+        {
+          "file": "docs/integration/ci-cli-claude-integration-progress.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-10-01 13:15",
+            "status": "Rating: 4.8/5 (up from 2.2/5)",
+            "completion": "FUNCTIONAL MEMORY INTEGRATION COMPLETE",
+            "issue": "Pre-dates Oct 1 fixes and improvements"
+          },
+          "severity": "LOW",
+          "action_needed": "Update with post-Oct 1 improvements (session files, hook fixes)",
+          "reason": "Missing recent improvements"
+        },
+        {
+          "file": "docs/integration/CLAUDE_CODE_INSTALLATION_GUIDE.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-09-25 21:03",
+            "issue": "Pre-dates symlink architecture (Sep 30)",
+            "missing": "Hook configuration updates (Oct 1)"
+          },
+          "severity": "MEDIUM",
+          "action_needed": "Update installation steps for symlink architecture and new hook format",
+          "reason": "Installation process changed with recent updates"
+        },
+        {
+          "file": "docs/integration/FUNCTIONAL_MEMORY_BRIDGE_STATUS.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-09-25 21:03",
+            "status": "FUNCTIONAL MEMORY BRIDGE OPERATIONAL",
+            "issue": "Pre-dates symlink architecture (Sep 30) which superseded bridge approach"
+          },
+          "severity": "MEDIUM",
+          "action_needed": "Update to reference symlink architecture or mark as superseded approach",
+          "reason": "Architecture changed - bridge superseded by symlinks"
+        },
+        {
+          "file": "docs/cli/migration_guide.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-08-13 20:50",
+            "age": "Nearly 2 months old",
+            "issue": "Pre-dates all recent improvements"
+          },
+          "severity": "LOW",
+          "action_needed": "Review and update for current architecture",
+          "reason": "Very old - likely missing recent changes"
+        },
+        {
+          "file": "docs/cli/external_integration.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-08-13 20:50",
+            "age": "Nearly 2 months old",
+            "issue": "Pre-dates symlink architecture"
+          },
+          "severity": "LOW",
+          "action_needed": "Update external integration patterns for current architecture",
+          "reason": "Old - likely missing recent architectural changes"
+        },
+        {
+          "file": "docs/integration/TRUSTWRAPPER_MVP_PRODUCT_SPEC.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-09-25 21:03",
+            "status": "Draft Specification",
+            "issue": "XAI deployed Sep 15, this spec from Sep 25 but still marked 'Draft'"
+          },
+          "severity": "LOW",
+          "action_needed": "Update status from Draft or archive if superseded by implementation",
+          "reason": "Implementation complete but spec still draft"
+        },
+        {
+          "file": "management/plans/Plans/CLAUDE_CODE_SDK_INTEGRATION_HANDOFF.md",
+          "status": "OUTDATED",
+          "evidence": {
+            "date": "2025-10-01 17:30",
+            "version": "Handoff plan",
+            "issue": "Many handoff items already completed (symlinks, hooks, memory)",
+            "missing": "Update with completion status"
+          },
+          "severity": "MEDIUM",
+          "action_needed": "Mark completed items, update timeline with actual completion dates",
+          "reason": "Plan partially executed - needs status updates"
+        }
+      ]
+    },
+
+    "summary_statistics": {
+      "current": {
+        "count": 45,
+        "percentage": "51.7%",
+        "description": "Active, accurate documentation reflecting current state"
+      },
+      "historical": {
+        "count": 32,
+        "percentage": "36.8%",
+        "description": "Valuable historical records of completed work"
+      },
+      "outdated": {
+        "count": 10,
+        "percentage": "11.5%",
+        "description": "Requires updates or corrections"
+      }
+    },
+
+    "recommendations": {
+      "immediate_priority": [
+        {
+          "action": "Fix CLAUDE_CODE_DOCUMENTATION_COMPREHENSIVE_INVENTORY.md",
+          "severity": "CRITICAL",
+          "reason": "Contains hallucinated information affecting multiple references",
+          "estimated_effort": "2-3 hours to revalidate all counts"
+        },
+        {
+          "action": "Update FINAL_INTEGRATION_STATUS.md",
+          "severity": "HIGH",
+          "reason": "Contradicts operational TrustWrapper status",
+          "estimated_effort": "30 minutes to clarify status"
+        },
+        {
+          "action": "Update CLAUDE_CODE_INSTALLATION_GUIDE.md",
+          "severity": "MEDIUM",
+          "reason": "Users need current installation steps",
+          "estimated_effort": "1 hour to incorporate symlink architecture and hook updates"
+        }
+      ],
+      "archival_candidates": [
+        {
+          "file": "INTEGRATION_VISUAL_DIAGRAM.md",
+          "reason": "Before/after comparison no longer needed - problem resolved",
+          "action": "Move to archive with reference from architecture docs"
+        },
+        {
+          "file": "docs/integration/FUNCTIONAL_MEMORY_BRIDGE_STATUS.md",
+          "reason": "Bridge approach superseded by symlink architecture",
+          "action": "Archive with note about architectural evolution"
+        }
+      ],
+      "maintenance_schedule": {
+        "weekly": [
+          "Update KNOWN_ISSUES.md with new discoveries/resolutions"
+        ],
+        "monthly": [
+          "Review guide currency (installation, quick start, usage)",
+          "Update completion status on handoff plans"
+        ],
+        "quarterly": [
+          "Archive completed sprint documentation",
+          "Review and consolidate historical records"
+        ]
+      }
+    }
+  }
+}

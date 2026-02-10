@@ -1,0 +1,459 @@
+{
+  "conflicts_analysis": {
+    "metadata": {
+      "analysis_date": "2025-10-03",
+      "files_analyzed": 87,
+      "conflicts_found": 12,
+      "severity_levels": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+    },
+
+    "critical_conflicts": [
+      {
+        "id": "CONFLICT-001",
+        "severity": "CRITICAL",
+        "type": "Factual Discrepancy",
+        "title": "Master Plan Version Mismatch",
+        "description": "Inventory claims different version and size than actual file",
+        "evidence": {
+          "inventory_claims": {
+            "file": "CLAUDE_CODE_DOCUMENTATION_COMPREHENSIVE_INVENTORY.md",
+            "claimed_version": "v3.1",
+            "claimed_lines": 792,
+            "claimed_size": "23KB"
+          },
+          "actual_file": {
+            "file": "docs/integration/claude-code-integration-plan.md",
+            "actual_version": "v2.0",
+            "actual_lines": 355,
+            "actual_size": "11KB",
+            "verified_date": "2025-10-02 16:02"
+          }
+        },
+        "impact": "Users following inventory will expect different content than exists",
+        "resolution_needed": "Update inventory or clarify versioning system",
+        "authoritative_source": "docs/integration/claude-code-integration-plan.md (actual file)"
+      },
+
+      {
+        "id": "CONFLICT-002",
+        "severity": "CRITICAL",
+        "type": "Count Mismatch",
+        "title": "SubagentStop Investigation Files Count",
+        "description": "Index originally claimed 14 files but only 4 actually exist",
+        "evidence": {
+          "original_claim": {
+            "file": "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md",
+            "original_count": 14,
+            "claimed_scope": "comprehensive investigation across 14 documents"
+          },
+          "actual_count": {
+            "files_exist": 4,
+            "files_list": [
+              "AGENTS/Debugger/SUBAGENT_STOP_DATA_INVESTIGATION.md",
+              "AGENTS/Developer/SUBAGENT_CAPTURE_FIX_COMPLETE_2025-10-01.md",
+              "AGENTS/Developer/SUBAGENT_DUPLICATE_ENTRIES_FIX_2025-10-01.md",
+              "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md"
+            ],
+            "verified_date": "2025-10-02 19:16"
+          },
+          "correction_made": {
+            "file": "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md",
+            "lines_updated": [7, 9, 65, 318],
+            "new_count": 4,
+            "corrected_date": "2025-10-02 19:16"
+          }
+        },
+        "impact": "Misleading documentation scope, users expect more files than exist",
+        "resolution_status": "CORRECTED - Index updated to show 4 files",
+        "authoritative_source": "Actual file count (4 files verified)"
+      }
+    ],
+
+    "high_priority_conflicts": [
+      {
+        "id": "CONFLICT-003",
+        "severity": "HIGH",
+        "type": "Temporal Status Conflict",
+        "title": "Sprint 004 Status Ambiguity",
+        "description": "Different documents show conflicting status for Sprint 004",
+        "evidence": {
+          "claim_1": {
+            "file": "docs/development/sprints/sprint-004/README.md",
+            "lines": "3-4",
+            "status": "🚀 ACTIVE",
+            "claim": "Sprint currently in progress"
+          },
+          "claim_2": {
+            "file": "management/plans/Plans/CLAUDE_CODE_HOOKS_OPTIMIZATION_SPRINT.md",
+            "lines": "6",
+            "status": "Ready for Day 1 Execution",
+            "claim": "Day 0 validation COMPLETE, ready to start"
+          },
+          "claim_3": {
+            "file": "docs/development/sprints/sprint-005/README.md",
+            "lines": "73-77",
+            "status": "DEFERRED to Sprint 006",
+            "reason": "Sprint 005 memory crisis took priority"
+          }
+        },
+        "temporal_context": "Sprint 004 started Sep 27, Sprint 005 started Sep 28 (emergency)",
+        "resolution_needed": "Clarify if Sprint 004 is active, deferred, or completed",
+        "authoritative_source": "Sprint 005 documents (most recent, Sep 28+) indicate Sprint 004 deferred"
+      },
+
+      {
+        "id": "CONFLICT-004",
+        "severity": "HIGH",
+        "type": "Architecture Evolution",
+        "title": "Memory Update Method Contradiction",
+        "description": "Different approaches to memory updates described across documents",
+        "evidence": {
+          "approach_1": {
+            "file": "docs/development/sprints/sprint-005/AGENT_DRIVEN_MEMORY_SYSTEM.md",
+            "lines": "16-33",
+            "method": "Agent-driven memory writing",
+            "description": "Agents write their own summaries, 100% meaningful content",
+            "date": "2025-09-28"
+          },
+          "approach_2": {
+            "file": "docs/development/sprints/sprint-005/planning/technical-design.md",
+            "lines": "46-55",
+            "method": "AI-powered summarization via Claude API",
+            "description": "ai-memory-updater.sh with Claude API integration",
+            "date": "2025-09-28"
+          },
+          "approach_3": {
+            "file": "docs/development/sprints/sprint-005/MEMORY_SYSTEM_TRUTH.md",
+            "lines": "28-29",
+            "method": "Transcript access with zero-cost updates",
+            "description": "Claude Code provides transcript paths, no API needed",
+            "date": "2025-09-28"
+          }
+        },
+        "resolution": "These are NOT conflicts but EVOLUTION - started with AI API plan, discovered transcript access, implemented agent-driven approach",
+        "authoritative_source": "FINAL_COMPLETION_REPORT.md shows agent-driven memory is implemented solution"
+      },
+
+      {
+        "id": "CONFLICT-005",
+        "severity": "HIGH",
+        "type": "Integration Status Discrepancy",
+        "title": "TrustWrapper Integration Status",
+        "description": "Different completion percentages reported",
+        "evidence": {
+          "claim_1": {
+            "file": "docs/integration/FINAL_INTEGRATION_STATUS.md",
+            "lines": "5-9",
+            "status": "85% Complete",
+            "pending": "TrustWrapper integration",
+            "date": "2025-10-01 13:15"
+          },
+          "claim_2": {
+            "file": "docs/integration/TRUSTWRAPPER_INTEGRATION_STATUS.md",
+            "lines": "1-7",
+            "status": "✅ FULLY OPERATIONAL",
+            "date": "2025-09-18",
+            "claim": "Real-time hallucination protection active"
+          },
+          "claim_3": {
+            "file": "docs/integration/XAI_MVP_IMPLEMENTATION_PLAN.md",
+            "lines": "4-7",
+            "status": "✅ ENTERPRISE FEATURES OPERATIONAL",
+            "date": "2025-09-15",
+            "claim": "All TrustWrapper components active"
+          }
+        },
+        "temporal_analysis": "TrustWrapper operational Sep 15/18, but FINAL_INTEGRATION_STATUS (Oct 1) says 85% with TrustWrapper pending",
+        "resolution_needed": "Clarify if TrustWrapper is operational or pending",
+        "likely_cause": "FINAL_INTEGRATION_STATUS may be outdated or refers to different aspect"
+      }
+    ],
+
+    "medium_priority_conflicts": [
+      {
+        "id": "CONFLICT-006",
+        "severity": "MEDIUM",
+        "type": "Configuration Format Conflict",
+        "title": "Hook Configuration Format Evolution",
+        "description": "Multiple hook configuration formats shown across documents",
+        "evidence": {
+          "format_1": {
+            "file": "HOOK_FIX_COMPLETE.md",
+            "lines": "22-31",
+            "format": "Simple string paths (old format)",
+            "example": "\"PostToolUse\": \"/path/to/script.sh\"",
+            "status": "Before fix"
+          },
+          "format_2": {
+            "file": "HOOK_FIX_COMPLETE.md",
+            "lines": "33-73",
+            "format": "Array with matcher and timeout (new format)",
+            "example": "PostToolUse: [{matcher: '.*', hooks: [{type: 'command', command: '...', timeout: 30}]}]",
+            "status": "After fix (Oct 1, 2025)"
+          },
+          "format_3": {
+            "file": "docs/architecture/CI_INTEGRATION_QUICK_REFERENCE.md",
+            "lines": "63-79",
+            "format": "Simplified array format in guide",
+            "status": "Current recommendation"
+          }
+        },
+        "resolution": "NOT a conflict - temporal evolution from old to new format",
+        "authoritative_source": "New array format (Oct 1, 2025) is current standard",
+        "action_needed": "Mark old format examples as deprecated"
+      },
+
+      {
+        "id": "CONFLICT-007",
+        "severity": "MEDIUM",
+        "type": "File Location Discrepancy",
+        "title": "Archive Safety File Count Mismatch",
+        "description": "Inventory claims 10 archive safety files but only 5 exist",
+        "evidence": {
+          "inventory_claim": {
+            "file": "CLAUDE_CODE_DOCUMENTATION_COMPREHENSIVE_INVENTORY.md",
+            "claimed_count": 10,
+            "category": "Archive Safety Documentation"
+          },
+          "actual_files": {
+            "count": 5,
+            "files": [
+              "docs/archive-safety/PROACTIVE_HOOK_DESIGN.md",
+              "docs/archive-safety/V3.2_FINAL_UX_DESIGN.md",
+              "docs/archive-safety/PROACTIVE_HOOK_TESTING_GUIDE.md",
+              "docs/archive-safety/ARCHIVE_SAFETY_TEST.md",
+              "docs/archive-safety/ANTI_LAZINESS_VALIDATION.md"
+            ],
+            "verified_date": "2025-10-03"
+          },
+          "root_level_related": {
+            "files": [
+              "ARCHIVE_SAFETY_JSONL_FIX.md",
+              "ARCHIVE_HOOK_UX_FIXES.md"
+            ],
+            "note": "Related but in root, not docs/archive-safety/"
+          }
+        },
+        "resolution": "Inventory hallucinated extra files or counted root-level files incorrectly",
+        "authoritative_source": "Actual filesystem: 5 files in docs/archive-safety/, 2 related in root"
+      },
+
+      {
+        "id": "CONFLICT-008",
+        "severity": "MEDIUM",
+        "type": "Agent Count Discrepancy",
+        "title": "Agent Count Variations",
+        "description": "Different documents report different agent counts",
+        "evidence": {
+          "claim_1": {
+            "file": "docs/guides/AGENT_USAGE_GUIDE.md",
+            "lines": "171",
+            "count": "160 agents",
+            "date": "2025-09-05"
+          },
+          "claim_2": {
+            "file": "docs/integration/ci-trustwrapper-integration.md",
+            "lines": "30, 59",
+            "count": "111+ agents",
+            "date": "2025-10-01"
+          },
+          "claim_3": {
+            "file": "docs/analysis/CLAUDE_CODE_AGENT_ARCHITECTURE.md",
+            "lines": "52",
+            "count": "131 agent directories",
+            "date": "2025-09-29"
+          },
+          "claim_4": {
+            "file": "docs/development/sprints/sprint-001/README.md",
+            "lines": "10-14",
+            "count": "133 agents total (89 with metadata, 44 without)",
+            "date": "2025-09-27"
+          }
+        },
+        "analysis": "Counts vary based on what is counted (converted agents vs directories vs with metadata)",
+        "resolution": "NOT a conflict - different counts measure different things",
+        "clarification_needed": "Define what 'agent count' means in each context"
+      }
+    ],
+
+    "low_priority_conflicts": [
+      {
+        "id": "CONFLICT-009",
+        "severity": "LOW",
+        "type": "Terminology Inconsistency",
+        "title": "CI Project Name Ambiguity",
+        "description": "CI referred to with different meanings across documents",
+        "evidence": {
+          "meaning_1": {
+            "usage": "CollaborativeIntelligence (the main system)",
+            "files": ["Multiple sprint docs", "Architecture docs"],
+            "abbreviation": "CI = CollaborativeIntelligence"
+          },
+          "meaning_2": {
+            "usage": "CI CLI tool (the Rust binary)",
+            "files": ["CLI docs", "Integration guides"],
+            "abbreviation": "CI = Command-line interface tool"
+          },
+          "clarification_exists": {
+            "file": "docs/architecture/CI_INTEGRATION_QUICK_REFERENCE.md",
+            "lines": "10-11",
+            "distinction": "CollaborativeIntelligence = Universal platform, CI = Optional CLI tool"
+          }
+        },
+        "impact": "Potential confusion but clarified in key documents",
+        "resolution": "Use full names or context-specific clarification"
+      },
+
+      {
+        "id": "CONFLICT-010",
+        "severity": "LOW",
+        "type": "Date Format Inconsistency",
+        "title": "Inconsistent Date Formats",
+        "description": "Multiple date formats used across documentation",
+        "evidence": {
+          "format_1": "2025-09-30 (ISO 8601)",
+          "format_2": "September 30, 2025 (Full text)",
+          "format_3": "Sep 30, 2025 (Abbreviated)",
+          "format_4": "Sept 30 (Shortened)"
+        },
+        "impact": "Minor - doesn't affect understanding",
+        "resolution": "Standardize on ISO 8601 for technical docs"
+      },
+
+      {
+        "id": "CONFLICT-011",
+        "severity": "LOW",
+        "type": "Path Format Variations",
+        "title": "File Path Representation Inconsistency",
+        "description": "Mix of absolute and relative paths in documentation",
+        "evidence": {
+          "absolute_paths": "Used in hook configurations and technical docs",
+          "relative_paths": "Used in guides and references",
+          "tilde_paths": "~/Projects/... in some examples"
+        },
+        "impact": "Minor - context usually clarifies",
+        "resolution": "Use relative paths in guides, absolute in configs"
+      },
+
+      {
+        "id": "CONFLICT-012",
+        "severity": "LOW",
+        "type": "Markdown Style Variations",
+        "title": "Inconsistent Status Indicators",
+        "description": "Different ways to show status across documents",
+        "evidence": {
+          "style_1": "✅ COMPLETE",
+          "style_2": "🚀 ACTIVE",
+          "style_3": "⏳ In Progress",
+          "style_4": "Status: Complete"
+        },
+        "impact": "Cosmetic - doesn't affect content",
+        "resolution": "Standardize on emoji + text format"
+      }
+    ],
+
+    "resolved_conflicts": [
+      {
+        "id": "RESOLVED-001",
+        "original_conflict": "SubagentStop Index count mismatch (14 vs 4 files)",
+        "resolution_date": "2025-10-02 19:16",
+        "resolution_action": "Updated SUBAGENT_STOP_INDEX.md lines 7, 9, 65, 318 to show 4 files",
+        "verified": "File now accurately lists 4 investigation files"
+      }
+    ],
+
+    "non_conflicts_clarified": [
+      {
+        "id": "NOT-CONFLICT-001",
+        "perceived_conflict": "Archive Safety version progression (v2.0 → v3.0 → v3.1 → v3.2)",
+        "clarification": "This is EVOLUTION, not conflict - each version builds on previous",
+        "evidence": {
+          "v2.0": "Blocking approach (initial)",
+          "v3.0": "Proactive guidance (improvement)",
+          "v3.1": "Anti-laziness validation (enhancement)",
+          "v3.2": "Block early, guide clearly (final)"
+        },
+        "authoritative_timeline": "Temporal progression documented in files"
+      },
+      {
+        "id": "NOT-CONFLICT-002",
+        "perceived_conflict": "Memory system approaches (AI API vs agent-driven vs transcript)",
+        "clarification": "This is DISCOVERY PROCESS, not conflict",
+        "timeline": [
+          "Day 1: Planned AI-powered summarization",
+          "Day 2: Discovered transcript path access",
+          "Final: Implemented agent-driven approach using transcripts"
+        ],
+        "authoritative_outcome": "Agent-driven memory is implemented solution (FINAL_COMPLETION_REPORT.md)"
+      },
+      {
+        "id": "NOT-CONFLICT-003",
+        "perceived_conflict": "SubagentStop reliability (0% vs 100%)",
+        "clarification": "This is TEMPORAL FIX, not conflict",
+        "timeline": [
+          "Pre-Oct 1: 0% reliability (broken)",
+          "Oct 1 14:57:35: JSONL fix (commit 3a0eb11)",
+          "Post-Oct 1: 100% reliability (fixed)"
+        ],
+        "authoritative_status": "Current status is 100% reliable (KNOWN_ISSUES.md shows fixed)"
+      }
+    ],
+
+    "recommendations": {
+      "immediate_actions": [
+        {
+          "priority": "CRITICAL",
+          "action": "Update CLAUDE_CODE_DOCUMENTATION_COMPREHENSIVE_INVENTORY.md",
+          "reason": "Contains hallucinated file counts and versions",
+          "specific_fixes": [
+            "Master plan: correct to v2.0, 355 lines, 11KB",
+            "Archive safety: correct to 5 files (not 10)",
+            "SubagentStop: already corrected to 4 files"
+          ]
+        },
+        {
+          "priority": "HIGH",
+          "action": "Clarify Sprint 004 final status",
+          "reason": "Conflicting status markers across documents",
+          "recommendation": "Add final status note to README.md indicating deferred to Sprint 006"
+        },
+        {
+          "priority": "HIGH",
+          "action": "Clarify TrustWrapper integration status",
+          "reason": "FINAL_INTEGRATION_STATUS.md conflicts with operational status",
+          "recommendation": "Update FINAL_INTEGRATION_STATUS.md or clarify what '85%' refers to"
+        }
+      ],
+      "documentation_standards": [
+        {
+          "standard": "Use ISO 8601 dates in technical docs",
+          "current_status": "Mixed formats",
+          "impact": "Low"
+        },
+        {
+          "standard": "Mark old configuration formats as deprecated",
+          "current_status": "Old examples exist without deprecation notice",
+          "impact": "Medium"
+        },
+        {
+          "standard": "Distinguish CI (system) vs CI (tool) consistently",
+          "current_status": "Mostly clear but could be clearer",
+          "impact": "Low"
+        }
+      ]
+    },
+
+    "summary": {
+      "total_conflicts": 12,
+      "critical": 2,
+      "high": 3,
+      "medium": 4,
+      "low": 3,
+      "resolved": 1,
+      "non_conflicts_identified": 3,
+      "primary_issue": "Inventory file contains hallucinated information",
+      "secondary_issue": "Temporal status ambiguities (evolution vs conflicts)",
+      "tertiary_issue": "Terminology and formatting inconsistencies"
+    }
+  }
+}

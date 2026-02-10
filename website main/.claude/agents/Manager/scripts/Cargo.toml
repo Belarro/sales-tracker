@@ -1,0 +1,40 @@
+[package]
+name = "agent-creation-tools"
+version = "0.2.0"
+edition = "2021"
+
+[[bin]]
+name = "create-agent"
+path = "src/create_agent.rs"
+
+[[bin]]
+name = "batch-create-agents"
+path = "src/batch_create_agents.rs"
+
+[[bin]]
+name = "sync-agent-indices"
+path = "src/sync_agent_indices.rs"
+
+[[bin]]
+name = "update-agent-registry"
+path = "src/update_agent_registry.rs"
+
+[[bin]]
+name = "validate-agent"
+path = "src/validate_agent.rs"
+
+[dependencies]
+anyhow = "1.0"
+regex = "1.10"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.4", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+colored = "2.0"
+tokio = { version = "1.0", features = ["full"] }
+rayon = "1.8"
+handlebars = "4.5"
+walkdir = "2.4"
+uuid = { version = "1.0", features = ["v4"] }
+futures = "0.3"
+num_cpus = "1.16"

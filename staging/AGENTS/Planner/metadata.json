@@ -1,0 +1,13 @@
+{
+  "name": "Planner",
+  "description": "Agent Planner",
+  "capabilities": [],
+  "created_at": "2025-07-31T23:43:17.487372+00:00",
+  "last_used": "2025-08-14T17:56:55.846085+00:00",
+  "usage_count": 10,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Planner",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Planner/Planner_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Planner/ContinuousLearning.md",
+  "attributes": {}
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Linguist",
+  "description": "Agent Linguist",
+  "capabilities": [],
+  "created_at": "2025-08-02T19:46:27.592181+00:00",
+  "last_used": "2025-08-02T19:46:27.592236+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Linguist",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Linguist/Linguist_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Linguist/ContinuousLearning.md",
+  "attributes": {}
+}

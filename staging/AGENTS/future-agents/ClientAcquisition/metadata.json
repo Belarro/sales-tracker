@@ -1,0 +1,13 @@
+{
+  "name": "ClientAcquisition",
+  "description": "Client acquisition and business development strategist",
+  "capabilities": [],
+  "created_at": "2025-09-26T22:26:35.017056+00:00",
+  "last_used": "2025-09-26T22:26:35.017056+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/ClientAcquisition",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/ClientAcquisition/MEMORY.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/ClientAcquisition/ContinuousLearning.md",
+  "attributes": {}
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Consolidator",
+  "description": "Agent Consolidator",
+  "capabilities": [],
+  "created_at": "2025-08-03T00:47:10.933203+00:00",
+  "last_used": "2025-08-14T14:33:27.909670+00:00",
+  "usage_count": 2,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Consolidator",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Consolidator/Consolidator_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Consolidator/ContinuousLearning.md",
+  "attributes": {}
+}

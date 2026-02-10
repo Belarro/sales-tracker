@@ -1,0 +1,20 @@
+{
+  "workingDirectory": "c:/Users/The boss/Downloads/Claude Code/saletracker",
+  "agentsDirectory": "c:/Users/The boss/Downloads/Claude Code/AGENTS",
+  "permissions": {
+    "allow": [
+      "Bash(bash:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(git:*)",
+      "Read(//c/Users/The boss/**)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "team-sdk": {
+    "enabled": true,
+    "ciRoot": "c:/Users/The boss/Downloads/Claude Code/collaborativeintelligence",
+    "cliPath": "c:/Users/The boss/Downloads/Claude Code/collaborativeintelligence/integrations/team-sdk/dist/cli.js"
+  }
+}

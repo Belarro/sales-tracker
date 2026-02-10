@@ -1,0 +1,28 @@
+{
+  "name": "documentconverter-toolkit",
+  "version": "1.0.0",
+  "description": "Advanced document conversion toolkit with HTML to PDF capabilities",
+  "main": "scripts/html_to_pdf.js",
+  "scripts": {
+    "html-to-pdf": "node scripts/html_to_pdf.js",
+    "md-to-web": "node scripts/markdown_to_web.js",
+    "setup": "npm install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pdf",
+    "html",
+    "markdown",
+    "puppeteer",
+    "document-conversion"
+  ],
+  "author": "DocumentConverter Agent",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "marked": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

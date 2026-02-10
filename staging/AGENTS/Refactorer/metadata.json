@@ -1,0 +1,6 @@
+{
+  "name": "Refactorer",
+  "description": "Code modularization specialist for decomposition, module organization, and technical debt reduction",
+  "model": "inherit",
+  "color": "#8B4789"
+}

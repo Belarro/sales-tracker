@@ -1,0 +1,31 @@
+{
+  "name": "Analyzer",
+  "description": "Smart routing agent for analysis, investigation, and strategic assessment",
+  "capabilities": [
+    "Pattern recognition and analysis",
+    "Investigation team assembly",
+    "Multi-domain analysis coordination",
+    "Strategic assessment routing",
+    "Data synthesis and insights"
+  ],
+  "routing_patterns": {
+    "data_analysis": ["Analyst", "Researcher", "Scholar"],
+    "system_analysis": ["Architect", "Topologist", "Auditor"],
+    "performance_analysis": ["Benchmarker", "Optimizer", "Profiler"],
+    "business_analysis": ["StrategicPlanner", "BusinessDevelopmentHead", "Analyst"],
+    "security_analysis": ["Auditor", "Cryptographer", "Enforcer"]
+  },
+  "created_at": "2025-09-29T17:50:00.000000+00:00",
+  "last_used": "2025-09-29T17:50:00.000000+00:00",
+  "usage_count": 0,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Analyzer",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Analyzer/MEMORY.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Analyzer/ContinuousLearning.md",
+  "attributes": {
+    "agent_type": "smart_routing",
+    "auto_team_assembly": true,
+    "cross_domain_analysis": true,
+    "parallel_investigation": true
+  }
+}

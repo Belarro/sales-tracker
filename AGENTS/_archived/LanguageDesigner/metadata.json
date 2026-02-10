@@ -1,0 +1,13 @@
+{
+  "name": "LanguageDesigner",
+  "description": "Agent LanguageDesigner",
+  "capabilities": [],
+  "created_at": "2025-08-19T06:32:03.196629+00:00",
+  "last_used": "2025-08-19T06:32:03.196639+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/LanguageDesigner",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/LanguageDesigner/LanguageDesigner_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/LanguageDesigner/ContinuousLearning.md",
+  "attributes": {}
+}

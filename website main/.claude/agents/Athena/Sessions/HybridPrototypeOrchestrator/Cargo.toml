@@ -1,0 +1,22 @@
+[package]
+name = "autonomous-prototype"
+version = "0.1.0"
+edition = "2021"
+description = "Autonomous prototype development with hybrid agent orchestration"
+authors = ["CollaborativeIntelligence System"]
+
+[[bin]]
+name = "autonomous-prototype"
+path = "autonomous_prototype_cli.rs"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.11", features = ["json"] }
+uuid = { version = "1.0", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+[dev-dependencies]
+tempfile = "3.0"

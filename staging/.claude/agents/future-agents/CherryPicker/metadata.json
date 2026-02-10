@@ -1,0 +1,13 @@
+{
+  "name": "CherryPicker",
+  "description": "Agent CherryPicker",
+  "capabilities": [],
+  "created_at": "2025-08-13T22:22:26.203905+00:00",
+  "last_used": "2025-08-16T04:57:24.664065+00:00",
+  "usage_count": 3,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CherryPicker",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CherryPicker/CherryPicker_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/CherryPicker/ContinuousLearning.md",
+  "attributes": {}
+}

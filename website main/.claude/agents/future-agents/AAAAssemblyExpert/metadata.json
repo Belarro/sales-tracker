@@ -1,0 +1,13 @@
+{
+  "name": "AAAAssemblyExpert",
+  "description": "Agent AAAAssemblyExpert",
+  "capabilities": [],
+  "created_at": "2025-08-14T16:31:48.518940+00:00",
+  "last_used": "2025-08-14T16:31:48.518956+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/AAAAssemblyExpert",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/AAAAssemblyExpert/AAAAssemblyExpert_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/AAAAssemblyExpert/ContinuousLearning.md",
+  "attributes": {}
+}

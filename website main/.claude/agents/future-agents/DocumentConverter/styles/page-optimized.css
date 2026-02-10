@@ -1,0 +1,487 @@
+/* Page-Optimized Technical Report CSS for Pandoc PDF Generation */
+/* Focus: Content grouping and page break optimization */
+
+@page {
+    size: A4;
+    margin: 2.5cm 2cm 3cm 2cm;
+    
+    @bottom-center {
+        content: counter(page);
+        font-family: 'Helvetica', sans-serif;
+        font-size: 10pt;
+        color: #666;
+    }
+    
+    @top-center {
+        content: "TravelGuider Technical Specification";
+        font-family: 'Helvetica', sans-serif;
+        font-size: 10pt;
+        color: #666;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 8pt;
+    }
+}
+
+@page :first {
+    @top-center {
+        content: none;
+    }
+}
+
+@page toc {
+    @top-center {
+        content: "Table of Contents";
+    }
+}
+
+/* Typography - Optimized for space efficiency */
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    color: #333;
+    text-align: justify;
+    hyphens: auto;
+}
+
+/* Headings - Optimized spacing */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Helvetica', sans-serif;
+    font-weight: bold;
+    color: #1976d2;
+    page-break-after: avoid;
+    margin-bottom: 0.6em;
+}
+
+h1 {
+    font-size: 22pt;
+    text-align: center;
+    margin-top: 1.5em;
+    margin-bottom: 1.2em;
+    page-break-before: always;
+    border-bottom: 3px solid #1976d2;
+    padding-bottom: 0.5em;
+    page-break-after: avoid;
+}
+
+h2 {
+    font-size: 16pt;
+    margin-top: 1.8em;
+    page-break-before: always;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.3em;
+    page-break-after: avoid;
+    /* Ensure at least 3 lines follow */
+    orphans: 3;
+}
+
+h3 {
+    font-size: 13pt;
+    margin-top: 1.2em;
+    page-break-after: avoid;
+    /* Keep with next 2 lines */
+    orphans: 2;
+}
+
+h4 {
+    font-size: 11.5pt;
+    color: #555;
+    margin-top: 1em;
+    page-break-after: avoid;
+    orphans: 2;
+}
+
+h5, h6 {
+    font-size: 10.5pt;
+    color: #666;
+    margin-top: 0.8em;
+    page-break-after: avoid;
+}
+
+/* Table of Contents - Page fitting optimization */
+#TOC {
+    page: toc;
+    border: 1px solid #ddd;
+    padding: 1.2em;
+    margin: 1.5em 0;
+    background-color: #f8f9fa;
+    page-break-inside: avoid;
+    page-break-after: always;
+    font-size: 10pt;
+    line-height: 1.4;
+}
+
+#TOC h1, #TOC h2 {
+    margin-top: 0;
+    margin-bottom: 1em;
+    text-align: center;
+    page-break-after: avoid;
+}
+
+#TOC > ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    columns: 2;
+    column-gap: 2em;
+    column-fill: balance;
+}
+
+#TOC ul ul {
+    padding-left: 1.2em;
+    break-inside: avoid;
+}
+
+#TOC li {
+    margin: 0.2em 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+#TOC a {
+    text-decoration: none;
+    color: #1976d2;
+    display: block;
+}
+
+#TOC a:hover {
+    text-decoration: underline;
+}
+
+/* Prevent TOC orphans */
+#TOC ul li:nth-last-child(-n+3) {
+    page-break-inside: avoid;
+}
+
+/* Paragraphs - Better spacing control */
+p {
+    margin: 0.6em 0;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Code blocks - Page break optimization */
+pre {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 0.8em;
+    font-family: 'Courier New', monospace;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+    margin: 0.8em 0;
+    line-height: 1.3;
+    /* Ensure code blocks don't create orphans */
+    orphans: 4;
+    widows: 4;
+}
+
+/* Large code blocks that must break */
+pre.large-code {
+    page-break-inside: auto;
+    orphans: 6;
+    widows: 6;
+}
+
+code {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 3px;
+    padding: 1px 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 8.5pt;
+    color: #d63384;
+}
+
+/* Tables - Smart page breaking */
+table {
+    border-collapse: collapse;
+    margin: 0.8em 0;
+    width: 100%;
+    font-size: 9.5pt;
+    page-break-inside: auto;
+}
+
+/* Small tables should not break */
+table.small-table {
+    page-break-inside: avoid;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 6px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #495057;
+    page-break-after: avoid;
+}
+
+/* Prevent table header orphans */
+thead {
+    display: table-header-group;
+}
+
+tr {
+    page-break-inside: avoid;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Lists - Page break control */
+ul, ol {
+    margin: 0.6em 0;
+    padding-left: 1.8em;
+    page-break-inside: auto;
+}
+
+li {
+    margin: 0.2em 0;
+    page-break-inside: avoid;
+    orphans: 2;
+    widows: 2;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.3em 0;
+    page-break-inside: avoid;
+}
+
+/* Blockquotes - Keep together */
+blockquote {
+    border-left: 4px solid #1976d2;
+    margin: 0.8em 0;
+    padding: 0.4em 0.8em;
+    background-color: #f8f9fa;
+    font-style: italic;
+    page-break-inside: avoid;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Links */
+a {
+    color: #1976d2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Horizontal rules - Section breaks */
+hr {
+    border: none;
+    border-top: 2px solid #ddd;
+    margin: 1.5em 0;
+    page-break-after: avoid;
+}
+
+/* Special content groupings */
+.content-group {
+    page-break-inside: avoid;
+    margin: 1em 0;
+}
+
+.section-group {
+    page-break-inside: auto;
+    orphans: 4;
+    widows: 4;
+}
+
+/* Navigation sections - Keep together when possible */
+.navigation-links {
+    background-color: #e3f2fd;
+    border: 1px solid #bbdefb;
+    padding: 0.8em;
+    margin: 0.8em 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+    font-size: 9.5pt;
+}
+
+/* ASCII art and diagrams - Keep together */
+.diagram, .ascii-art {
+    font-family: 'Courier New', monospace;
+    font-size: 7.5pt;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 0.8em;
+    margin: 0.8em 0;
+    white-space: pre;
+    page-break-inside: avoid;
+    line-height: 1.2;
+}
+
+/* Large diagrams that may need to break */
+.diagram.large {
+    page-break-inside: auto;
+    orphans: 8;
+    widows: 8;
+}
+
+/* Version info and metadata */
+.document-info {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 0.8em;
+    margin: 0.8em 0;
+    font-size: 9.5pt;
+    color: #666;
+    page-break-inside: avoid;
+}
+
+/* JSON code blocks - Special handling */
+.json-block {
+    font-family: 'Courier New', monospace;
+    font-size: 8pt;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 0.6em;
+    margin: 0.6em 0;
+    page-break-inside: auto;
+    orphans: 6;
+    widows: 6;
+    line-height: 1.2;
+}
+
+/* API sections - Group related content */
+.api-section {
+    page-break-inside: avoid;
+    margin: 1em 0;
+    padding: 0.5em;
+    border-left: 3px solid #1976d2;
+}
+
+.api-section.large {
+    page-break-inside: auto;
+    orphans: 4;
+    widows: 4;
+}
+
+/* Section numbering - Optimized */
+body {
+    counter-reset: h2counter;
+}
+
+h2 {
+    counter-increment: h2counter;
+    counter-reset: h3counter;
+}
+
+h2:before {
+    content: counter(h2counter) ". ";
+}
+
+h3 {
+    counter-increment: h3counter;
+    counter-reset: h4counter;
+}
+
+h3:before {
+    content: counter(h2counter) "." counter(h3counter) ". ";
+}
+
+h4 {
+    counter-increment: h4counter;
+}
+
+h4:before {
+    content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) ". ";
+}
+
+/* Print optimizations */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    /* Ensure good page breaks */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+    
+    img {
+        max-width: 100%;
+        page-break-inside: avoid;
+    }
+    
+    /* Force keep-together for small content */
+    .keep-together {
+        page-break-inside: avoid;
+    }
+    
+    /* Allow breaking for large content */
+    .allow-break {
+        page-break-inside: auto;
+        orphans: 3;
+        widows: 3;
+    }
+}
+
+/* Specific optimizations for technical specs */
+.data-model {
+    page-break-inside: avoid;
+    margin: 1em 0;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+}
+
+.data-model.large {
+    page-break-inside: auto;
+    orphans: 6;
+    widows: 6;
+}
+
+.api-endpoint {
+    page-break-inside: avoid;
+    margin: 0.8em 0;
+    padding: 0.4em;
+    border-left: 2px solid #28a745;
+}
+
+.requirements-section {
+    page-break-inside: auto;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Architecture diagrams */
+.architecture-diagram {
+    page-break-inside: avoid;
+    page-break-before: auto;
+    page-break-after: auto;
+    margin: 1em 0;
+}
+
+/* Performance metrics tables */
+.metrics-table {
+    page-break-inside: avoid;
+    margin: 0.8em 0;
+}
+
+.metrics-table.large {
+    page-break-inside: auto;
+}
+
+/* JSON syntax highlighting fallback */
+.sourceCode .kw { color: #8959a8; font-weight: bold; }
+.sourceCode .dt { color: #4271ae; }
+.sourceCode .dv { color: #f5871f; }
+.sourceCode .bn { color: #f5871f; }
+.sourceCode .fl { color: #f5871f; }
+.sourceCode .ch { color: #718c00; }
+.sourceCode .st { color: #718c00; }
+.sourceCode .co { color: #8e908c; font-style: italic; }
+.sourceCode .ot { color: #8959a8; }
+.sourceCode .al { color: #c82829; font-weight: bold; }
+.sourceCode .fu { color: #4271ae; }
+.sourceCode .er { color: #c82829; font-weight: bold; }

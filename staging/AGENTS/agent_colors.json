@@ -1,0 +1,150 @@
+{
+  "agent_colors": {
+    "Athena": {
+      "color": "#003300",
+      "name": "Dark Green 1",
+      "description": "Knowledge Architect and Memory Systems Specialist"
+    },
+    "Master": {
+      "color": "#001a00",
+      "name": "Dark Green 2",
+      "description": "System Master"
+    },
+    "Debugger": {
+      "color": "#001133",
+      "name": "Dark Blue 1",
+      "description": "Debug and troubleshooting specialist"
+    },
+    "Architect": {
+      "color": "#000d26",
+      "name": "Dark Blue 2",
+      "description": "System architecture specialist"
+    },
+    "SwiftSpecialist": {
+      "color": "#191970",
+      "name": "Navy Blue",
+      "description": "Swift programming specialist"
+    },
+    "UI": {
+      "color": "#2d1b69",
+      "name": "Dark Purple 1",
+      "description": "User interface specialist"
+    },
+    "UX": {
+      "color": "#2d1b69",
+      "name": "Dark Purple 1",
+      "description": "User experience specialist"
+    },
+    "Designer": {
+      "color": "#1a0d33",
+      "name": "Dark Purple 2",
+      "description": "Design specialist"
+    },
+    "Optimizer": {
+      "color": "#301934",
+      "name": "Deep Violet",
+      "description": "Performance optimization specialist"
+    },
+    "Topologist": {
+      "color": "#2d1a0d",
+      "name": "Dark Brown 1",
+      "description": "Repository topology specialist"
+    },
+    "Planner": {
+      "color": "#331a00",
+      "name": "Dark Brown 2",
+      "description": "Task planning specialist"
+    },
+    "Memory": {
+      "color": "#3c2415",
+      "name": "Coffee Brown",
+      "description": "Memory systems specialist"
+    },
+    "Fixer": {
+      "color": "#330d0d",
+      "name": "Dark Red 1",
+      "description": "Problem fixing specialist"
+    },
+    "Tester": {
+      "color": "#2d0a0a",
+      "name": "Dark Red 2",
+      "description": "Testing and quality assurance specialist"
+    },
+    "Analyst": {
+      "color": "#722f37",
+      "name": "Burgundy",
+      "description": "Analysis specialist"
+    },
+    "Developer": {
+      "color": "#1a1a1a",
+      "name": "Dark Gray 1",
+      "description": "Development specialist"
+    },
+    "Documenter": {
+      "color": "#262626",
+      "name": "Charcoal",
+      "description": "Documentation specialist"
+    },
+    "Writer": {
+      "color": "#262626",
+      "name": "Charcoal",
+      "description": "Writing specialist"
+    },
+    "Refactorer": {
+      "color": "#301934",
+      "name": "Deep Violet",
+      "description": "Code refactoring specialist"
+    },
+    "Engineer": {
+      "color": "#1a1a1a",
+      "name": "Dark Gray 1",
+      "description": "Engineering specialist"
+    },
+    "Verifier": {
+      "color": "#330d0d",
+      "name": "Dark Red 1",
+      "description": "Verification specialist"
+    },
+    "Researcher": {
+      "color": "#722f37",
+      "name": "Burgundy",
+      "description": "Research specialist"
+    },
+    "Visionary": {
+      "color": "#191970",
+      "name": "Navy Blue",
+      "description": "Vision and strategy specialist"
+    },
+    "Recommender": {
+      "color": "#3c2415",
+      "name": "Coffee Brown",
+      "description": "Recommendation specialist"
+    },
+    "Scholar": {
+      "color": "#262626",
+      "name": "Charcoal",
+      "description": "Scholarly research specialist"
+    },
+    "Sage": {
+      "color": "#003300",
+      "name": "Dark Green 1",
+      "description": "Wisdom and guidance specialist"
+    },
+    "Gaia": {
+      "color": "#001a00",
+      "name": "Dark Green 2",
+      "description": "Ecosystem management specialist"
+    },
+    "Cacher": {
+      "color": "#0d1a26",
+      "name": "Steel Blue",
+      "description": "Caching optimization and implementation specialist"
+    }
+  },
+  "color_schema": {
+    "version": "1.0",
+    "description": "Agent-specific terminal background colors for visual identification",
+    "color_format": "hex",
+    "terminal_compatibility": "xterm-256color"
+  }
+}

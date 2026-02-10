@@ -1,0 +1,13 @@
+{
+  "name": "Trader",
+  "description": "Agent Trader",
+  "capabilities": [],
+  "created_at": "2025-08-08T16:25:14.348159+00:00",
+  "last_used": "2025-08-08T19:03:37.823424+00:00",
+  "usage_count": 5,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Trader",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Trader/Trader_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Trader/ContinuousLearning.md",
+  "attributes": {}
+}

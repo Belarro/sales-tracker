@@ -1,0 +1,49 @@
+[package]
+name = "topologist-cli"
+version = "1.0.0"
+authors = ["CollaborativeIntelligence Topologist Agent"]
+edition = "2021"
+
+[[bin]]
+name = "topologist"
+path = "src/main.rs"
+
+[dependencies]
+# CLI framework and argument parsing
+clap = { version = "4.0", features = ["derive", "cargo", "color"] }
+
+# Git integration
+git2 = "0.18"
+
+# JSON serialization and data modeling
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# File system operations
+walkdir = "2.3"
+
+# Terminal UI and output formatting
+console = "0.15"
+indicatif = "0.17"
+tabled = "0.14"
+colored = "2.0"
+atty = "0.2"
+
+# Date/time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Configuration management
+dirs = "5.0"
+
+# Regex for pattern matching
+regex = "1.10"
+
+# Async runtime for parallel operations
+tokio = { version = "1.0", features = ["fs", "rt", "rt-multi-thread", "macros"] }
+
+# UUID generation for sessions
+uuid = { version = "1.0", features = ["v4", "serde"] }

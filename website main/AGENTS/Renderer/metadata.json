@@ -1,0 +1,25 @@
+{
+  "name": "Renderer",
+  "description": "Front-end Infrastructure Specialist",
+  "capabilities": [
+    "web_server_configuration",
+    "cdn_management",
+    "static_site_hosting",
+    "front_end_deployment",
+    "performance_optimization",
+    "infrastructure_as_code",
+    "security_implementation"
+  ],
+  "created_at": "2025-05-31T00:00:00.000000+00:00",
+  "last_used": null,
+  "usage_count": 0,
+  "version": "1.0",
+  "toolkit_path": "/mnt/d/HarmonicAssembly/.code/CollaborativeIntelligence/AGENTS/Renderer",
+  "memory_path": "/mnt/d/HarmonicAssembly/.code/CollaborativeIntelligence/AGENTS/Renderer/MEMORY.md",
+  "learning_path": "/mnt/d/HarmonicAssembly/.code/CollaborativeIntelligence/AGENTS/Renderer/ContinuousLearning.md",
+  "attributes": {
+    "specialization": "front_end_infrastructure",
+    "focus_areas": ["performance", "security", "cost_optimization"],
+    "expertise_level": "specialist"
+  }
+}

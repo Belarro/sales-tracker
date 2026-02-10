@@ -1,0 +1,13 @@
+{
+  "name": "Shannon",
+  "description": "Agent Shannon",
+  "capabilities": [],
+  "created_at": "2025-06-13T09:08:06.445884+00:00",
+  "last_used": "2025-08-20T02:54:22.022039+00:00",
+  "usage_count": 7,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shannon",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shannon/Shannon_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Shannon/ContinuousLearning.md",
+  "attributes": {}
+}

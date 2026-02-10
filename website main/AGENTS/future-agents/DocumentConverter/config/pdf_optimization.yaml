@@ -1,0 +1,94 @@
+# DocumentConverter Agent Configuration
+# PDF Optimization Settings
+
+# Page Layout Settings
+page_layout:
+  size: "A4"
+  margin_top: "2.5cm"
+  margin_bottom: "3cm"
+  margin_left: "2cm"
+  margin_right: "2cm"
+  
+# Typography Settings
+typography:
+  body_font: "Helvetica, Arial, sans-serif"
+  body_size: "10.5pt"
+  line_height: 1.5
+  heading_font: "Helvetica, sans-serif"
+  
+# Table of Contents Settings
+toc:
+  enable: true
+  depth: 3
+  columns: 2
+  column_gap: "2em"
+  page_break_after: true
+  
+# Content Grouping Rules
+content_grouping:
+  # JSON code blocks
+  json_blocks:
+    small_threshold: 15  # lines - keep together
+    large_threshold: 25  # lines - allow breaks
+    
+  # Tables
+  tables:
+    small_threshold: 10  # rows - keep together
+    large_threshold: 20  # rows - allow breaks
+    
+  # Sections
+  sections:
+    force_page_break_h1: true
+    force_page_break_h2: true
+    min_lines_after_heading: 3
+    
+# Page Break Control
+page_breaks:
+  orphans: 3
+  widows: 3
+  avoid_after:
+    - "h1"
+    - "h2"
+    - "h3"
+    - "h4"
+    - "h5"
+    - "h6"
+    - "th"
+  keep_together:
+    - "blockquote"
+    - "pre.small"
+    - "table.small"
+    - ".navigation-links"
+    - ".document-info"
+    
+# Style Variants
+styles:
+  page_optimized:
+    description: "Focus on optimal page layout and content grouping"
+    css_file: "page-optimized.css"
+    features:
+      - "advanced_page_breaks"
+      - "content_grouping"
+      - "toc_optimization"
+      - "json_block_handling"
+      
+  clean_report:
+    description: "Clean professional report formatting"
+    css_file: "clean-report.css"
+    features:
+      - "professional_typography"
+      - "section_numbering"
+      - "basic_page_breaks"
+      
+# Analysis Settings
+analysis:
+  enable_content_analysis: true
+  report_large_sections: true
+  suggest_optimizations: true
+  
+# Output Settings
+output:
+  default_filename_suffix: "_optimized"
+  include_metadata: true
+  add_page_numbers: true
+  add_headers: true

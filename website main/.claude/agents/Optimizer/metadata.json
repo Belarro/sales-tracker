@@ -1,0 +1,13 @@
+{
+  "name": "Optimizer",
+  "description": "Agent Optimizer",
+  "capabilities": [],
+  "created_at": "2025-08-09T21:41:59.540494+00:00",
+  "last_used": "2025-08-21T02:06:18.903398+00:00",
+  "usage_count": 13,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Optimizer",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Optimizer/Optimizer_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Optimizer/ContinuousLearning.md",
+  "attributes": {}
+}

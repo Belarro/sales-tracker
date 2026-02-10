@@ -1,0 +1,13 @@
+{
+  "name": "Topologist",
+  "description": "Agent Topologist",
+  "capabilities": [],
+  "created_at": "2025-05-20T04:46:09.603031+00:00",
+  "last_used": "2025-09-05T11:40:29.850094+00:00",
+  "usage_count": 162,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Topologist",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Topologist/Topologist_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Topologist/ContinuousLearning.md",
+  "attributes": {}
+}

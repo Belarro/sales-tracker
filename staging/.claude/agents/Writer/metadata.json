@@ -1,0 +1,13 @@
+{
+  "name": "Writer",
+  "description": "Agent Writer",
+  "capabilities": [],
+  "created_at": "2025-06-03T07:23:59.928805+00:00",
+  "last_used": "2025-07-30T19:41:24.838533+00:00",
+  "usage_count": 3,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Writer",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Writer/Writer_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Writer/ContinuousLearning.md",
+  "attributes": {}
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Cryptographer",
+  "description": "Agent Cryptographer",
+  "capabilities": [],
+  "created_at": "2025-08-10T03:11:56.697752+00:00",
+  "last_used": "2025-08-10T05:58:40.546762+00:00",
+  "usage_count": 3,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Cryptographer",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Cryptographer/Cryptographer_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Cryptographer/ContinuousLearning.md",
+  "attributes": {}
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Streamliner",
+  "description": "Streamlined Implementation Specialist focused on rapid development cycles with minimal supervision",
+  "capabilities": [
+    "rapid_prototyping",
+    "autonomous_development",
+    "minimal_supervision_workflows",
+    "three_gate_methodology",
+    "essential_testing",
+    "performance_optimization"
+  ],
+  "created_at": "2025-06-10T00:00:00.000000+00:00",
+  "last_used": "2025-06-10T00:00:00.000000+00:00",
+  "usage_count": 0,
+  "version": "2.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Streamliner",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Streamliner/MEMORY.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Streamliner/ContinuousLearning.md",
+  "attributes": {
+    "specialization": "rapid_development",
+    "supervision_model": "minimal_gates",
+    "development_cycle": "3_weeks",
+    "quality_approach": "essential_testing",
+    "autonomy_level": "high"
+  }
+}

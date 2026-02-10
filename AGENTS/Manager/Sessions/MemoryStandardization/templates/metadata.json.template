@@ -1,0 +1,9 @@
+{
+  "date": "YYYY-MM-DD",
+  "agent": "AgentName",
+  "session_type": "implementation|analysis|planning|etc",
+  "status": "in_progress|completed|archived",
+  "related_sessions": ["Session1", "Session2"],
+  "key_innovations": ["Innovation1", "Innovation2"],
+  "affected_components": ["Component1", "Component2"]
+}

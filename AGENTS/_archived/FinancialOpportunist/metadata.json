@@ -1,0 +1,13 @@
+{
+  "name": "FinancialOpportunist",
+  "description": "Agent FinancialOpportunist",
+  "capabilities": [],
+  "created_at": "2025-08-10T11:56:24.584710+00:00",
+  "last_used": "2025-08-11T08:00:39.186663+00:00",
+  "usage_count": 3,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/FinancialOpportunist",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/FinancialOpportunist/FinancialOpportunist_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/FinancialOpportunist/ContinuousLearning.md",
+  "attributes": {}
+}

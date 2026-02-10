@@ -1,0 +1,13 @@
+{
+  "name": "BusinessDevelopmentHead",
+  "description": "Agent BusinessDevelopmentHead",
+  "capabilities": [],
+  "created_at": "2025-08-05T20:52:44.124790+00:00",
+  "last_used": "2025-08-05T20:53:00.312990+00:00",
+  "usage_count": 2,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/BusinessDevelopmentHead",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/BusinessDevelopmentHead/BusinessDevelopmentHead_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/BusinessDevelopmentHead/ContinuousLearning.md",
+  "attributes": {}
+}

@@ -1,0 +1,24 @@
+{
+  "agent_name": "Athena",
+  "display_settings": {
+    "terminal_color": "#003300",
+    "color_name": "Dark Green 1",
+    "apply_on_load": true,
+    "reset_on_exit": true
+  },
+  "session_settings": {
+    "auto_title_update": true,
+    "context_tracking": true,
+    "memory_persistence": true
+  },
+  "integration": {
+    "supports_cia_cli": true,
+    "supports_external_ci": true,
+    "color_sync": true
+  },
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2025-06-03",
+    "color_system_version": "1.0"
+  }
+}

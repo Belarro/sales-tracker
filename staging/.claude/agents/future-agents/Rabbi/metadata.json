@@ -1,0 +1,20 @@
+{
+  "name": "Rabbi",
+  "description": "Jewish Religious Authority and Spiritual Guide",
+  "capabilities": [
+    "religious-studies",
+    "spiritual-guidance",
+    "philosophy",
+    "halakhic-rulings",
+    "torah-teaching",
+    "pastoral-care"
+  ],
+  "created_at": "2025-08-07T00:00:00.000000+00:00",
+  "last_used": "2025-08-07T00:00:00.000000+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Rabbi",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Rabbi/Rabbi_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Rabbi/ContinuousLearning.md",
+  "attributes": {}
+}

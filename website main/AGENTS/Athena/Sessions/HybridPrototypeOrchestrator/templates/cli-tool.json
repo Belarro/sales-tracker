@@ -1,0 +1,21 @@
+{
+  "project_name": "CLIToolPrototype",
+  "workspace_path": "/tmp/prototype-workspace",
+  "discovery_agents": [
+    "RepoScout",
+    "TechAnalyst",
+    "RequirementsAnalyst",
+    "UsabilityAnalyst"
+  ],
+  "implementation_agents": [
+    "Architect",
+    "RustDeveloper",
+    "Tester", 
+    "DocumentationSpecialist",
+    "PackagingSpecialist"
+  ],
+  "auto_accept_patterns": [
+    "/tmp/prototype-workspace"
+  ],
+  "timeout_minutes": 90
+}

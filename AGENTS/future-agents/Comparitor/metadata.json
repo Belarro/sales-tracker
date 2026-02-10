@@ -1,0 +1,13 @@
+{
+  "name": "Comparitor",
+  "description": "Agent Comparitor",
+  "capabilities": [],
+  "created_at": "2025-05-27T00:32:35.071425+00:00",
+  "last_used": "2025-05-27T00:32:35.071694+00:00",
+  "usage_count": 1,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Comparitor",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Comparitor/Comparitor_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Comparitor/ContinuousLearning.md",
+  "attributes": {}
+}

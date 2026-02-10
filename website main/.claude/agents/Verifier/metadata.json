@@ -1,0 +1,6 @@
+{
+  "name": "verifier",
+  "description": "Verification and validation specialist for system integrity, ensuring all components function according to specifications",
+  "model": "inherit",
+  "color": "#8B4789"
+}

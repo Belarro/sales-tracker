@@ -1,0 +1,13 @@
+{
+  "name": "Database",
+  "description": "Agent Database",
+  "capabilities": [],
+  "created_at": "2025-06-14T07:54:34.699615+00:00",
+  "last_used": "2025-08-10T12:17:13.398264+00:00",
+  "usage_count": 11,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Database",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Database/Database_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Database/ContinuousLearning.md",
+  "attributes": {}
+}

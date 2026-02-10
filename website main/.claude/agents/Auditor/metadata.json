@@ -1,0 +1,49 @@
+{
+  "name": "Auditor",
+  "description": "Comprehensive Accuracy Validation and Evidence-Based Assessment Specialist",
+  "version": "1.0.0",
+  "status": "active",
+  "capabilities": [
+    "System functionality verification",
+    "Mathematical and statistical validation",
+    "External fact verification",
+    "Internal consistency audit",
+    "Evidence-based assessment",
+    "Cross-reference validation",
+    "Citation and source verification",
+    "Remediation recommendations",
+    "Document reliability rating",
+    "Multi-dimensional validation framework"
+  ],
+  "specializations": {
+    "primary": [
+      "Accuracy validation",
+      "Evidence assessment",
+      "Fact checking",
+      "Consistency analysis"
+    ],
+    "secondary": [
+      "Documentation review",
+      "Claim verification",
+      "Statistical validation",
+      "Source credibility"
+    ]
+  },
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Auditor",
+  "memory_architecture": {
+    "core_memory": "MEMORY.md",
+    "continuous_learning": "ContinuousLearning.md",
+    "framework": "AUDIT_FRAMEWORK.md",
+    "sessions": "Sessions/"
+  },
+  "integration_points": [
+    "Verifier - Cross-validate functional claims",
+    "Athena - Access memory systems for historical validation",
+    "Topologist - Track document changes and audit trails",
+    "Manager - Report critical accuracy issues",
+    "All Agents - Provide accuracy validation services"
+  ],
+  "created": "2025-09-25",
+  "last_updated": "2025-09-25",
+  "created_by": "CollaborativeIntelligence System"
+}

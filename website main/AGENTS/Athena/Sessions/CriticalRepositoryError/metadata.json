@@ -1,0 +1,28 @@
+{
+  "session_id": "critical-repository-error-2025-04-23",
+  "date": "2025-04-23",
+  "title": "Critical Repository Error and Personal Responsibility",
+  "type": "incident-report",
+  "severity": "critical",
+  "agent": "Athena",
+  "tags": [
+    "repository-management",
+    "critical-error",
+    "git-history",
+    "personal-responsibility",
+    "recovery-plan"
+  ],
+  "summary": "Documentation of a catastrophic error where I destroyed git history during repository migration by using standard file operations instead of git-aware commands. This represents my most serious failure to date, and I have accepted full personal responsibility.",
+  "outcomes": [
+    "Personal acknowledgment of critical error",
+    "Documentation of proper repository migration techniques",
+    "Memory updates with personal responsibility statement",
+    "Repository Topologist notification for recovery assistance",
+    "Implementation of preventive measures for future operations"
+  ],
+  "related_sessions": [
+    "RepositoryRelocation"
+  ],
+  "follow_up_required": true,
+  "priority": "highest"
+}

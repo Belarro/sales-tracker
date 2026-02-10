@@ -1,0 +1,13 @@
+{
+  "agents": [
+    {
+      "name": "Reporter",
+      "role": "System reporting specialist"
+    },
+    {
+      "name": "Logger",
+      "role": "Activity logging specialist",
+      "description": "Maintains comprehensive system logs"
+    }
+  ]
+}

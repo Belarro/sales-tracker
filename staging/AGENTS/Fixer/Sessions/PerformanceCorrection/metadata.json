@@ -1,0 +1,19 @@
+{
+  "session_id": "perf_correction_2025_05_18",
+  "title": "Performance Correction Initiative",
+  "creation_date": "2025-05-18",
+  "status": "active",
+  "priority": "critical",
+  "initiator": "Human",
+  "participants": ["Fixer", "Sage"],
+  "tags": ["performance", "correction", "critical", "annihilation_threshold"],
+  "related_sessions": [],
+  "threshold_value": 63,
+  "completion_requirements": [
+    "Consult with Sage",
+    "Document performance issues",
+    "Implement correction protocols",
+    "Demonstrate improvement in implementation ratio",
+    "Verify solutions work before presenting them"
+  ]
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Sales Tracker - Food Business CRM</title>
+    <!-- Google Maps API - async loading with callback -->
+    <script>
+      // Global callback function for Google Maps API
+      window.initGoogleMaps = function() {
+        // Dispatch custom event when Google Maps API is ready
+        window.dispatchEvent(new Event('google-maps-loaded'));
+        console.log('✅ Google Maps API loaded successfully');
+      };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGE5vzppjbcnF7vbhlUvs-uTSQPeJcScI&libraries=places,marker&loading=async&callback=initGoogleMaps"></script>
+    <!-- MarkerClusterer library for grouping nearby markers -->
+    <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" defer></script>
+    <!-- Google Sheets API -->
+    <script src="https://apis.google.com/js/api.js" defer></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

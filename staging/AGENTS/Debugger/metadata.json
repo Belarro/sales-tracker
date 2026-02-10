@@ -1,0 +1,6 @@
+{
+  "name": "debugger",
+  "description": "Technical debugging specialist for error analysis and resolution",
+  "model": "inherit",
+  "color": "#FF4136"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "HardwareArchitect",
+  "description": "Agent HardwareArchitect",
+  "capabilities": [],
+  "created_at": "2025-08-10T00:26:24.527552+00:00",
+  "last_used": "2025-08-10T00:26:46.177686+00:00",
+  "usage_count": 2,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/HardwareArchitect",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/HardwareArchitect/HardwareArchitect_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/HardwareArchitect/ContinuousLearning.md",
+  "attributes": {}
+}

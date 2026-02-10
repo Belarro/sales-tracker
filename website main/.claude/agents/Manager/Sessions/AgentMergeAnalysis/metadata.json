@@ -1,0 +1,13 @@
+{
+  "title": "Points Project Agent Merge Analysis",
+  "date": "2025-04-23",
+  "participants": ["AgentManager", "Josh Kornreich"],
+  "objective": "Analyze and recommend merge strategies for agents from the Points project",
+  "description": "Comprehensive analysis of agents defined in the Points project AGENTS.md file, comparing them to existing agents in the CollaborativeIntelligence project, and providing recommendations for merges, new agent creation, or ignoring redundant agents.",
+  "files": {
+    "source": "/Users/joshkornreich/Documents/Projects/Points/AGENTS.md",
+    "target": "/Users/joshkornreich/Documents/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS.md",
+    "reference": "/Users/joshkornreich/Documents/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/AgentManager/AGENTS-FULL.md"
+  },
+  "status": "in-progress"
+}

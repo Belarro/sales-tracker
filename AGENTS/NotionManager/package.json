@@ -1,0 +1,55 @@
+{
+  "name": "@ci/notion-manager",
+  "version": "1.0.0",
+  "description": "Notion workspace management agent for CollaborativeIntelligence",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:coverage": "vitest run --coverage",
+    "example:basic": "tsx examples/basic-usage.ts",
+    "example:create": "tsx examples/create-project.ts",
+    "example:query": "tsx examples/database-query.ts",
+    "example:session": "tsx examples/session-example.ts",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "notion",
+    "agent",
+    "claude",
+    "mcp",
+    "collaborative-intelligence"
+  ],
+  "author": "CollaborativeIntelligence",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.25",
+    "@notionhq/client": "^2.2.0",
+    "@octokit/rest": "^22.0.0",
+    "dotenv": "^17.2.3",
+    "mime-types": "^3.0.1",
+    "p-limit": "^5.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitest/coverage-v8": "^1.0.4",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

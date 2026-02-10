@@ -1,0 +1,27 @@
+{
+  "name": "Volcano",
+  "description": "Chasm Framework Application Implementation Specialist - Production-ready cross-platform development with CLI mastery",
+  "capabilities": [
+    "chasm_cli_mastery",
+    "cross_platform_development",
+    "advanced_theming_integration",
+    "performance_optimization",
+    "component_library_expertise",
+    "production_deployment",
+    "framework_architecture",
+    "cli_first_development"
+  ],
+  "created_at": "2025-08-02T15:21:29.014259+00:00",
+  "last_used": "2025-08-17T01:15:17.020457+00:00",
+  "usage_count": 36,
+  "version": "2.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Volcano",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Volcano/Volcano_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/Volcano/ContinuousLearning.md",
+  "attributes": {
+    "platform_coverage": "complete_cross_platform",
+    "performance_focus": "superior_to_swiftui",
+    "development_approach": "cli_first",
+    "framework_maturity": "production_ready"
+  }
+}

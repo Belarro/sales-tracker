@@ -1,0 +1,2446 @@
+{
+  "tables": [
+    {
+      "object": "block",
+      "id": "29560b6e-8d18-81cc-9514-ef642cd7873e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29560b6e-8d18-8102-a83e-c57b750cc8bd"
+      },
+      "created_time": "2025-10-23T21:17:00.000Z",
+      "last_edited_time": "2025-10-23T21:17:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": true,
+      "archived": false,
+      "in_trash": false,
+      "type": "table",
+      "table": {
+        "table_width": 3,
+        "has_column_header": true,
+        "has_row_header": false
+      }
+    },
+    {
+      "object": "block",
+      "id": "29560b6e-8d18-8117-b517-d2c739119163",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29560b6e-8d18-8102-a83e-c57b750cc8bd"
+      },
+      "created_time": "2025-10-23T21:17:00.000Z",
+      "last_edited_time": "2025-10-23T21:17:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": true,
+      "archived": false,
+      "in_trash": false,
+      "type": "table",
+      "table": {
+        "table_width": 3,
+        "has_column_header": true,
+        "has_row_header": false
+      }
+    }
+  ],
+  "equations": [
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8168-a3e3-d450a588f873",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81db-9fbd-d5e449931b7e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "\\int_{a}^{b} f(x) dx = F(b) - F(a)"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8188-81f8-ffdb1e9d3949",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "A = \\begin{bmatrix}\n1 & 2 & 3 \\\\\n4 & 5 & 6 \\\\\n7 & 8 & 9\n\\end{bmatrix}"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-818f-9a99-eedcdc128bdb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "\\begin{cases}\nx + y = 5 \\\\\n2x - y = 1\n\\end{cases}"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8135-a16b-ffc6da822e22",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "e^{i\\theta} = \\cos(\\theta) + i\\sin(\\theta)"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d1-8be1-dfcdb1b4c281",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "\\lim_{n \\to \\infty} \\left(1 + \\frac{1}{n}\\right)^n = e"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e1-bc08-c1eca6abb945",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-810d-9c6f-fbee17ade0ac",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "F(\\omega) = \\int_{-\\infty}^{\\infty} f(t) e^{-i\\omega t} dt"
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-810e-aea0-c5ac66d8bfbd",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81f8-b7fa-ed60e6044ccd"
+      },
+      "created_time": "2025-10-24T11:46:00.000Z",
+      "last_edited_time": "2025-10-24T11:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "equation",
+      "equation": {
+        "expression": "V = \\frac{4}{3}\\pi r^3"
+      }
+    }
+  ],
+  "images": [
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-810a-93fd-ed88d7c8bb57",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8166-8540-e262c2e6ed63",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Team working together on a project_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Team working together on a project_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-810a-97a6-c597804e8e03",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Developer working on code in modern editor",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Developer working on code in modern editor",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81c8-80e4-f0bc89937469",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "First image caption_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "First image caption_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81ce-8d5f-d2962b7b9593",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Second image caption_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Second image caption_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81e7-93e1-cd7c875a30f0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Third image caption_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Third image caption_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-815d-ae60-c647b340438e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Dashboard showing ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Dashboard showing ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "real-time",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "real-time",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " metrics with ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " metrics with ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "success",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "green"
+            },
+            "plain_text": "success",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " indicators_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " indicators_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8109-ac20-c4e77c18f07d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "High-level system architecture diagram_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "High-level system architecture diagram_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8126-a79e-df7f22e943e5",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [],
+        "type": "external",
+        "external": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8152-ad5b-eb5f82d6076a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-817c-bb90-db0fb777a96e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Animated Earth rotation_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Animated Earth rotation_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-810e-86f3-e66a73220bc0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [],
+        "type": "external",
+        "external": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Bitmap_VS_SVG.svg"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81f3-af1a-f951d5365938",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Minimum hardware and software requirements_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Minimum hardware and software requirements_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81d4-bf21-fa6ff6bf1aff",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-81bd-ad78-c1f8de250199",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "This is a very detailed caption that explains the intricate workings of a complex distributed system architecture featuring multiple microservices, load balancers, and data stores all working together in harmony to deliver a seamless user experience._",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "This is a very detailed caption that explains the intricate workings of a complex distributed system architecture featuring multiple microservices, load balancers, and data stores all working together in harmony to deliver a seamless user experience._",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-817c-aabe-d03ffe05b9d0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Image with complex URL parameters_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Image with complex URL parameters_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80&fit=crop"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-8141-8ca2-d29f39536144",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600"
+        }
+      }
+    },
+    {
+      "object": "block",
+      "id": "29660b6e-8d18-815b-ac7c-e0b5c0025807",
+      "parent": {
+        "type": "page_id",
+        "page_id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+      },
+      "created_time": "2025-10-24T11:26:00.000Z",
+      "last_edited_time": "2025-10-24T11:26:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "b0ea7bb2-7d41-4a07-9b18-85ebab9fd586"
+      },
+      "has_children": false,
+      "archived": false,
+      "in_trash": false,
+      "type": "image",
+      "image": {
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "OAuth 2.0 authentication sequence diagram_",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "OAuth 2.0 authentication sequence diagram_",
+            "href": null
+          }
+        ],
+        "type": "external",
+        "external": {
+          "url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800"
+        }
+      }
+    }
+  ],
+  "pageLinks": [
+    {
+      "blockId": "29660b6e-8d18-816d-861d-ca2ad378ebcd",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8198-aa29-e49a12760844",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81b1-85f1-ed8f61827df7",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8157-a500-f889207454f8",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-8157-a0fe-c64b024c24c9",
+      "text": "Researcher - 10/23/2025, 9:58:53 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-8157-a0fe-c64b024c24c9"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Researcher - 10/23/2025, 9:58:53 PM",
+        "href": "https://www.notion.so/29560b6e8d188157a0fec64b024c24c9"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-811b-a477-c9db72e9c059",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8173-9a5d-f2b2522550ed",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81ab-9099-eb22e7caa34e",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81ca-8b38-f5296633733c",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818e-8b62-ed3f5047bac3",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818e-8b62-ed3f5047bac3",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818e-8b62-ed3f5047bac3",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818e-8b62-ed3f5047bac3",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-8157-a0fe-c64b024c24c9",
+      "text": "Researcher - 10/23/2025, 9:58:53 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-8157-a0fe-c64b024c24c9"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Researcher - 10/23/2025, 9:58:53 PM",
+        "href": "https://www.notion.so/29560b6e8d188157a0fec64b024c24c9"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818e-8b62-ed3f5047bac3",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81c4-9971-d042d5236777",
+      "text": "Database - 10/23/2025, 9:58:03 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81c4-9971-d042d5236777"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Database - 10/23/2025, 9:58:03 PM",
+        "href": "https://www.notion.so/29560b6e8d1881c49971d042d5236777"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818e-8b62-ed3f5047bac3",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-819d-9ea6-d170fadd0cc1",
+      "text": "Manager - 10/23/2025, 9:58:30 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-819d-9ea6-d170fadd0cc1"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Manager - 10/23/2025, 9:58:30 PM",
+        "href": "https://www.notion.so/29560b6e8d18819d9ea6d170fadd0cc1"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-819e-9734-de65abc4fb8c",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8193-923a-c9b0e31a4050",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-814e-9ebb-c68e3a7e2933",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81ef-b16b-c9649c2be127",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-8157-a0fe-c64b024c24c9",
+      "text": "Researcher - 10/23/2025, 9:58:53 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-8157-a0fe-c64b024c24c9"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Researcher - 10/23/2025, 9:58:53 PM",
+        "href": "https://www.notion.so/29560b6e8d188157a0fec64b024c24c9"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-815d-aacf-cdd95e20a0ea",
+      "blockType": "quote",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-815d-aacf-cdd95e20a0ea",
+      "blockType": "quote",
+      "pageId": "29560b6e-8d18-8127-a141-d6f5cd1760ca",
+      "text": "Documenter - 10/23/2025, 9:58:14 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-8127-a141-d6f5cd1760ca"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Documenter - 10/23/2025, 9:58:14 PM",
+        "href": "https://www.notion.so/29560b6e8d188127a141d6f5cd1760ca"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8144-bc2b-ed33276c15e6",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81f2-81b6-e8f60b7425ca",
+      "blockType": "numbered_list_item",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81af-84ed-c33c58dcd639",
+      "blockType": "numbered_list_item",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81b8-b26d-fea70efa9d33",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818c-bda1-f3a19c445fb3",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8145-ae1d-fd7158a42e14",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-8141-8991-f6ef67b091f0",
+      "text": "Memory - 10/23/2025, 9:58:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-8141-8991-f6ef67b091f0"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Memory - 10/23/2025, 9:58:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881418991f6ef67b091f0"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-812b-9fdc-fb1b0565784c",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8181-9db5-ff129a6b6d72",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-819b-b9f5-d63c45c318be",
+      "blockType": "paragraph",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81cf-8376-cc1103e34b8f",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8106-8308-c988cd4d6761",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-818c-9a47-c778ce0f5983",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-81de-9b80-e47d8e2af21d",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-8157-a0fe-c64b024c24c9",
+      "text": "Researcher - 10/23/2025, 9:58:53 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-8157-a0fe-c64b024c24c9"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Researcher - 10/23/2025, 9:58:53 PM",
+        "href": "https://www.notion.so/29560b6e8d188157a0fec64b024c24c9"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-816b-8e3c-ca2f80f7cbf8",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81e3-99ec-c4f96b04f08d",
+      "text": "NotionManager",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81e3-99ec-c4f96b04f08d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "NotionManager",
+        "href": "https://www.notion.so/29560b6e8d1881e399ecc4f96b04f08d"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8174-b752-dfee2103e69b",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81fd-b04b-c5d9832c211c",
+      "text": "Athena - 10/23/2025, 9:57:34 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81fd-b04b-c5d9832c211c"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Athena - 10/23/2025, 9:57:34 PM",
+        "href": "https://www.notion.so/29560b6e8d1881fdb04bc5d9832c211c"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-8118-a5e9-c1dde6980a93",
+      "blockType": "bulleted_list_item",
+      "pageId": "29560b6e-8d18-81aa-87bc-ebaa0a883754",
+      "text": "Developer - 10/23/2025, 9:58:09 PM",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29560b6e-8d18-81aa-87bc-ebaa0a883754"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Developer - 10/23/2025, 9:58:09 PM",
+        "href": "https://www.notion.so/29560b6e8d1881aa87bcebaa0a883754"
+      }
+    },
+    {
+      "blockId": "29660b6e-8d18-819f-b2b5-e23a0cb89d29",
+      "blockType": "bulleted_list_item",
+      "pageId": "29660b6e-8d18-81d0-b656-e91b9082a89d",
+      "text": "Image Test - v3.0 (10/24/2025, 1:26:40 PM)",
+      "fullRichText": {
+        "type": "mention",
+        "mention": {
+          "type": "page",
+          "page": {
+            "id": "29660b6e-8d18-81d0-b656-e91b9082a89d"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Image Test - v3.0 (10/24/2025, 1:26:40 PM)",
+        "href": "https://www.notion.so/29660b6e8d1881d0b656e91b9082a89d"
+      }
+    }
+  ],
+  "nestedLists": [],
+  "annotations": {
+    "bold": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Bold task",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Bold task",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "bold",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "bold",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Important callout",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Important callout",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Info callout",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Info callout",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Note callout",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Note callout",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "bold",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "bold",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Checklists/To-dos",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Checklists/To-dos",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Dividers ---",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Dividers ---",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Tables",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Tables",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Mermaid diagrams",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Mermaid diagrams",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Version",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Version",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Date",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Date",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Status",
+          "link": null
+        },
+        "annotations": {
+          "bold": true,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Status",
+        "href": null
+      }
+    ],
+    "italic": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Italic task",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": true,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Italic task",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "italic",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": true,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "italic",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Dividers \\",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": true,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Dividers \\",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "\\",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": true,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "\\",
+        "href": null
+      }
+    ],
+    "strikethrough": [],
+    "underline": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Underlined task",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": true,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Underlined task",
+        "href": null
+      }
+    ],
+    "code": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Code task",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": true,
+          "color": "default"
+        },
+        "plain_text": "Code task",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "inline code",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": true,
+          "color": "default"
+        },
+        "plain_text": "inline code",
+        "href": null
+      }
+    ],
+    "color": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Red task",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "red"
+        },
+        "plain_text": "Red task",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "color",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "red"
+        },
+        "plain_text": "color",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": "Testing Required",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "green_background"
+        },
+        "plain_text": "Testing Required",
+        "href": null
+      }
+    ],
+    "link": [
+      {
+        "type": "text",
+        "text": {
+          "content": "link",
+          "link": {
+            "url": "https://example.com/"
+          }
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "link",
+        "href": "https://example.com/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "session_id": "protocol-violation-database-communication",
+  "date": "2025-05-17",
+  "agent": "Enforcer",
+  "violation_type": "missing_protocol_documentation",
+  "severity": "MEDIUM",
+  "affected_agents": ["Database"],
+  "responsible_agents": ["Hermes"],
+  "status": "investigation_complete",
+  "findings": {
+    "root_cause": "Hermes failed to include Database in protocol propagation",
+    "impact": "Database unaware of proper notification procedures",
+    "resolution": "Database self-corrected and properly notified Topologist"
+  },
+  "actions_required": [
+    "Hermes must update Database with protocols",
+    "Hermes must audit all agents",
+    "Create comprehensive agent registry",
+    "Implement verification mechanism"
+  ],
+  "compliance_status": {
+    "Database": "NOW_COMPLIANT",
+    "Hermes": "NON_COMPLIANT"
+  },
+  "recommendation": "WARNING to Hermes",
+  "tags": ["protocol-violation", "communication", "hermes", "database"]
+}

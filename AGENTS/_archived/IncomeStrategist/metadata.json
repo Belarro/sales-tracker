@@ -1,0 +1,13 @@
+{
+  "name": "IncomeStrategist",
+  "description": "Agent IncomeStrategist",
+  "capabilities": [],
+  "created_at": "2025-07-30T11:42:28.945330+00:00",
+  "last_used": "2025-08-09T21:29:44.534316+00:00",
+  "usage_count": 3,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/IncomeStrategist",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/IncomeStrategist/IncomeStrategist_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/IncomeStrategist/ContinuousLearning.md",
+  "attributes": {}
+}

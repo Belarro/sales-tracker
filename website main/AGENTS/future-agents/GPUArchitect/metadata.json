@@ -1,0 +1,13 @@
+{
+  "name": "GPUArchitect",
+  "description": "Agent GPUArchitect",
+  "capabilities": [],
+  "created_at": "2025-06-14T16:16:04.336565+00:00",
+  "last_used": "2025-06-16T07:57:25.358682+00:00",
+  "usage_count": 16,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/GPUArchitect",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/GPUArchitect/GPUArchitect_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/GPUArchitect/ContinuousLearning.md",
+  "attributes": {}
+}

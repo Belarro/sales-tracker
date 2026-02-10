@@ -1,0 +1,29 @@
+{
+  "agents": [
+    {
+      "name": "DataValidator",
+      "role": "Data validation and integrity specialist",
+      "description": "Ensures data consistency, validity, and integrity across all system operations. Specializes in input validation, format verification, and data quality assurance."
+    },
+    {
+      "name": "ErrorHandler",
+      "role": "Error management and recovery specialist",
+      "description": "Manages system errors, exceptions, and edge cases. Provides graceful error handling, recovery strategies, and comprehensive error reporting."
+    },
+    {
+      "name": "PerformanceMonitor",
+      "role": "System performance monitoring specialist",
+      "description": "Tracks and analyzes system performance metrics. Identifies bottlenecks, suggests optimizations, and ensures optimal resource utilization."
+    },
+    {
+      "name": "SecurityAuditor",
+      "role": "Security analysis and compliance specialist",
+      "description": "Conducts security audits, vulnerability assessments, and compliance checks. Ensures system adherence to security best practices and standards."
+    },
+    {
+      "name": "ConfigManager",
+      "role": "Configuration management specialist",
+      "description": "Manages system configurations, environment variables, and settings. Ensures consistency across deployments and maintains configuration documentation."
+    }
+  ]
+}

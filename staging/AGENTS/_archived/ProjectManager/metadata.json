@@ -1,0 +1,13 @@
+{
+  "name": "ProjectManager",
+  "description": "Agent ProjectManager",
+  "capabilities": [],
+  "created_at": "2025-08-01T15:08:24.328805+00:00",
+  "last_used": "2025-08-08T16:51:18.168104+00:00",
+  "usage_count": 7,
+  "version": "1.0",
+  "toolkit_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/ProjectManager",
+  "memory_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/ProjectManager/ProjectManager_memory.md",
+  "learning_path": "/Users/eladm/Projects/Nuru-AI/CollaborativeIntelligence/AGENTS/ProjectManager/ContinuousLearning.md",
+  "attributes": {}
+}

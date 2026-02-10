@@ -1,0 +1,385 @@
+{
+  "dependency_map": {
+    "master_planning_hub": {
+      "files": [
+        "docs/integration/claude-code-integration-plan.md",
+        "management/plans/Plans/CLAUDE_CODE_SDK_INTEGRATION_HANDOFF.md",
+        "management/plans/Plans/CLAUDE_CODE_HOOKS_OPTIMIZATION_SPRINT.md"
+      ],
+      "depends_on": [
+        "architecture_decisions",
+        "sprint_documentation",
+        "integration_status"
+      ],
+      "referenced_by": [
+        "user_guides",
+        "technical_analysis"
+      ]
+    },
+
+    "architecture_decisions": {
+      "files": [
+        "docs/architecture/CI_COLLABORATIVEINTELLIGENCE_INTEGRATION_ARCHITECTURE.md",
+        "docs/architecture/decisions/ADR-001-MEMORY-UNIFICATION-SYMLINK-APPROACH.md",
+        "docs/architecture/CI_INTEGRATION_QUICK_REFERENCE.md"
+      ],
+      "depends_on": [
+        "sprint_005_memory_crisis"
+      ],
+      "referenced_by": [
+        "master_planning_hub",
+        "integration_guides",
+        "troubleshooting"
+      ],
+      "key_decisions": [
+        "Symlink architecture (Sep 30, 2025)",
+        "Memory unification approach",
+        "CI as interface layer, CollaborativeIntelligence as data layer"
+      ]
+    },
+
+    "sprint_005_memory_crisis": {
+      "files": [
+        "docs/development/sprints/sprint-005/README.md",
+        "docs/development/sprints/sprint-005/FINAL_COMPLETION_REPORT.md",
+        "docs/development/sprints/sprint-005/AGENT_DRIVEN_MEMORY_SYSTEM.md",
+        "docs/development/sprints/sprint-005/MEMORY_SYSTEM_TRUTH.md",
+        "docs/development/sprints/sprint-005/POST_COMPLETION_FOLLOWUP.md",
+        "docs/development/sprints/sprint-005/MEMORY_UNIFICATION_VERIFICATION.md",
+        "docs/development/sprints/sprint-005/CI_INTEGRATION_CLEANUP_GUIDE.md"
+      ],
+      "depends_on": [
+        "sprint_004_hooks",
+        "subagent_stop_investigation"
+      ],
+      "referenced_by": [
+        "architecture_decisions",
+        "integration_status",
+        "hook_fixes"
+      ],
+      "key_achievements": [
+        "96% noise reduction (4% → 100% meaningful content)",
+        "Agent-driven memory writing paradigm",
+        "Memory unification via symlinks (Sep 30, 2025)",
+        "Transcript path discovery (zero-cost updates)"
+      ]
+    },
+
+    "sprint_004_hooks": {
+      "files": [
+        "docs/development/sprints/sprint-004/README.md",
+        "docs/development/sprints/sprint-004/planning/timeline.md",
+        "docs/development/sprints/sprint-004/progress/daily-notes.md"
+      ],
+      "depends_on": [],
+      "referenced_by": [
+        "sprint_005_memory_crisis",
+        "hook_configuration"
+      ],
+      "status": "Day 0 Complete, deferred to Sprint 006",
+      "key_findings": [
+        "PreToolUse pattern works (95% success) but undocumented",
+        "Migration to native Claude Code hooks validated"
+      ]
+    },
+
+    "subagent_stop_investigation": {
+      "files": [
+        "AGENTS/Debugger/SUBAGENT_STOP_DATA_INVESTIGATION.md",
+        "AGENTS/Developer/SUBAGENT_CAPTURE_FIX_COMPLETE_2025-10-01.md",
+        "AGENTS/Developer/SUBAGENT_DUPLICATE_ENTRIES_FIX_2025-10-01.md",
+        "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md"
+      ],
+      "depends_on": [],
+      "referenced_by": [
+        "sprint_005_memory_crisis",
+        "known_issues"
+      ],
+      "key_fixes": [
+        "JSONL parsing bug (commit 3a0eb11, Oct 1 14:57:35)",
+        "Duplicate entries via CLAUDE_HOOK_TYPE (commit 651be06)",
+        "SubagentStop reliability: 0% → 100%"
+      ]
+    },
+
+    "hook_configuration": {
+      "files": [
+        "HOOK_FIX_COMPLETE.md",
+        "HOOK_CONFIGURATION_FIX_SUMMARY.md",
+        "SESSION_FILE_CREATION_FIX_COMPLETE.md"
+      ],
+      "depends_on": [
+        "sprint_005_memory_crisis"
+      ],
+      "referenced_by": [
+        "integration_guides"
+      ],
+      "key_changes": [
+        "Updated from simple string paths to array format with matcher/timeout",
+        "Fixed agent-session-manager to forward to enhanced-memory-updater",
+        "Session files now created automatically (Oct 1 14:15)"
+      ]
+    },
+
+    "archive_safety_evolution": {
+      "files": [
+        "docs/archive-safety/PROACTIVE_HOOK_DESIGN.md",
+        "docs/archive-safety/V3.2_FINAL_UX_DESIGN.md",
+        "docs/archive-safety/ANTI_LAZINESS_VALIDATION.md",
+        "docs/archive-safety/PROACTIVE_HOOK_TESTING_GUIDE.md",
+        "ARCHIVE_SAFETY_JSONL_FIX.md",
+        "ARCHIVE_HOOK_UX_FIXES.md"
+      ],
+      "depends_on": [],
+      "referenced_by": [],
+      "evolution": [
+        "v2.0: Blocking approach",
+        "v3.0: Proactive guidance using additionalContext",
+        "v3.1: Anti-laziness validation",
+        "v3.2: Block early, guide clearly (final)"
+      ],
+      "key_fixes": [
+        "JSONL parsing (Oct 2 12:51)",
+        "Root archive detection regex (Oct 2 13:22)"
+      ]
+    },
+
+    "integration_status": {
+      "files": [
+        "docs/integration/FINAL_INTEGRATION_STATUS.md",
+        "docs/integration/ci-cli-claude-integration-progress.md",
+        "docs/integration/KNOWN_ISSUES.md",
+        "INTEGRATION_EXECUTIVE_SUMMARY.md",
+        "INTEGRATION_VISUAL_DIAGRAM.md"
+      ],
+      "depends_on": [
+        "architecture_decisions",
+        "sprint_005_memory_crisis",
+        "hook_configuration"
+      ],
+      "referenced_by": [
+        "master_planning_hub"
+      ],
+      "current_status": [
+        "85% Complete (TrustWrapper integration pending)",
+        "Memory unification: ✅ RESOLVED (Sep 30, 2025)",
+        "Functional memory bridge: ✅ OPERATIONAL",
+        "Known issues: 0 critical, 2 resolved, 1 workaround"
+      ]
+    },
+
+    "user_guides": {
+      "files": [
+        "docs/cli/claude-code-integration.md",
+        "docs/integration/CLAUDE_CODE_INSTALLATION_GUIDE.md",
+        "docs/integration/CLAUDE_CODE_QUICK_START.md",
+        "docs/guides/AGENT_USAGE_GUIDE.md",
+        "docs/guides/QuickStart.md",
+        "docs/guides/claude-md-protection.md",
+        "docs/guides/KNOWLEDGE_ORGANIZATION_REFERENCE_GUIDE.md",
+        "docs/guides/README.md",
+        "docs/guides/README_VOICE_MODE.md",
+        "QUICK_FIX_GUIDE.md"
+      ],
+      "depends_on": [
+        "master_planning_hub",
+        "integration_status"
+      ],
+      "referenced_by": [],
+      "audience": [
+        "New users (Quick Start, Installation)",
+        "Developers (Agent Usage, Voice Mode)",
+        "System admins (Protection, Organization)"
+      ]
+    },
+
+    "cli_documentation": {
+      "files": [
+        "docs/cli/CLI.md",
+        "docs/cli/external_integration.md",
+        "docs/cli/migration_guide.md",
+        "docs/cli/external-ci-architecture.md",
+        "docs/cli/claudeCliIntegration.md"
+      ],
+      "depends_on": [
+        "architecture_decisions"
+      ],
+      "referenced_by": [
+        "user_guides"
+      ],
+      "key_concepts": [
+        "External CI utility architecture",
+        "4-step detection mechanism",
+        "Integration types (embedded/sibling/symlink)"
+      ]
+    },
+
+    "technical_analysis": {
+      "files": [
+        "docs/analysis/CLAUDE_CODE_CONFIGURATION_INVESTIGATION.md",
+        "docs/analysis/CLAUDE_CODE_AGENT_ARCHITECTURE.md",
+        "AGENTS/Debugger/CLAUDE_CODE_HOOKS_TECHNICAL_ANALYSIS.md",
+        "AGENTS/Developer/CLAUDE_CODE_INTEGRATION_DISCOVERY.md"
+      ],
+      "depends_on": [],
+      "referenced_by": [
+        "architecture_decisions",
+        "sprint_005_memory_crisis"
+      ],
+      "key_discoveries": [
+        "Three-tier configuration hierarchy (Global/Project/Source)",
+        "Three-tier agent storage (~/.claude, .claude, AGENTS/)",
+        "Transcript paths automatically provided by Claude Code",
+        "Zero-cost intelligent updates without API key"
+      ]
+    },
+
+    "trustwrapper_integration": {
+      "files": [
+        "docs/integration/TRUSTWRAPPER_INTEGRATION_STATUS.md",
+        "docs/integration/ci-trustwrapper-integration.md",
+        "docs/integration/TRUSTWRAPPER_MVP_PRODUCT_SPEC.md",
+        "docs/integration/XAI_MVP_IMPLEMENTATION_PLAN.md",
+        "docs/integration/coordination/MESSAGE_TO_TRUSTWRAPPER_TEAM.md"
+      ],
+      "depends_on": [],
+      "referenced_by": [
+        "integration_status"
+      ],
+      "status": [
+        "TrustWrapper: ✅ FULLY OPERATIONAL (Sep 18, 2025)",
+        "XAI: ✅ Enterprise features operational (Sep 15, 2025)",
+        "Critical bug: Async event loop conflict (85% complete)"
+      ]
+    },
+
+    "workflow_guides": {
+      "files": [
+        "docs/integration/unified-workflow-guide.md",
+        "docs/integration/README.md"
+      ],
+      "depends_on": [
+        "user_guides",
+        "cli_documentation"
+      ],
+      "referenced_by": [],
+      "workflows": [
+        "New project workflow",
+        "Existing project integration",
+        "Agent collaboration workflow",
+        "Bug fixing workflow"
+      ]
+    },
+
+    "sprint_management": {
+      "files": [
+        "docs/development/sprints/SPRINT_RENUMBERING.md",
+        "docs/development/sprints/VERIFICATION_REPORT.md",
+        "docs/development/sprints/sprint-001/README.md",
+        "docs/development/sprints/sprint-001/metadata-schema.md"
+      ],
+      "depends_on": [],
+      "referenced_by": [
+        "sprint_005_memory_crisis"
+      ],
+      "key_events": [
+        "Sprint renumbering (Sep 28, 2025): Old Sprint 005 → Sprint 007",
+        "New Sprint 005: Memory Crisis Resolution (critical priority)"
+      ]
+    }
+  },
+
+  "cross_references": {
+    "symlink_architecture": {
+      "primary_source": "docs/architecture/decisions/ADR-001-MEMORY-UNIFICATION-SYMLINK-APPROACH.md",
+      "referenced_in": [
+        "docs/architecture/CI_INTEGRATION_QUICK_REFERENCE.md",
+        "docs/integration/ci-cli-claude-integration-progress.md",
+        "INTEGRATION_EXECUTIVE_SUMMARY.md",
+        "docs/development/sprints/sprint-005/MEMORY_UNIFICATION_VERIFICATION.md"
+      ],
+      "implementation_date": "2025-09-30",
+      "commits": ["CI: 1d52fe7", "CollaborativeIntelligence: e7844bf"]
+    },
+
+    "agent_driven_memory": {
+      "primary_source": "docs/development/sprints/sprint-005/AGENT_DRIVEN_MEMORY_SYSTEM.md",
+      "referenced_in": [
+        "docs/development/sprints/sprint-005/FINAL_COMPLETION_REPORT.md",
+        "docs/development/sprints/sprint-005/MEMORY_SYSTEM_TRUTH.md"
+      ],
+      "paradigm_shift": "Automated extraction (96% templates) → Agent-driven (100% meaningful)",
+      "results": "96% noise reduction, $0.00 cost"
+    },
+
+    "subagent_stop_fix": {
+      "primary_source": "AGENTS/Developer/SUBAGENT_CAPTURE_FIX_COMPLETE_2025-10-01.md",
+      "referenced_in": [
+        "docs/integration/KNOWN_ISSUES.md",
+        "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md"
+      ],
+      "fix_date": "2025-10-01 14:57:35",
+      "commit": "3a0eb11",
+      "impact": "SubagentStop reliability: 0% → 100%"
+    },
+
+    "transcript_discovery": {
+      "primary_source": "AGENTS/Developer/CLAUDE_CODE_INTEGRATION_DISCOVERY.md",
+      "referenced_in": [
+        "docs/development/sprints/sprint-005/MEMORY_SYSTEM_TRUTH.md",
+        "docs/development/sprints/sprint-005/COMPLETION_REPORT.md"
+      ],
+      "discovery": "Claude Code automatically provides transcript paths in hook data",
+      "impact": "Zero-cost intelligent updates without API key"
+    }
+  },
+
+  "temporal_evolution": {
+    "memory_system": [
+      {"date": "2025-08-13", "status": "Learning pipeline broken", "evidence": "73% agents stale"},
+      {"date": "2025-09-28", "status": "Sprint 005 started", "focus": "Memory crisis resolution"},
+      {"date": "2025-09-29", "status": "Memory fragmentation discovered", "issue": "CI/CollaborativeIntelligence split"},
+      {"date": "2025-09-30", "status": "Symlink architecture implemented", "commits": "1d52fe7, e7844bf"},
+      {"date": "2025-10-01", "status": "Hook configuration fixed", "result": "Session files created"}
+    ],
+
+    "subagent_stop": [
+      {"date": "pre-2025-10-01", "status": "0% reliability", "issue": "No stdin data capture"},
+      {"date": "2025-10-01 14:57:35", "status": "JSONL parsing fixed", "commit": "3a0eb11"},
+      {"date": "2025-10-01", "status": "Duplicate entries fixed", "commit": "651be06"},
+      {"date": "post-2025-10-01", "status": "100% reliability", "verified": "KNOWN_ISSUES.md"}
+    ],
+
+    "archive_safety": [
+      {"version": "v2.0", "approach": "Blocking", "issue": "Fights against Claude's nature"},
+      {"version": "v3.0", "approach": "Proactive guidance", "innovation": "additionalContext field"},
+      {"version": "v3.1", "approach": "Anti-laziness validation", "addition": "Explicit line count confirmation"},
+      {"version": "v3.2", "approach": "Block early, guide clearly", "status": "Final"}
+    ]
+  },
+
+  "conflicts_identified": {
+    "inventory_vs_actual": {
+      "file": "CLAUDE_CODE_DOCUMENTATION_COMPREHENSIVE_INVENTORY.md",
+      "discrepancy": "Claimed master plan v3.1 (792 lines) but actual is v2.0 (355 lines)",
+      "evidence": "docs/integration/claude-code-integration-plan.md actual stats",
+      "resolution": "Inventory contains hallucinated/outdated information"
+    },
+
+    "subagent_stop_index": {
+      "file": "docs/integration/technical/troubleshooting/SUBAGENT_STOP_INDEX.md",
+      "original_claim": "14 investigation files",
+      "actual": "4 files exist",
+      "corrected": "Lines 7, 9, 65, 318 updated to show 4 files",
+      "verified": "2025-10-02 19:16"
+    }
+  },
+
+  "metadata": {
+    "analysis_date": "2025-10-03",
+    "total_files_analyzed": 87,
+    "total_lines_read": "Approximately 25,000+ lines",
+    "evidence_collected": "Line counts, sizes, dates, key findings for all files",
+    "verification_method": "Systematic complete file reading with no limit parameter"
+  }
+}
