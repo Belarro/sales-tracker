@@ -140,7 +140,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
           // Fetch place details
           await place.fetchFields({
-            fields: ['displayName', 'formattedAddress', 'nationalPhoneNumber', 'websiteURI', 'googleMapsURI']
+            fields: ['displayName', 'formattedAddress', 'nationalPhoneNumber', 'websiteURI', 'googleMapsURI', 'location']
           });
 
           console.log('✅ Google Maps POI details:', place);

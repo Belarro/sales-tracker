@@ -88,9 +88,18 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const prevCount = parseInt(location.followUpCount) || 0;
       const newCount = location.nextActionDate ? prevCount + 1 : prevCount;
 
+      // Build directLink with precise coordinates if available
+      let directLink = location.directLink || '';
+      if (location.lat && location.lng && !directLink.match(/^-?\d+\.\d+,-?\d+\.\d+/)) {
+        // Store as "LAT,LNG|PLACE_ID" for precise marker placement
+        directLink = `${location.lat},${location.lng}`;
+        if (location.placeId) directLink += `|${location.placeId}`;
+      }
+
       const checkInData = {
         ...location,
         ...formData,
+        directLink: directLink,
         directPhone: formData.phone,
         directEmail: formData.email,
         businessTypes: formData.businessTypes,
