@@ -11,9 +11,11 @@ export const useLocations = () => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentView, setCurrentView] = useState('map'); // 'map' or 'list'
+    const [loadError, setLoadError] = useState('');
 
     // Fetch locations from Google Sheets
     const refreshLocations = useCallback(async () => {
+        setLoadError('');
         try {
             const locations = await getAllLocations();
             console.log('Loaded locations:', locations);
@@ -22,6 +24,7 @@ export const useLocations = () => {
             setVisitedLocations(activeLocations);
         } catch (err) {
             console.error('Error loading locations:', err);
+            setLoadError('Failed to load locations. Please refresh the page.');
         }
     }, []);
 
@@ -90,6 +93,7 @@ export const useLocations = () => {
         handleLocationSelect,
         clearSelection,
         setSelectedLocation,
+        loadError,
         // Pipeline
         overdueTasks,
         todayTasks,

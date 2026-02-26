@@ -152,8 +152,8 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
             businessWebsite: place.websiteURI || '',
             directLink: place.googleMapsURI || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName)}`,
             placeId: event.placeId,
-            lat: place.location?.lat() || null,
-            lng: place.location?.lng() || null,
+            lat: place.location && typeof place.location.lat === 'function' ? place.location.lat() : null,
+            lng: place.location && typeof place.location.lng === 'function' ? place.location.lng() : null,
             // Add other fields expected by LocationPanel/Schema
             businessEmail: '',
             businessTypes: '',
@@ -243,7 +243,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
           const parts = location.directLink.split('|');
           const [lat, lng] = parts[0].split(',').map(parseFloat);
           console.log(`✅ Using saved coordinates for ${location.locationName}: ${lat}, ${lng}`);
-          createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count);
+          createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count, location);
           return;
         }
 
@@ -254,7 +254,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
             const lat = parseFloat(match[1]);
             const lng = parseFloat(match[2]);
             console.log(`✅ Using URL coordinates for ${location.locationName}: ${lat}, ${lng}`);
-            createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count);
+            createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count, location);
             return;
           }
         }
@@ -276,7 +276,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
             if (place.location) {
               console.log(`✅ Using Place ID coordinates for ${location.locationName}`);
-              createCustomMarker(place.location, color, count);
+              createCustomMarker(place.location, color, count, location);
               return;
             }
           } catch (error) {
@@ -286,30 +286,26 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
       }
 
       // Last resort: Geocode the address
-      // console.log(`⚠️ Geocoding address for ${location.locationName}: ${location.businessAddress}`);
-      geocodeAndCreateMarker(location.businessAddress, color, count);
+      geocodeAndCreateMarker(location.businessAddress, color, count, location);
     });
   }, [visitedLocations, mapReady]);
 
-  const geocodeAndCreateMarker = (address, color, count) => {
+  const geocodeAndCreateMarker = (address, color, count, locationData) => {
     if (!window.google) {
       return;
     }
 
-    // console.log(`🔍 Geocoding address: "${address}"`);
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
-      // console.log(`   Geocode status: ${status}`);
       if (status === 'OK' && results[0]) {
-        // console.log(`   ✅ Geocoded successfully: ${results[0].geometry.location.lat()}, ${results[0].geometry.location.lng()}`);
-        createCustomMarker(results[0].geometry.location, color, count);
+        createCustomMarker(results[0].geometry.location, color, count, locationData);
       } else {
         console.warn(`   ❌ Geocoding failed for "${address}": ${status}`);
       }
     });
   };
 
-  const createCustomMarker = (position, color, count) => {
+  const createCustomMarker = (position, color, count, locationData) => {
     if (!mapInstanceRef.current) return;
 
     // Create custom HTML marker
@@ -336,6 +332,18 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     circle.textContent = count > 1 ? count : '';
 
     markerDiv.appendChild(circle);
+
+    // Click handler — open location details
+    if (locationData) {
+      markerDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        onLocationSelect({
+          ...locationData,
+          name: locationData.locationName,
+          address: locationData.businessAddress
+        });
+      });
+    }
 
     // Create overlay view
     class CustomOverlay extends window.google.maps.OverlayView {

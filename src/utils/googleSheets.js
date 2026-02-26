@@ -538,6 +538,19 @@ export const deleteLocation = async (locationName, businessAddress) => {
       return false;
     }
 
+    // Look up the actual sheet ID for the Data sheet
+    const spreadsheet = await window.gapi.client.sheets.spreadsheets.get({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID
+    });
+    const dataSheet = spreadsheet.result.sheets.find(
+      s => s.properties.title === CONFIG.SHEETS.DATA
+    );
+    if (!dataSheet) {
+      console.error('Data sheet not found');
+      return false;
+    }
+    const sheetId = dataSheet.properties.sheetId;
+
     // Delete the row (rowIndex + 2 because: +1 for 0-index, +1 for header row)
     await window.gapi.client.sheets.spreadsheets.batchUpdate({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
@@ -545,7 +558,7 @@ export const deleteLocation = async (locationName, businessAddress) => {
         requests: [{
           deleteDimension: {
             range: {
-              sheetId: 0, // Assumes Data sheet is the first sheet (ID 0)
+              sheetId: sheetId,
               dimension: 'ROWS',
               startIndex: rowIndex + 1, // +1 for header
               endIndex: rowIndex + 2
