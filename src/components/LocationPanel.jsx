@@ -43,8 +43,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         phone: location.directPhone || location.businessPhone || '',
         businessTypes: location.businessTypes || '',
         businessWebsite: location.businessWebsite || '',
-        interestLevel: '',
-        sampleGiven: 'NO',
+        interestLevel: location.interestLevel || '',
+        sampleGiven: location.sampleGiven || 'NO',
         visitNotes: ''
       });
       setFollowUpDate('');

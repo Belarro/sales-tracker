@@ -240,12 +240,21 @@ export const addVisitToHistory = async (visitData) => {
       visitData.interestLevel || '',
       visitData.visitNotes || '',
       visitData.followUpDate || '',
-      visitData.sampleGiven || ''
+      visitData.sampleGiven || '',
+      visitData.archived || '',
+      visitData.pipelineStage || '',
+      visitData.followUpCount || '0',
+      visitData.lastFollowUpDate || '',
+      visitData.nextActionDate || '',
+      visitData.nextActionType || '',
+      visitData.automationStatus || '',
+      visitData.materialsSent || '',
+      visitData.notesInternal || ''
     ]];
 
     const appendResponse = await window.gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:Q`,
+      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A:Z`,
       valueInputOption: 'USER_ENTERED',
       resource: { values }
     });
@@ -401,7 +410,7 @@ export const getLocationHistory = async (locationName, businessAddress) => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A2:Q`
+      range: `${CONFIG.SHEETS.VISIT_HISTORY}!A2:Z`
     });
 
     const rows = response.result.values || [];
@@ -424,7 +433,16 @@ export const getLocationHistory = async (locationName, businessAddress) => {
         interestLevel: row[13] || '',
         visitNotes: row[14] || '',
         followUpDate: row[15] || '',
-        sampleGiven: row[16] || ''
+        sampleGiven: row[16] || '',
+        archived: row[17] || '',
+        pipelineStage: row[18] || '',
+        followUpCount: row[19] || '0',
+        lastFollowUpDate: row[20] || '',
+        nextActionDate: row[21] || '',
+        nextActionType: row[22] || '',
+        automationStatus: row[23] || '',
+        materialsSent: row[24] || '',
+        notesInternal: row[25] || ''
       }));
   } catch (error) {
     console.error('Error fetching location history:', error);
@@ -950,7 +968,7 @@ const setRowFontSizeVisitHistory = async (rowNumber) => {
               startRowIndex: rowNumber - 1,
               endRowIndex: rowNumber,
               startColumnIndex: 0,
-              endColumnIndex: 17 // Column Q (0-based)
+              endColumnIndex: 26 // Column Z (0-based)
             },
             cell: {
               userEnteredFormat: {
