@@ -1,5 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { getAllLocations } from '../utils/googleSheets';
+import { daysFromToday } from '../utils/dateUtils';
+import { CONFIG } from '../config';
 
 /**
  * Custom hook for managing Locations data
@@ -34,6 +36,40 @@ export const useLocations = () => {
         );
     }, [visitedLocations, searchQuery]);
 
+    // Pipeline: locations that need follow-up action
+    const taskLocations = useMemo(() => {
+        return visitedLocations
+            .filter(loc => {
+                if (!loc.nextActionDate) return false;
+                if (['Not Interested', 'Closed Deal'].includes(loc.interestLevel)) return false;
+                if (loc.pipelineStage === 'closed_won' || loc.pipelineStage === 'closed_lost') return false;
+                if (['sent', 'delivered'].includes(loc.automationStatus)) return false;
+                return true;
+            })
+            .map(loc => ({
+                ...loc,
+                _daysUntilAction: daysFromToday(loc.nextActionDate)
+            }));
+    }, [visitedLocations]);
+
+    const overdueTasks = useMemo(() =>
+        taskLocations
+            .filter(loc => loc._daysUntilAction !== null && loc._daysUntilAction < 0)
+            .sort((a, b) => a._daysUntilAction - b._daysUntilAction),
+        [taskLocations]);
+
+    const todayTasks = useMemo(() =>
+        taskLocations.filter(loc => loc._daysUntilAction === 0),
+        [taskLocations]);
+
+    const upcomingTasks = useMemo(() =>
+        taskLocations
+            .filter(loc => loc._daysUntilAction !== null &&
+                           loc._daysUntilAction > 0 &&
+                           loc._daysUntilAction <= CONFIG.UPCOMING_DAYS_WINDOW)
+            .sort((a, b) => a._daysUntilAction - b._daysUntilAction),
+        [taskLocations]);
+
     const handleLocationSelect = (location) => {
         setSelectedLocation(location);
     };
@@ -53,6 +89,10 @@ export const useLocations = () => {
         refreshLocations,
         handleLocationSelect,
         clearSelection,
-        setSelectedLocation
+        setSelectedLocation,
+        // Pipeline
+        overdueTasks,
+        todayTasks,
+        upcomingTasks
     };
 };

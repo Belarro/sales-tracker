@@ -13,6 +13,7 @@ import SimpleMap from './components/SimpleMap.jsx';
 import LocationPanel from './components/LocationPanel.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import ListView from './components/ListView.jsx';
+import TodaysTasks from './components/TodaysTasks.jsx';
 import Layout from './components/Layout.jsx';
 import LoadingScreen from './components/LoadingScreen.jsx';
 
@@ -33,7 +34,11 @@ function App() {
     setCurrentView,
     refreshLocations,
     handleLocationSelect,
-    clearSelection
+    clearSelection,
+    // Pipeline
+    overdueTasks,
+    todayTasks,
+    upcomingTasks
   } = useLocations();
 
   const [showAdminSetup, setShowAdminSetup] = useState(false);
@@ -68,7 +73,7 @@ function App() {
       <div className="login-container">
         <div className="login-box">
           <h1>Access Denied</h1>
-          <p style={{ color: '#ea4335', marginBottom: '20px' }}>{error}</p>
+          <p style={{ color: 'var(--color-danger)', marginBottom: '20px' }}>{error}</p>
           <button onClick={handleSignOut} className="btn btn-secondary">
             Sign Out
           </button>
@@ -110,12 +115,16 @@ function App() {
       toggleDashboard={() => setShowDashboard(!showDashboard)}
       currentView={currentView}
       onViewChange={setCurrentView}
+      overdueCount={overdueTasks.length}
     >
       {/* Dashboard Panel */}
       {showDashboard && (
         <div className="dashboard-panel">
           <Dashboard
-            visitedLocations={visitedLocations} // Pass raw list for stats
+            visitedLocations={visitedLocations}
+            overdueTasks={overdueTasks}
+            todayTasks={todayTasks}
+            upcomingTasks={upcomingTasks}
             onLocationSelect={handleLocationSelect}
             onViewChange={(view) => {
               setCurrentView(view);
@@ -145,23 +154,31 @@ function App() {
         </button>
       )}
 
-      {/* Main View Area (Map or List) */}
+      {/* Main View Area */}
       <div className="view-container" style={{ height: '100%', width: '100%' }}>
         {currentView === 'map' ? (
           <div className="map-container">
             <SimpleMap
               onLocationSelect={handleLocationSelect}
-              visitedLocations={filteredLocations} // Pass filtered list for display
+              visitedLocations={filteredLocations}
               searchQuery={searchQuery}
             />
           </div>
-        ) : (
+        ) : currentView === 'list' ? (
           <ListView
             visitedLocations={visitedLocations}
             searchQuery={searchQuery}
             onLocationSelect={handleLocationSelect}
           />
-        )}
+        ) : currentView === 'tasks' ? (
+          <TodaysTasks
+            overdueTasks={overdueTasks}
+            todayTasks={todayTasks}
+            upcomingTasks={upcomingTasks}
+            onLocationSelect={handleLocationSelect}
+            onRefresh={refreshLocations}
+          />
+        ) : null}
       </div>
 
       {selectedLocation && (

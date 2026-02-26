@@ -165,7 +165,7 @@ export const getAllLocations = async () => {
   try {
     const response = await window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-      range: `${CONFIG.SHEETS.DATA}!A2:R`
+      range: `${CONFIG.SHEETS.DATA}!A2:Z`
     });
 
     const rows = response.result.values || [];
@@ -187,7 +187,16 @@ export const getAllLocations = async () => {
       visitNotes: row[14] || '',
       followUpDate: row[15] || '',
       sampleGiven: row[16] || '',
-      archived: row[17] || ''
+      archived: row[17] || '',
+      // Pipeline columns S-Z
+      pipelineStage: row[18] || '',
+      followUpCount: row[19] || '0',
+      lastFollowUpDate: row[20] || '',
+      nextActionDate: row[21] || '',
+      nextActionType: row[22] || '',
+      automationStatus: row[23] || '',
+      materialsSent: row[24] || '',
+      notesInternal: row[25] || ''
     }));
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -324,7 +333,16 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       locationData.visitNotes || '',
       locationData.followUpDate || '',
       locationData.sampleGiven || '',
-      locationData.archived || ''
+      locationData.archived || '',
+      // Pipeline columns S-Z
+      locationData.pipelineStage || CONFIG.PIPELINE_STAGES.NEW_VISIT,
+      String(locationData.followUpCount || '0'),
+      locationData.lastFollowUpDate || '',
+      locationData.nextActionDate || '',
+      locationData.nextActionType || '',
+      locationData.automationStatus || '',
+      locationData.materialsSent || '',
+      locationData.notesInternal || ''
     ]];
 
     if (existingLocation) {
@@ -340,7 +358,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
         console.log(`✅ Updating row ${rowIndex + 2} in Data sheet`);
         await window.gapi.client.sheets.spreadsheets.values.update({
           spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:R${rowIndex + 2}`,
+          range: `${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:Z${rowIndex + 2}`,
           valueInputOption: 'USER_ENTERED',
           resource: { values }
         });
@@ -353,7 +371,7 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       console.log('➕ Adding new location to Data sheet');
       const appendResponse = await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
-        range: `${CONFIG.SHEETS.DATA}!A:R`,
+        range: `${CONFIG.SHEETS.DATA}!A:Z`,
         valueInputOption: 'USER_ENTERED',
         resource: { values }
       });
@@ -522,6 +540,53 @@ export const deleteLocation = async (locationName, businessAddress) => {
     return true;
   } catch (error) {
     console.error('Error deleting location:', error);
+    return false;
+  }
+};
+
+/**
+ * Update pipeline columns only (S-Z) for an existing location.
+ * Used when marking follow-ups done, scheduling next actions,
+ * or logging pipeline progress without a full visit re-log.
+ */
+export const updatePipelineData = async (locationName, businessAddress, pipelineData) => {
+  try {
+    const locations = await getAllLocations();
+    const rowIndex = locations.findIndex(
+      loc => loc.locationName === locationName &&
+             loc.businessAddress === businessAddress
+    );
+
+    if (rowIndex === -1) {
+      console.error('Location not found for pipeline update');
+      return false;
+    }
+
+    const existing = locations[rowIndex];
+    const rowNum = rowIndex + 2; // 1-based + header
+
+    const values = [[
+      pipelineData.pipelineStage    ?? existing.pipelineStage    ?? '',
+      pipelineData.followUpCount    ?? existing.followUpCount     ?? '0',
+      pipelineData.lastFollowUpDate ?? existing.lastFollowUpDate  ?? '',
+      pipelineData.nextActionDate   ?? existing.nextActionDate    ?? '',
+      pipelineData.nextActionType   ?? existing.nextActionType    ?? '',
+      pipelineData.automationStatus ?? existing.automationStatus  ?? '',
+      pipelineData.materialsSent    ?? existing.materialsSent     ?? '',
+      pipelineData.notesInternal    ?? existing.notesInternal     ?? ''
+    ]];
+
+    await window.gapi.client.sheets.spreadsheets.values.update({
+      spreadsheetId: CONFIG.GOOGLE_SHEET_ID,
+      range: `${CONFIG.SHEETS.DATA}!S${rowNum}:Z${rowNum}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: { values }
+    });
+
+    console.log(`✅ Pipeline data updated for row ${rowNum}`);
+    return true;
+  } catch (error) {
+    console.error('Error updating pipeline data:', error);
     return false;
   }
 };
@@ -831,7 +896,7 @@ const setRowFontSize = async (rowNumber) => {
               startRowIndex: rowNumber - 1, // 0-based
               endRowIndex: rowNumber,
               startColumnIndex: 0, // Column A
-              endColumnIndex: 18 // Column R (0-based, so 18 means up to column R)
+              endColumnIndex: 26 // Column Z (0-based, so 26 means up to column Z)
             },
             cell: {
               userEnteredFormat: {

@@ -1,7 +1,8 @@
-import React from 'react';
-import '../styles/variables.css'; // Ensure variables are available if this is mounted in isolation
+// ============================================
+// LOADING SCREEN — Light mode
+// ============================================
 
-const LoadingScreen = ({ message = "Loading Sales Tracker..." }) => {
+const LoadingScreen = ({ message = "Loading..." }) => {
   return (
     <div style={{
       position: 'fixed',
@@ -13,25 +14,26 @@ const LoadingScreen = ({ message = "Loading Sales Tracker..." }) => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'var(--color-bg-main)', // Updated
+      backgroundColor: 'var(--color-bg-main)',
       zIndex: 'var(--z-loading)',
-      color: 'var(--color-text-secondary)', // Updated
       fontFamily: 'var(--font-family-base)'
     }}>
-      <div className="spinner" style={{
-        width: '50px',
-        height: '50px',
-        border: '4px solid var(--color-border)', // Updated
-        borderTop: '4px solid var(--color-primary)',
+      <div style={{
+        width: '36px',
+        height: '36px',
+        border: '3px solid var(--color-border)',
+        borderTop: '3px solid var(--color-primary)',
         borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
+        animation: 'spin 0.8s linear infinite',
         marginBottom: 'var(--spacing-md)'
-      }}></div>
-      <h2 style={{
-        fontSize: 'var(--font-size-lg)',
+      }} />
+      <div style={{
+        fontSize: 'var(--font-size-md)',
         fontWeight: '500',
-        color: 'var(--color-text-main)' // Updated
-      }}>{message}</h2>
+        color: 'var(--color-text-secondary)'
+      }}>
+        {message}
+      </div>
 
       <style>{`
         @keyframes spin {

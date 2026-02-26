@@ -1,36 +1,32 @@
 // ============================================
-// LIST VIEW COMPONENT (PRO VERSION)
+// LIST VIEW — Light mode
 // ============================================
 
 import { useState, useMemo } from 'react';
-import '../styles/variables.css';
 
 const ListView = ({
   visitedLocations = [],
   searchQuery = '',
-  onLocationSelect,
-  onExport
+  onLocationSelect
 }) => {
   const [sortBy, setSortBy] = useState('recent');
   const [filterInterest, setFilterInterest] = useState('all');
 
-  // Helper for Interest Colors (using CSS variables where possible or matching theme)
   const getStatusStyle = (level) => {
     switch (level) {
       case 'Interested':
       case 'Closed Deal':
-        return { bg: 'rgba(16, 185, 129, 0.2)', color: '#34d399', border: 'rgba(16, 185, 129, 0.3)' };
+        return { bg: 'var(--color-success-light)', color: 'var(--color-success)', border: '#a7f3d0' };
       case 'Not Interested':
-        return { bg: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+        return { bg: 'var(--color-danger-light)', color: 'var(--color-danger)', border: '#fecaca' };
       case 'Follow Up':
       case 'Pending':
-        return { bg: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' };
+        return { bg: 'var(--color-warning-light)', color: 'var(--color-warning)', border: '#fde68a' };
       default:
-        return { bg: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', border: 'rgba(148, 163, 184, 0.3)' };
+        return { bg: 'var(--color-bg-secondary)', color: 'var(--color-text-muted)', border: 'var(--color-border)' };
     }
   };
 
-  // Filter and Sort Logic (Same as before, just kept for functionality)
   const filteredLocations = useMemo(() => {
     let result = [...visitedLocations];
 
@@ -54,8 +50,6 @@ const ListView = ({
 
     result.sort((a, b) => {
       if (sortBy === 'name') return (a.locationName || '').localeCompare(b.locationName || '');
-      // Default to recent (string comparison of timestamps works if ISO, but here mostly reliant on insertion order or simple date parsing if needed)
-      // For now assuming existing sort logic was sufficient or valid enough for the prototype
       return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
     });
 
@@ -63,7 +57,6 @@ const ListView = ({
   }, [visitedLocations, searchQuery, filterInterest, sortBy]);
 
   const handleExport = () => {
-    // CSV Export logic
     const headers = ['Name', 'Address', 'Interest', 'Notes', 'Date'];
     const csvContent = [
       headers.join(','),
@@ -83,24 +76,8 @@ const ListView = ({
     link.click();
   };
 
-  // --- STYLES ---
-  const containerStyle = {
-    padding: 'var(--spacing-md)',
-    paddingBottom: '80px', // Space for bottom nav
-    height: '100%',
-    overflowY: 'auto'
-  };
-
-  const controlBarStyle = {
-    display: 'flex',
-    gap: '8px',
-    marginBottom: 'var(--spacing-md)',
-    overflowX: 'auto',
-    paddingBottom: '4px'
-  };
-
   const selectStyle = {
-    background: 'var(--color-bg-secondary)',
+    background: 'var(--color-bg-main)',
     color: 'var(--color-text-main)',
     border: '1px solid var(--color-border)',
     padding: '8px 12px',
@@ -110,88 +87,118 @@ const ListView = ({
   };
 
   return (
-    <div className="list-view-container" style={containerStyle}>
-      {/* HEADER CONTROLS */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
-        <h2 style={{ fontSize: 'var(--font-size-lg)', color: 'var(--color-text-main)' }}>
+    <div className="list-view-container" style={{
+      padding: 'var(--spacing-md)',
+      paddingBottom: '80px',
+      height: '100%',
+      overflowY: 'auto',
+      background: 'var(--color-bg-secondary)'
+    }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 'var(--spacing-md)'
+      }}>
+        <h2 style={{
+          fontSize: 'var(--font-size-lg)',
+          color: 'var(--color-text-main)',
+          fontWeight: '600'
+        }}>
           Visits ({filteredLocations.length})
         </h2>
         <button onClick={handleExport} className="btn btn-secondary" style={{ fontSize: '12px', padding: '6px 12px' }}>
-          ⬇ CSV
+          Export CSV
         </button>
       </div>
 
-      <div style={controlBarStyle}>
+      {/* Filters */}
+      <div style={{
+        display: 'flex',
+        gap: 'var(--spacing-sm)',
+        marginBottom: 'var(--spacing-md)',
+        overflowX: 'auto'
+      }}>
         <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={selectStyle}>
-          <option value="recent">🕒 Recent</option>
-          <option value="name">🔤 Name</option>
+          <option value="recent">Recent</option>
+          <option value="name">Name</option>
         </select>
         <select value={filterInterest} onChange={e => setFilterInterest(e.target.value)} style={selectStyle}>
           <option value="all">All Status</option>
-          <option value="interested">🔥 Interested</option>
-          <option value="followup">⏰ Follow Up</option>
-          <option value="not-interested">❌ Not Interested</option>
+          <option value="interested">Interested</option>
+          <option value="followup">Follow Up</option>
+          <option value="not-interested">Not Interested</option>
         </select>
       </div>
 
-      {/* LIST ITEMS */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+      {/* List */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
         {filteredLocations.map((loc, idx) => {
           const statusStyle = getStatusStyle(loc.interestLevel);
           return (
             <div
               key={idx}
-              onClick={() => onLocationSelect({
-                name: loc.locationName,
-                address: loc.businessAddress,
-                phone: loc.businessPhone || '',
-                // Map fields to standard format for LocationPanel
-                ...loc
-              })}
+              onClick={() => onLocationSelect({ ...loc, name: loc.locationName, address: loc.businessAddress })}
               style={{
-                background: 'var(--color-bg-glass)',
-                backdropFilter: 'blur(10px)',
+                background: 'var(--color-bg-main)',
                 border: '1px solid var(--color-border)',
-                borderLeft: `4px solid ${statusStyle.color}`,
+                borderLeft: `3px solid ${statusStyle.color}`,
                 borderRadius: 'var(--border-radius-md)',
                 padding: 'var(--spacing-md)',
                 cursor: 'pointer',
-                transition: 'transform 0.2s',
-                boxShadow: 'var(--shadow-sm)'
+                transition: 'all 150ms ease',
+                boxShadow: 'var(--shadow-xs)'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: '600', color: 'var(--color-text-main)' }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '4px',
+                gap: 'var(--spacing-sm)'
+              }}>
+                <h3 style={{
+                  fontSize: 'var(--font-size-md)',
+                  fontWeight: '600',
+                  color: 'var(--color-text-main)',
+                  margin: 0
+                }}>
                   {loc.locationName}
                 </h3>
                 <span style={{
                   fontSize: '10px',
                   padding: '2px 8px',
-                  borderRadius: '10px',
+                  borderRadius: 'var(--border-radius-full)',
                   background: statusStyle.bg,
                   color: statusStyle.color,
-                  border: `1px solid ${statusStyle.border}`,
                   textTransform: 'uppercase',
-                  fontWeight: '700'
+                  fontWeight: '700',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}>
                   {loc.interestLevel || 'N/A'}
                 </span>
               </div>
 
-              <div style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', marginBottom: '8px' }}>
+              <div style={{
+                color: 'var(--color-text-secondary)',
+                fontSize: 'var(--font-size-sm)',
+                marginBottom: loc.visitNotes ? '8px' : 0
+              }}>
                 {loc.businessAddress}
               </div>
 
               {loc.visitNotes && (
                 <div style={{
-                  background: 'rgba(0,0,0,0.2)',
-                  padding: '8px',
-                  borderRadius: '4px',
-                  fontSize: '13px',
+                  background: 'var(--color-bg-secondary)',
+                  padding: '6px 10px',
+                  borderRadius: 'var(--border-radius-sm)',
+                  fontSize: 'var(--font-size-xs)',
                   color: 'var(--color-text-muted)',
                   fontStyle: 'italic'
                 }}>
-                  "{loc.visitNotes.length > 60 ? loc.visitNotes.substring(0, 60) + '...' : loc.visitNotes}"
+                  {loc.visitNotes.length > 60 ? loc.visitNotes.substring(0, 60) + '...' : loc.visitNotes}
                 </div>
               )}
             </div>
@@ -199,7 +206,11 @@ const ListView = ({
         })}
 
         {filteredLocations.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-secondary)' }}>
+          <div style={{
+            textAlign: 'center',
+            padding: 'var(--spacing-2xl)',
+            color: 'var(--color-text-muted)'
+          }}>
             No visits found.
           </div>
         )}

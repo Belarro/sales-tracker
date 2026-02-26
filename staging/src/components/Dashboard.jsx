@@ -1,140 +1,142 @@
 // ============================================
-// DASHBOARD COMPONENT (PRO VERSION)
+// DASHBOARD COMPONENT — Light mode
 // ============================================
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import StatsCard from './StatsCard';
-import '../styles/variables.css';
+import { daysFromToday } from '../utils/dateUtils';
 
 const Dashboard = ({
   visitedLocations = [],
+  overdueTasks = [],
+  todayTasks = [],
+  upcomingTasks = [],
   onLocationSelect,
   onViewChange,
   currentView,
   searchQuery,
   onSearchChange
 }) => {
-  const [showFollowUps, setShowFollowUps] = useState(false);
-
-  // Parse date helper
-  const parseDate = (dateStr) => {
-    if (!dateStr) return null;
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return null;
-    return new Date(parts[2], parts[1] - 1, parts[0]);
-  };
-
-  // Stats Logic
   const stats = useMemo(() => {
     const total = visitedLocations.length;
-    const interested = visitedLocations.filter(l =>
-      ['Interested', 'Closed Deal'].includes(l.interestLevel)).length;
     const deals = visitedLocations.filter(l => l.interestLevel === 'Closed Deal').length;
-    const followUps = visitedLocations.filter(l =>
-      ['Follow Up', 'Pending'].includes(l.interestLevel)).length;
+    const overdueCount = overdueTasks.length;
+    const todayCount = todayTasks.length;
 
-    return { total, interested, deals, followUps };
-  }, [visitedLocations]);
+    const weekCount = visitedLocations.filter(l => {
+      const days = daysFromToday(l.nextActionDate);
+      return days !== null && days >= 0 && days <= 7;
+    }).length;
 
-  // Styling Objects (Inline for simpler iteration, moved to CSS later if needed)
-  const containerStyle = {
-    padding: 'var(--spacing-md)',
-    height: '100%',
-    overflowY: 'auto'
-  };
-
-  const gridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: 'var(--spacing-md)',
-    marginBottom: 'var(--spacing-lg)'
-  };
-
-  const searchStyle = {
-    width: '100%',
-    background: 'rgba(0,0,0,0.2)',
-    border: '1px solid var(--color-border)',
-    padding: '12px 16px',
-    borderRadius: 'var(--border-radius-full)',
-    color: 'var(--color-text-main)',
-    marginBottom: 'var(--spacing-md)',
-    fontSize: 'var(--font-size-sm)'
-  };
+    return { total, deals, overdueCount, todayCount, weekCount };
+  }, [visitedLocations, overdueTasks, todayTasks]);
 
   return (
-    <div className="dashboard-content" style={containerStyle}>
+    <div className="dashboard-content" style={{
+      padding: 'var(--spacing-md)',
+      height: '100%',
+      overflowY: 'auto'
+    }}>
       <h2 style={{
         color: 'var(--color-text-main)',
         marginBottom: 'var(--spacing-md)',
-        fontSize: 'var(--font-size-lg)'
+        fontSize: 'var(--font-size-lg)',
+        fontWeight: '600'
       }}>
         Overview
       </h2>
 
-      {/* SEARCH BAR */}
+      {/* Search */}
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search locations..."
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
-        style={searchStyle}
+        style={{
+          width: '100%',
+          background: 'var(--color-bg-input)',
+          border: '1px solid var(--color-border)',
+          padding: '10px 14px',
+          borderRadius: 'var(--border-radius-full)',
+          color: 'var(--color-text-main)',
+          marginBottom: 'var(--spacing-md)',
+          fontSize: 'var(--font-size-sm)',
+          outline: 'none'
+        }}
       />
 
-      {/* STATS GRID */}
-      <div style={gridStyle}>
-        <StatsCard
-          title="Total Visits"
-          value={stats.total}
-          icon="📍"
-        />
-        <StatsCard
-          title="Interested"
-          value={stats.interested}
-          icon="🔥"
-          type="primary"
-        />
-        <StatsCard
-          title="Deals"
-          value={stats.deals}
-          icon="💰"
-          type="success"
-        />
-        <StatsCard
-          title="Follow Ups"
-          value={stats.followUps}
-          icon="⏰"
-          type="warning"
-        />
+      {/* Action Stats */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 'var(--spacing-sm)',
+        marginBottom: 'var(--spacing-sm)'
+      }}>
+        <div onClick={() => onViewChange('tasks')} style={{ cursor: 'pointer' }}>
+          <StatsCard title="Overdue" value={stats.overdueCount} type="danger" />
+        </div>
+        <div onClick={() => onViewChange('tasks')} style={{ cursor: 'pointer' }}>
+          <StatsCard title="Due Today" value={stats.todayCount} type="warning" />
+        </div>
       </div>
 
-      {/* ACTION LIST (Placeholder for future "Recent Activity") */}
+      {/* Info Stats */}
       <div style={{
-        background: 'var(--color-bg-glass)',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 'var(--spacing-sm)',
+        marginBottom: 'var(--spacing-sm)'
+      }}>
+        <StatsCard title="This Week" value={stats.weekCount} type="primary" />
+        <StatsCard title="Total Visits" value={stats.total} />
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gap: 'var(--spacing-sm)',
+        marginBottom: 'var(--spacing-lg)'
+      }}>
+        <StatsCard title="Deals Closed" value={stats.deals} type="success" />
+      </div>
+
+      {/* Quick Actions */}
+      <div style={{
+        background: 'var(--color-bg-secondary)',
         borderRadius: 'var(--border-radius-lg)',
         padding: 'var(--spacing-md)',
         border: '1px solid var(--color-border)'
       }}>
-        <h3 style={{
-          fontSize: 'var(--font-size-sm)',
+        <div style={{
+          fontSize: 'var(--font-size-xs)',
           textTransform: 'uppercase',
-          color: 'var(--color-text-secondary)',
-          marginBottom: 'var(--spacing-sm)'
+          color: 'var(--color-text-muted)',
+          marginBottom: 'var(--spacing-sm)',
+          fontWeight: '600',
+          letterSpacing: '0.04em'
         }}>
           Quick Actions
-        </h3>
+        </div>
         <button
           className="btn btn-primary"
-          style={{ width: '100%', justifyContent: 'flex-start', marginBottom: '8px' }}
+          style={{ width: '100%', justifyContent: 'flex-start', marginBottom: '6px' }}
+          onClick={() => onViewChange('tasks')}
+        >
+          Today's Tasks {stats.overdueCount > 0 ? `(${stats.overdueCount} overdue)` : ''}
+        </button>
+        <button
+          className="btn btn-secondary"
+          style={{ width: '100%', justifyContent: 'flex-start', marginBottom: '6px' }}
           onClick={() => onViewChange('map')}
         >
-          🗺️ View Map
+          View Map
         </button>
         <button
           className="btn btn-secondary"
           style={{ width: '100%', justifyContent: 'flex-start' }}
           onClick={() => onViewChange('list')}
         >
-          📋 View All List
+          View All
         </button>
       </div>
     </div>

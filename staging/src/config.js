@@ -68,5 +68,54 @@ export const CONFIG = {
   DEFAULT_NOTE_TEMPLATES: [
     'Owner was not at the place, spoke with worker, got the owners email',
     'Not interested at all'
-  ]
+  ],
+
+  // Pipeline stage values (stored in column S)
+  // These are the strings n8n will filter on
+  PIPELINE_STAGES: {
+    NEW_VISIT:    'new_visit',
+    FOLLOW_UP_1:  'follow_up_1',
+    FOLLOW_UP_2:  'follow_up_2',
+    FOLLOW_UP_3:  'follow_up_3',
+    CLOSED_WON:   'closed_won',
+    CLOSED_LOST:  'closed_lost'
+  },
+
+  // Action type values (stored in column W)
+  ACTION_TYPES: [
+    'physical_visit',
+    'call',
+    'email',
+    'sms',
+    'whatsapp',
+    'send_materials'
+  ],
+
+  // Automation status values (stored in column X)
+  // App writes 'pending'; n8n reads 'pending', then writes 'sent'/'failed'
+  AUTOMATION_STATUS: {
+    PENDING:   'pending',
+    SENT:      'sent',
+    DELIVERED: 'delivered',
+    FAILED:    'failed',
+    SKIPPED:   'skipped'
+  },
+
+  // Materials that can be sent (stored comma-separated in column Y)
+  MATERIALS_LIST: [
+    'samples',
+    'catalog',
+    'price_list',
+    'menu_proposal'
+  ],
+
+  // Smart follow-up preset offsets in days
+  FOLLOW_UP_PRESETS: [
+    { label: '3 Days',  days: 3  },
+    { label: '1 Week',  days: 7  },
+    { label: '2 Weeks', days: 14 }
+  ],
+
+  // How many days ahead qualifies as "upcoming" on Today's Tasks
+  UPCOMING_DAYS_WINDOW: 3
 };
