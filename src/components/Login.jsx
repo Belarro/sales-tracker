@@ -38,6 +38,11 @@ const Login = ({ onLogin }) => {
         window.tokenClient = window.google.accounts.oauth2.initTokenClient({
           client_id: CONFIG.GOOGLE_CLIENT_ID,
           scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+          error_callback: (err) => {
+            console.error('OAuth error_callback:', err);
+            setError('Sign-in error: ' + (err.message || err.type || 'Unknown error. Please try again.'));
+            setLoading(false);
+          },
           callback: async (response) => {
             if (response.error) {
               console.error('OAuth error:', response);
