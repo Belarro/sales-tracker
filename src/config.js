@@ -20,6 +20,16 @@ export const CONFIG = {
   // Your Google Sheet ID
   GOOGLE_SHEET_ID: import.meta.env.VITE_GOOGLE_SHEET_ID || '',
 
+  // Contact role options for the dropdown
+  CONTACT_ROLES: [
+    'Owner',
+    'Head Chef',
+    'Sous Chef',
+    'Manager',
+    'Buyer',
+    'Staff'
+  ],
+
   // Business type options for the dropdown
   BUSINESS_TYPES: [
     'German',

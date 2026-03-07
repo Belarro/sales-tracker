@@ -629,7 +629,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         </form>
 
         {/* ===== SEND FOLLOW-UP ===== */}
-        {location.pipelineStage && location.pipelineStage !== 'closed_won' && location.pipelineStage !== 'closed_lost' && location.contactPerson && (location.directPhone || location.businessPhone) && (
+        {(location.pipelineStage || 'new_visit') !== 'closed_won' && (location.pipelineStage || 'new_visit') !== 'closed_lost' && (
           <div style={{
             marginTop: 'var(--spacing-lg)',
             borderTop: '1px solid var(--color-border)',
@@ -650,14 +650,22 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               color: 'var(--color-text-secondary)',
               marginBottom: 'var(--spacing-sm)'
             }}>
-              {getStageLabel(location.pipelineStage)}
+              {getStageLabel(location.pipelineStage || 'new_visit')}
             </div>
 
             {!showFollowUpPreview ? (
               <button
                 type="button"
                 onClick={() => {
-                  const msg = getFollowUpMessage(location, user?.name);
+                  const locWithForm = {
+                    ...location,
+                    contactPerson: formData.contactPerson || location.contactPerson || 'there',
+                    directPhone: formData.phone || location.directPhone || '',
+                    businessPhone: location.businessPhone || '',
+                    pipelineStage: location.pipelineStage || 'new_visit',
+                    language: formData.language || location.language || 'DE'
+                  };
+                  const msg = getFollowUpMessage(locWithForm, user?.name);
                   setFollowUpMsg(msg);
                   setShowFollowUpPreview(true);
                 }}
