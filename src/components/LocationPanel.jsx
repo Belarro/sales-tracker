@@ -6,8 +6,10 @@
 
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
-import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate } from '../utils/googleSheets.js';
+import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData } from '../utils/googleSheets.js';
 import { calculateNextActionDate } from '../utils/dateUtils.js';
+import { MANUAL_COLOR_OPTIONS, getPinColor, getColorLabel } from '../utils/colorUtils.js';
+import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
 
 const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -19,12 +21,17 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     businessWebsite: '',
     interestLevel: '',
     sampleGiven: 'NO',
-    visitNotes: ''
+    visitNotes: '',
+    pinColor: '',
+    language: ''
   });
   const [followUpDate, setFollowUpDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState({ type: '', text: '' });
   const [noteTemplates, setNoteTemplates] = useState([]);
+  const [showFollowUpPreview, setShowFollowUpPreview] = useState(false);
+  const [followUpMsg, setFollowUpMsg] = useState(null);
+  const [sendingFollowUp, setSendingFollowUp] = useState(false);
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -43,11 +50,19 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         phone: location.directPhone || location.businessPhone || '',
         businessTypes: location.businessTypes || '',
         businessWebsite: location.businessWebsite || '',
-        interestLevel: location.interestLevel || '',
+        interestLevel: location.interestLevel || 'Follow Up',
         sampleGiven: location.sampleGiven || 'NO',
-        visitNotes: ''
+        visitNotes: '',
+        pinColor: location.pinColor || '',
+        language: location.language || ''
       });
-      setFollowUpDate('');
+      // Default follow-up to 1 week if outcome is Follow Up or Interested
+      const interest = location.interestLevel || 'Follow Up';
+      if (interest === 'Follow Up' || interest === 'Interested') {
+        setFollowUpDate(calculateNextActionDate(7));
+      } else {
+        setFollowUpDate('');
+      }
       setSaveMessage({ type: '', text: '' });
     }
   }, [location]);
@@ -59,6 +74,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
 
   const setInterest = (level) => {
     setFormData(prev => ({ ...prev, interestLevel: level }));
+    // Auto-set a default follow-up date when Follow Up or Interested is selected
+    if ((level === 'Follow Up' || level === 'Interested') && !followUpDate) {
+      setFollowUpDate(calculateNextActionDate(7)); // Default: 1 week
+    }
   };
 
   const handleFollowUpPreset = (days) => {
@@ -113,6 +132,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         automationStatus: followUpDate ? 'pending' : '',
         materialsSent: location.materialsSent || '',
         notesInternal: location.notesInternal || '',
+        language: formData.language,
         locationName: location.locationName,
         businessAddress: location.businessAddress,
         timestamp: undefined
@@ -173,11 +193,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   if (!location) return null;
 
   const outcomeColors = {
-    'Interested': '#059669',
-    'Not Interested': '#dc2626',
-    'Closed Deal': '#059669',
-    'Follow Up': '#d97706',
-    'Pending': '#6b7280'
+    'Interested': '#2196F3',
+    'Not Interested': '#f44336',
+    'Closed Deal': '#4caf50',
+    'Follow Up': '#ffc107',
+    'Pending': '#9e9e9e'
   };
 
   const showFollowUp = formData.interestLevel === 'Follow Up' || formData.interestLevel === 'Interested';
@@ -196,6 +216,39 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             }}>
               {location.businessAddress}
             </div>
+            {/* Status indicator — color dot + label */}
+            {(() => {
+              const pinColor = getPinColor(location);
+              const label = getColorLabel(pinColor);
+              return (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginTop: '6px',
+                  padding: '5px 12px',
+                  borderRadius: 'var(--border-radius-full)',
+                  background: `${pinColor}25`,
+                  border: `1.5px solid ${pinColor}60`,
+                }}>
+                  <span style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: pinColor,
+                    flexShrink: 0,
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  }} />
+                  <span style={{
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: '700',
+                    color: 'var(--color-text-main)',
+                  }}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })()}
           </div>
           <button className="close-panel" onClick={onClose}>×</button>
         </div>
@@ -235,13 +288,16 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             </div>
             <div className="form-group">
               <label>Title / Role</label>
-              <input
-                type="text"
+              <select
                 name="contactTitle"
                 value={formData.contactTitle}
                 onChange={handleChange}
-                placeholder="Owner, Manager..."
-              />
+              >
+                <option value="">Select role...</option>
+                {CONFIG.CONTACT_ROLES.map(role => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -383,7 +439,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               value={formData.visitNotes}
               onChange={handleChange}
               placeholder="What happened? Key takeaways?"
-              rows="3"
+              rows="5"
+              style={{ minHeight: '120px' }}
             />
             {formData.visitNotes && !noteTemplates.includes(formData.visitNotes) && (
               <div style={{ textAlign: 'right', marginTop: '4px' }}>
@@ -434,6 +491,79 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   }}
                 >
                   {opt}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Pin Color Override */}
+          <div className="form-group">
+            <label>Pin Color</label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+              {MANUAL_COLOR_OPTIONS.map(opt => {
+                const isSelected = formData.pinColor === opt.value;
+                const isAuto = opt.value === '';
+                return (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, pinColor: opt.value }))}
+                    title={opt.label}
+                    style={{
+                      width: isAuto ? 'auto' : '32px',
+                      height: '32px',
+                      borderRadius: 'var(--border-radius-full)',
+                      border: isSelected
+                        ? '2.5px solid var(--color-text-main)'
+                        : '2px solid var(--color-border)',
+                      background: isAuto ? 'var(--color-bg-secondary)' : opt.value,
+                      cursor: 'pointer',
+                      padding: isAuto ? '0 12px' : '0',
+                      fontSize: 'var(--font-size-xs)',
+                      fontWeight: '600',
+                      color: isAuto ? 'var(--color-text-secondary)' : 'transparent',
+                      transition: 'all 150ms ease',
+                      boxShadow: isSelected && !isAuto ? '0 0 0 2px var(--color-bg-main), 0 0 0 4px var(--color-text-muted)' : 'none',
+                    }}
+                  >
+                    {isAuto ? 'Auto' : ''}
+                  </button>
+                );
+              })}
+            </div>
+            {formData.pinColor && (
+              <div style={{
+                fontSize: 'var(--font-size-xs)',
+                color: 'var(--color-text-muted)',
+                marginTop: '4px'
+              }}>
+                Manual override active
+              </div>
+            )}
+          </div>
+
+          {/* Language */}
+          <div className="form-group">
+            <label>Language</label>
+            <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+              {['DE', 'EN'].map(lang => (
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, language: lang }))}
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    borderRadius: 'var(--border-radius-md)',
+                    border: `1.5px solid ${formData.language === lang ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                    background: formData.language === lang ? 'var(--color-primary)' : 'var(--color-bg-main)',
+                    color: formData.language === lang ? '#fff' : 'var(--color-text-muted)',
+                    fontWeight: '600',
+                    fontSize: 'var(--font-size-sm)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {lang === 'DE' ? '🇩🇪 Deutsch' : '🇬🇧 English'}
                 </button>
               ))}
             </div>
@@ -497,6 +627,170 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             {isSaving ? 'Saving...' : 'Save Visit'}
           </button>
         </form>
+
+        {/* ===== SEND FOLLOW-UP ===== */}
+        {location.pipelineStage && location.pipelineStage !== 'closed_won' && location.pipelineStage !== 'closed_lost' && location.contactPerson && (location.directPhone || location.businessPhone) && (
+          <div style={{
+            marginTop: 'var(--spacing-lg)',
+            borderTop: '1px solid var(--color-border)',
+            paddingTop: 'var(--spacing-md)'
+          }}>
+            <div style={{
+              fontSize: 'var(--font-size-xs)',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              color: 'var(--color-text-muted)',
+              marginBottom: 'var(--spacing-xs)'
+            }}>
+              Follow-up Message
+            </div>
+            <div style={{
+              fontSize: 'var(--font-size-sm)',
+              color: 'var(--color-text-secondary)',
+              marginBottom: 'var(--spacing-sm)'
+            }}>
+              {getStageLabel(location.pipelineStage)}
+            </div>
+
+            {!showFollowUpPreview ? (
+              <button
+                type="button"
+                onClick={() => {
+                  const msg = getFollowUpMessage(location, user?.name);
+                  setFollowUpMsg(msg);
+                  setShowFollowUpPreview(true);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: 'var(--border-radius-md)',
+                  border: '1.5px solid #25D366',
+                  background: '#fff',
+                  color: '#25D366',
+                  fontWeight: '700',
+                  fontSize: 'var(--font-size-sm)',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}
+              >
+                Preview WhatsApp Message
+              </button>
+            ) : followUpMsg ? (
+              <div>
+                {/* Message preview */}
+                <div style={{
+                  background: '#f0f0f0',
+                  borderRadius: '12px',
+                  padding: '14px 16px',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  whiteSpace: 'pre-wrap',
+                  marginBottom: 'var(--spacing-sm)',
+                  maxHeight: '300px',
+                  overflowY: 'auto',
+                  color: '#1a1a1a'
+                }}>
+                  {followUpMsg.body}
+                </div>
+
+                <div style={{
+                  fontSize: '11px',
+                  color: 'var(--color-text-muted)',
+                  marginBottom: 'var(--spacing-sm)'
+                }}>
+                  Language: {followUpMsg.lang} &middot; Stage: {followUpMsg.stage}
+                  {followUpMsg.nextStage && ` → Next: ${getStageLabel(followUpMsg.nextStage)}`}
+                </div>
+
+                <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+                  {/* Send on WhatsApp */}
+                  {followUpMsg.waLink ? (
+                    <a
+                      href={followUpMsg.waLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={async () => {
+                        setSendingFollowUp(true);
+                        try {
+                          const now = new Date().toISOString().split('T')[0];
+                          const nextDate = followUpMsg.nextActionDays
+                            ? calculateNextActionDate(followUpMsg.nextActionDays)
+                            : '';
+                          await updatePipelineData(
+                            location.locationName,
+                            location.businessAddress,
+                            {
+                              pipelineStage: followUpMsg.nextStage,
+                              followUpCount: String((parseInt(location.followUpCount) || 0) + 1),
+                              lastFollowUpDate: now,
+                              nextActionDate: nextDate,
+                              nextActionType: followUpMsg.nextActionType || '',
+                              automationStatus: 'sent'
+                            }
+                          );
+                        } catch (e) {
+                          console.error('Failed to update pipeline:', e);
+                        }
+                        setSendingFollowUp(false);
+                        setShowFollowUpPreview(false);
+                      }}
+                      style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        padding: '14px',
+                        borderRadius: 'var(--border-radius-md)',
+                        background: '#25D366',
+                        color: '#fff',
+                        fontWeight: '700',
+                        fontSize: 'var(--font-size-sm)',
+                        textDecoration: 'none',
+                        fontFamily: 'inherit'
+                      }}
+                    >
+                      {sendingFollowUp ? 'Updating...' : 'Send on WhatsApp'}
+                    </a>
+                  ) : (
+                    <div style={{
+                      flex: 1,
+                      textAlign: 'center',
+                      padding: '14px',
+                      borderRadius: 'var(--border-radius-md)',
+                      background: '#f5f5f5',
+                      color: '#999',
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: '600'
+                    }}>
+                      No phone number
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setShowFollowUpPreview(false)}
+                    style={{
+                      padding: '14px 18px',
+                      borderRadius: 'var(--border-radius-md)',
+                      border: '1.5px solid var(--color-border)',
+                      background: 'var(--color-bg-main)',
+                      color: 'var(--color-text-secondary)',
+                      fontWeight: '600',
+                      fontSize: 'var(--font-size-sm)',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
+                No template available for this stage.
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ===== VISIT HISTORY ===== */}
         {location.visitHistory && location.visitHistory.length > 0 && (
