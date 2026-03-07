@@ -711,54 +711,110 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   {followUpMsg.nextStage && ` → Next: ${getStageLabel(followUpMsg.nextStage)}`}
                 </div>
 
-                <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                  {/* Send on WhatsApp */}
-                  {followUpMsg.waLink ? (
-                    <a
-                      href={followUpMsg.waLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={async () => {
-                        setSendingFollowUp(true);
-                        try {
-                          const now = new Date().toISOString().split('T')[0];
-                          const nextDate = followUpMsg.nextActionDays
-                            ? calculateNextActionDate(followUpMsg.nextActionDays)
-                            : '';
-                          await updatePipelineData(
-                            location.locationName,
-                            location.businessAddress,
-                            {
-                              pipelineStage: followUpMsg.nextStage,
-                              followUpCount: String((parseInt(location.followUpCount) || 0) + 1),
-                              lastFollowUpDate: now,
-                              nextActionDate: nextDate,
-                              nextActionType: followUpMsg.nextActionType || '',
-                              automationStatus: 'sent'
-                            }
-                          );
-                        } catch (e) {
-                          console.error('Failed to update pipeline:', e);
-                        }
-                        setSendingFollowUp(false);
-                        setShowFollowUpPreview(false);
+                {/* Copy + Send buttons */}
+                {followUpMsg.waLink ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                    {/* Copy message button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(followUpMsg.body);
+                        const btn = document.getElementById('copy-msg-btn');
+                        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Message'; }, 1500); }
                       }}
+                      id="copy-msg-btn"
                       style={{
-                        flex: 1,
-                        textAlign: 'center',
-                        padding: '14px',
+                        width: '100%',
+                        padding: '12px',
                         borderRadius: 'var(--border-radius-md)',
-                        background: '#25D366',
-                        color: '#fff',
-                        fontWeight: '700',
+                        border: '1.5px solid var(--color-border)',
+                        background: 'var(--color-bg-main)',
+                        color: 'var(--color-text-main)',
+                        fontWeight: '600',
                         fontSize: 'var(--font-size-sm)',
-                        textDecoration: 'none',
+                        cursor: 'pointer',
                         fontFamily: 'inherit'
                       }}
                     >
-                      {sendingFollowUp ? 'Updating...' : 'Send on WhatsApp'}
-                    </a>
-                  ) : (
+                      Copy Message
+                    </button>
+
+                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+                      {/* Send via WA Business (primary) */}
+                      <a
+                        href={followUpMsg.waLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={async (e) => {
+                          // On Android, try to open WA Business directly
+                          const isAndroid = /android/i.test(navigator.userAgent);
+                          if (isAndroid && followUpMsg.phone) {
+                            e.preventDefault();
+                            // Copy message first since intent doesn't carry text
+                            await navigator.clipboard.writeText(followUpMsg.body);
+                            window.location.href = `intent://send/${followUpMsg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
+                          }
+                          setSendingFollowUp(true);
+                          try {
+                            const now = new Date().toISOString().split('T')[0];
+                            const nextDate = followUpMsg.nextActionDays
+                              ? calculateNextActionDate(followUpMsg.nextActionDays)
+                              : '';
+                            await updatePipelineData(
+                              location.locationName,
+                              location.businessAddress,
+                              {
+                                pipelineStage: followUpMsg.nextStage,
+                                followUpCount: String((parseInt(location.followUpCount) || 0) + 1),
+                                lastFollowUpDate: now,
+                                nextActionDate: nextDate,
+                                nextActionType: followUpMsg.nextActionType || '',
+                                automationStatus: 'sent'
+                              }
+                            );
+                          } catch (err) {
+                            console.error('Failed to update pipeline:', err);
+                          }
+                          setSendingFollowUp(false);
+                          setShowFollowUpPreview(false);
+                        }}
+                        style={{
+                          flex: 1,
+                          textAlign: 'center',
+                          padding: '14px',
+                          borderRadius: 'var(--border-radius-md)',
+                          background: '#25D366',
+                          color: '#fff',
+                          fontWeight: '700',
+                          fontSize: 'var(--font-size-sm)',
+                          textDecoration: 'none',
+                          fontFamily: 'inherit'
+                        }}
+                      >
+                        {sendingFollowUp ? 'Updating...' : 'Send via WA Business'}
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowFollowUpPreview(false)}
+                        style={{
+                          padding: '14px 18px',
+                          borderRadius: 'var(--border-radius-md)',
+                          border: '1.5px solid var(--color-border)',
+                          background: 'var(--color-bg-main)',
+                          color: 'var(--color-text-secondary)',
+                          fontWeight: '600',
+                          fontSize: 'var(--font-size-sm)',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit'
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
                     <div style={{
                       flex: 1,
                       textAlign: 'center',
@@ -769,28 +825,27 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                       fontSize: 'var(--font-size-sm)',
                       fontWeight: '600'
                     }}>
-                      No phone number
+                      No phone number — add one above
                     </div>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => setShowFollowUpPreview(false)}
-                    style={{
-                      padding: '14px 18px',
-                      borderRadius: 'var(--border-radius-md)',
-                      border: '1.5px solid var(--color-border)',
-                      background: 'var(--color-bg-main)',
-                      color: 'var(--color-text-secondary)',
-                      fontWeight: '600',
-                      fontSize: 'var(--font-size-sm)',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit'
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowFollowUpPreview(false)}
+                      style={{
+                        padding: '14px 18px',
+                        borderRadius: 'var(--border-radius-md)',
+                        border: '1.5px solid var(--color-border)',
+                        background: 'var(--color-bg-main)',
+                        color: 'var(--color-text-secondary)',
+                        fontWeight: '600',
+                        fontSize: 'var(--font-size-sm)',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit'
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>

@@ -255,15 +255,25 @@ export function getFollowUpMessage(location, userName, extra) {
   const langTemplate = template[lang] || template['DE'];
   const result = langTemplate(location, userName, extra);
 
-  // Build WhatsApp deep link
+  // Build WhatsApp deep links
   const phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+  const encodedText = phone ? encodeURIComponent(result.body) : '';
+
+  // Regular WhatsApp link (fallback / iOS / desktop)
   const waLink = phone
-    ? `https://wa.me/${phone}?text=${encodeURIComponent(result.body)}`
+    ? `https://wa.me/${phone}?text=${encodedText}`
+    : null;
+
+  // WhatsApp Business link (Android intent targeting com.whatsapp.w4b)
+  const waBusinessLink = phone
+    ? `intent://send/${phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`
     : null;
 
   return {
     ...result,
     waLink,
+    waBusinessLink,
+    phone,
     stage,
     lang
   };
