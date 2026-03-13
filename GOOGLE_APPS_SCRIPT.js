@@ -6,7 +6,7 @@
  * - Pipeline stage (row background tint)
  * - Automation status (column X)
  *
- * COLUMN LAYOUT (A-AC, 29 columns):
+ * COLUMN LAYOUT (A-AB, 28 columns):
  * A: timestamp, B: salesRep, C: locationName, D: businessAddress,
  * E: directLink, F: businessPhone, G: businessEmail, H: businessWebsite,
  * I: contactPerson, J: contactTitle, K: directPhone, L: directEmail,
@@ -15,8 +15,7 @@
  * S: pipelineStage, T: followUpCount, U: lastFollowUpDate,
  * V: nextActionDate, W: nextActionType, X: automationStatus,
  * Y: materialsSent, Z: notesInternal,
- * AA: whatsAppLink (auto-generated), AB: whatToBring (auto-generated),
- * AC: sentCheckbox (tick when sent, auto-advances pipeline)
+ * AA: whatsAppLink (auto-generated), AB: sentCheckbox (tick when sent)
  *
  * INSTALLATION INSTRUCTIONS:
  * 1. Open your Google Sheet
@@ -228,6 +227,9 @@ var DIGEST_EMAIL = 'hello@belarro.com';
 var VARIETIES_LINK_EN = 'https://belarro.com/varieties';
 var VARIETIES_LINK_DE = 'https://belarro.com/de/varieties';
 
+// Price list PDF on Google Drive
+var PRICE_PDF_LINK = 'https://drive.google.com/file/d/1B5-TwZKvrz2Rl_vLOqBN35FG_xXwxvvQ/view?usp=drive_link';
+
 /**
  * Your name for messages
  */
@@ -245,12 +247,14 @@ function getMessageForStage(stage, contactName, locationName, lang) {
       ? 'Hi ' + contactName + ', hier ist Ron von Belarro.\n\n'
         + 'Hat mich gefreut dich heute bei ' + locationName + ' kennenzulernen. Danke dass du dir die Zeit genommen hast.\n\n'
         + 'Hier siehst du was wir alles anbauen:\n' + VARIETIES_LINK_DE + '\n\n'
+        + 'Und hier ist unsere Preisliste:\n' + PRICE_PDF_LINK + '\n\n'
         + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Es ist eine wiederkehrende Bestellung, wir bauen es extra fuer dich an. Du kannst jederzeit aendern oder pausieren.\n\n'
         + 'Wuerde mich freuen wenn du uns ausprobierst.\n\n'
         + 'Ron Ben\nGruender von Belarro'
       : 'Hi ' + contactName + ', this is Ron from Belarro.\n\n'
         + 'It was really nice meeting you today at ' + locationName + '. Thank you for taking the time.\n\n'
         + 'Here is what we grow:\n' + VARIETIES_LINK_EN + '\n\n'
+        + 'And here is our price list:\n' + PRICE_PDF_LINK + '\n\n'
         + 'We deliver every Tuesday. No minimum order, no delivery fee. It is a recurring order, we actually grow it for you. You can always change or cancel anytime.\n\n'
         + 'Would love for you to give us a try.\n\n'
         + 'Ron Ben\nFounder of Belarro',
@@ -722,9 +726,8 @@ function setupAllTriggers() {
 
   Logger.log('All triggers set up: color coding at midnight, digest at 8am, edit trigger for checkboxes.');
 
-  // Refresh sheet links and run digest to test
+  // Refresh sheet links
   refreshSheetLinks();
-  sendFollowUpDigest();
 }
 
 // ============================================================
@@ -745,18 +748,17 @@ function refreshSheetLinks() {
   if (lastRow < 2) return;
 
   // Add headers if missing
-  var headers = dataSheet.getRange(1, 27, 1, 3).getValues()[0];
+  var headers = dataSheet.getRange(1, 27, 1, 2).getValues()[0];
   if (headers[0] !== 'WhatsApp Link') dataSheet.getRange(1, 27).setValue('WhatsApp Link');
-  if (headers[1] !== 'What To Bring') dataSheet.getRange(1, 28).setValue('What To Bring');
-  if (headers[2] !== 'Sent') dataSheet.getRange(1, 29).setValue('Sent');
+  if (headers[1] !== 'Sent') dataSheet.getRange(1, 28).setValue('Sent');
+  // Clear old column AC header and AB "What To Bring" if they exist
+  var oldHeaders = dataSheet.getRange(1, 29, 1, 1).getValues()[0];
+  if (oldHeaders[0] === 'Sent' || oldHeaders[0] === 'What To Bring') dataSheet.getRange(1, 29).setValue('');
 
   // Read all data (A-Z = 26 columns)
   var values = dataSheet.getRange(2, 1, lastRow - 1, 26).getValues();
-  // Read existing AC checkboxes
-  var sentValues = dataSheet.getRange(2, 29, lastRow - 1, 1).getValues();
 
   var waLinks = [];
-  var reminders = [];
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
@@ -796,55 +798,33 @@ function refreshSheetLinks() {
       }
     }
     waLinks.push([waLink]);
-
-    // What to bring/send reminder
-    var reminder = [];
-    if (pipelineStage === 'new_visit') {
-      reminder.push('Send varieties link');
-      if (sampleGiven !== 'YES') reminder.push('Bring samples next visit');
-    } else if (pipelineStage === 'follow_up_1') {
-      reminder.push('Ask about samples');
-    } else if (pipelineStage === 'follow_up_2') {
-      reminder.push('Offer smallest box trial');
-    } else if (pipelineStage === 'follow_up_3') {
-      reminder.push('Share new varieties link');
-    } else if (pipelineStage === 'final_touch') {
-      reminder.push('Last message, keep it soft');
-    }
-    reminders.push([reminder.join(', ')]);
   }
 
-  // Write AA (WhatsApp links) and AB (reminders)
-  dataSheet.getRange(2, 27, waLinks.length, 1).setValues(waLinks);
-  dataSheet.getRange(2, 28, reminders.length, 1).setValues(reminders);
-
-  // Make WhatsApp links clickable with rich text
+  // Build rich text values for AA (WhatsApp links) in one batch
+  var richTexts = [];
   for (var j = 0; j < waLinks.length; j++) {
     if (waLinks[j][0]) {
-      var cell = dataSheet.getRange(j + 2, 27);
-      var richText = SpreadsheetApp.newRichTextValue()
+      richTexts.push([SpreadsheetApp.newRichTextValue()
         .setText('Send WhatsApp')
         .setLinkUrl(waLinks[j][0])
-        .build();
-      cell.setRichTextValue(richText);
-      cell.setFontColor('#25D366');
-      cell.setFontWeight('bold');
+        .build()]);
+    } else {
+      richTexts.push([SpreadsheetApp.newRichTextValue().setText('').build()]);
     }
   }
+  dataSheet.getRange(2, 27, richTexts.length, 1).setRichTextValues(richTexts);
+  // Style the whole AA column at once
+  var aaRange = dataSheet.getRange(2, 27, richTexts.length, 1);
+  aaRange.setFontColor('#25D366');
+  aaRange.setFontWeight('bold');
 
-  // Ensure AC column has checkboxes for active rows
-  for (var k = 0; k < values.length; k++) {
-    var rowArchived = values[k][17];
-    var rowStage = values[k][18];
-    if (rowArchived !== 'YES' && rowStage !== 'closed_won' && rowStage !== 'closed_lost') {
-      var sentCell = dataSheet.getRange(k + 2, 29);
-      // Only add checkbox if not already one
-      var validation = sentCell.getDataValidation();
-      if (!validation || validation.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.CHECKBOX) {
-        sentCell.insertCheckboxes();
-        sentCell.setValue(false);
-      }
-    }
+  // Add checkboxes to AB column (28) in one batch
+  var abRange = dataSheet.getRange(2, 28, values.length, 1);
+  abRange.insertCheckboxes();
+  // Clear old column AC if it had checkboxes
+  if (lastRow > 1) {
+    dataSheet.getRange(2, 29, lastRow - 1, 1).clearContent();
+    dataSheet.getRange(2, 29, lastRow - 1, 1).clearDataValidations();
   }
 
   Logger.log('Sheet links refreshed. Rows: ' + values.length);
@@ -864,11 +844,11 @@ function onSheetEdit(e) {
   var row = e.range.getRow();
   if (row < 2) return;
 
-  // AC = column 29: Sent checkbox ticked
-  if (col === 29 && e.value === 'TRUE') {
+  // AB = column 28: Sent checkbox ticked
+  if (col === 28 && e.value === 'TRUE') {
     markRowAsSent(row);
     // Uncheck the box after processing
-    sheet.getRange(row, 29).setValue(false);
+    sheet.getRange(row, 28).setValue(false);
     // Refresh the WhatsApp link for next stage
     SpreadsheetApp.flush();
     refreshSingleRow(row);
@@ -883,16 +863,14 @@ function onSheetEdit(e) {
       sheet.getRange(row, 22).setValue('');              // V: nextActionDate
       sheet.getRange(row, 24).setValue('');              // X: automationStatus
       sheet.getRange(row, 27).setValue('');              // AA: clear WA link
-      sheet.getRange(row, 28).setValue('Client');        // AB: reminder
-      sheet.getRange(row, 29).setValue(false);           // AC: uncheck
+      sheet.getRange(row, 28).setValue(false);           // AB: uncheck
       Logger.log('Row ' + row + ' converted to client (closed_won)');
     } else if (newInterest === 'Not Interested') {
       sheet.getRange(row, 19).setValue('closed_lost');
       sheet.getRange(row, 22).setValue('');
       sheet.getRange(row, 24).setValue('');
       sheet.getRange(row, 27).setValue('');
-      sheet.getRange(row, 28).setValue('');
-      sheet.getRange(row, 29).setValue(false);
+      sheet.getRange(row, 28).setValue(false);
       Logger.log('Row ' + row + ' marked as closed_lost');
     }
   }
@@ -917,7 +895,6 @@ function refreshSingleRow(rowNum) {
 
   if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
     dataSheet.getRange(rowNum, 27).setValue('');
-    dataSheet.getRange(rowNum, 28).setValue(pipelineStage === 'closed_won' ? 'Client' : '');
     return;
   }
 
@@ -940,22 +917,6 @@ function refreshSingleRow(rowNum) {
       cell.setFontWeight('bold');
     }
   }
-
-  // Update reminder
-  var reminder = '';
-  if (pipelineStage === 'new_visit') {
-    reminder = 'Send varieties link';
-    if (sampleGiven !== 'YES') reminder += ', Bring samples';
-  } else if (pipelineStage === 'follow_up_1') {
-    reminder = 'Ask about samples';
-  } else if (pipelineStage === 'follow_up_2') {
-    reminder = 'Offer smallest box trial';
-  } else if (pipelineStage === 'follow_up_3') {
-    reminder = 'Share new varieties link';
-  } else if (pipelineStage === 'final_touch') {
-    reminder = 'Last message, keep it soft';
-  }
-  dataSheet.getRange(rowNum, 28).setValue(reminder);
 }
 
 /**
