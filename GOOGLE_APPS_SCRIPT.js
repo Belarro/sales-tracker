@@ -222,13 +222,19 @@ var DIGEST_EMAIL = 'hello@belarro.com';
 /**
  * Price list links
  */
-// Links sent to chefs. Using varieties page for now.
-// Switch to /for-chefs once the chef price page is ready.
-var VARIETIES_LINK_EN = 'https://belarro.com/varieties';
-var VARIETIES_LINK_DE = 'https://belarro.com/de/varieties';
+// Links sent to chefs — for-chefs page with ordering system
+var CHEF_LINK_EN = 'https://belarro.com/for-chefs';
+var CHEF_LINK_DE = 'https://belarro.com/de/for-chefs';
 
-// Price list PDF on Google Drive
-var PRICE_PDF_LINK = 'https://drive.google.com/file/d/1B5-TwZKvrz2Rl_vLOqBN35FG_xXwxvvQ/view?usp=drive_link';
+/**
+ * Build personalized for-chefs link with pre-filled restaurant/contact
+ */
+function chefLink(base, contactName, locationName) {
+  var parts = [];
+  if (locationName) parts.push('c=' + encodeURIComponent(locationName));
+  if (contactName) parts.push('n=' + encodeURIComponent(contactName));
+  return parts.length > 0 ? base + '?' + parts.join('&') : base;
+}
 
 /**
  * Your name for messages
@@ -246,17 +252,13 @@ function getMessageForStage(stage, contactName, locationName, lang) {
     'new_visit': isDE
       ? 'Hi ' + contactName + ', hier ist Ron von Belarro.\n\n'
         + 'Hat mich gefreut dich heute bei ' + locationName + ' kennenzulernen. Danke dass du dir die Zeit genommen hast.\n\n'
-        + 'Hier siehst du was wir alles anbauen:\n' + VARIETIES_LINK_DE + '\n\n'
-        + 'Und hier ist unsere Preisliste:\n' + PRICE_PDF_LINK + '\n\n'
-        + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Es ist eine wiederkehrende Bestellung, wir bauen es extra fuer dich an. Du kannst jederzeit aendern oder pausieren.\n\n'
-        + 'Wuerde mich freuen wenn du uns ausprobierst.\n\n'
+        + 'Hier ist alles was wir anbauen mit Preisen — du kannst auch direkt bestellen:\n' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\n'
+        + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.\n\n'
         + 'Ron Ben\nGruender von Belarro'
       : 'Hi ' + contactName + ', this is Ron from Belarro.\n\n'
         + 'It was really nice meeting you today at ' + locationName + '. Thank you for taking the time.\n\n'
-        + 'Here is what we grow:\n' + VARIETIES_LINK_EN + '\n\n'
-        + 'And here is our price list:\n' + PRICE_PDF_LINK + '\n\n'
-        + 'We deliver every Tuesday. No minimum order, no delivery fee. It is a recurring order, we actually grow it for you. You can always change or cancel anytime.\n\n'
-        + 'Would love for you to give us a try.\n\n'
+        + 'Here is everything we grow with prices — you can also order directly:\n' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\n'
+        + 'We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you\'d like to test us.\n\n'
         + 'Ron Ben\nFounder of Belarro',
 
     'follow_up_1': isDE
@@ -274,17 +276,17 @@ function getMessageForStage(stage, contactName, locationName, lang) {
         + 'Ron',
 
     'follow_up_3': isDE
-      ? 'Hi ' + contactName + ', wir haben gerade ein paar neue Sorten dazubekommen. Schau mal rein: ' + VARIETIES_LINK_DE + '\n\n'
+      ? 'Hi ' + contactName + ', wir haben ein paar neue Sorten im Angebot. Schau mal rein: ' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\n'
         + 'Soll ich Dienstag was vorbeibringen?\n\n'
         + 'Ron'
-      : 'Hi ' + contactName + ', we just added some new varieties to the list. Worth a look: ' + VARIETIES_LINK_EN + '\n\n'
+      : 'Hi ' + contactName + ', we just started growing some new varieties. Worth a look: ' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\n'
         + 'Want me to bring some by this Tuesday?\n\n'
         + 'Ron',
 
-    'final_touch': isDE
-      ? 'Hi ' + contactName + ', wir bauen weiterhin tolle Sachen an und wuerden uns freuen mit dir zu arbeiten wenn die Zeit passt. Kein Druck. Ich bin da wenn du mich brauchst.\n\n'
+    'order_confirmed': isDE
+      ? 'Hi ' + contactName + ', du bist im Plan.\n\nErste Lieferung: Dienstag.\n\nRechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.\n\n'
         + 'Ron'
-      : 'Hi ' + contactName + ', we are still growing great stuff and would love to work with you when the time is right. No pressure. I am here whenever you need us.\n\n'
+      : 'Hi ' + contactName + ', you\'re on the schedule.\n\nFirst delivery: Tuesday.\n\nInvoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.\n\n'
         + 'Ron',
 
     'recurring': isDE
@@ -329,8 +331,8 @@ function getNextStage(stage) {
     'new_visit':         'follow_up_1',
     'follow_up_1':       'follow_up_2',
     'follow_up_2':       'follow_up_3',
-    'follow_up_3':       'final_touch',
-    'final_touch':       'closed_lost',
+    'follow_up_3':       'closed_lost',
+    'order_confirmed':   'delivery_reminder',
     'recurring':         'recurring',
     'inactive_2wk':      'inactive_1mo',
     'inactive_1mo':      'closed_lost',
@@ -345,11 +347,11 @@ function getNextStage(stage) {
  */
 function getNextActionDays(stage) {
   var map = {
-    'new_visit':         3,
-    'follow_up_1':       4,
+    'new_visit':         2,
+    'follow_up_1':       3,
     'follow_up_2':       14,
-    'follow_up_3':       16,
-    'final_touch':       null,
+    'follow_up_3':       null,
+    'order_confirmed':   null,
     'recurring':         7,
     'inactive_2wk':      14,
     'inactive_1mo':      null,

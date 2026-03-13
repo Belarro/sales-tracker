@@ -11,8 +11,19 @@
 // - Link to for-chefs page, never PDFs
 // - "du" in German, casual but professional
 
-const PRICE_LIST_LINK_EN = 'https://belarro.com/for-chefs';
-const PRICE_LIST_LINK_DE = 'https://belarro.com/de/for-chefs';
+const BASE_LINK_EN = 'https://belarro.com/for-chefs';
+const BASE_LINK_DE = 'https://belarro.com/de/for-chefs';
+
+/**
+ * Build a personalized for-chefs link with pre-filled restaurant/contact info
+ */
+function priceLink(base, loc) {
+  const params = new URLSearchParams();
+  if (loc.locationName) params.set('c', loc.locationName);
+  if (loc.contactPerson) params.set('n', loc.contactPerson);
+  const qs = params.toString();
+  return qs ? `${base}?${qs}` : base;
+}
 
 /**
  * Get the sender name. Defaults to 'Ron' if not provided.
@@ -35,8 +46,8 @@ export const FOLLOW_UP_TEMPLATES = {
       body: [
         `Hi ${loc.contactPerson}, this is ${senderName(user)} from Belarro.`,
         `Great meeting you at ${loc.locationName} today. Thanks for your time.`,
-        `Here's everything we grow with prices:`,
-        PRICE_LIST_LINK_EN,
+        `Here's everything we grow with prices — you can also order directly:`,
+        priceLink(BASE_LINK_EN, loc),
         `We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you'd like to test us.`
       ].join('\n\n'),
       nextStage: 'follow_up_1',
@@ -47,8 +58,8 @@ export const FOLLOW_UP_TEMPLATES = {
       body: [
         `Hi ${loc.contactPerson}, hier ist ${senderName(user)} von Belarro.`,
         `Hat mich gefreut dich bei ${loc.locationName} kennenzulernen. Danke fuer deine Zeit.`,
-        `Hier ist unsere komplette Liste mit Preisen:`,
-        PRICE_LIST_LINK_DE,
+        `Hier ist unsere komplette Liste mit Preisen — du kannst auch direkt bestellen:`,
+        priceLink(BASE_LINK_DE, loc),
         `Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.`
       ].join('\n\n'),
       nextStage: 'follow_up_1',
@@ -104,13 +115,13 @@ export const FOLLOW_UP_TEMPLATES = {
   // ──────────────────────────────────────────
   follow_up_3: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, we just started growing some new varieties. Worth a look: ${PRICE_LIST_LINK_EN}\n\nWant me to bring some by this Tuesday?`,
+      body: `Hi ${loc.contactPerson}, we just started growing some new varieties. Worth a look: ${priceLink(BASE_LINK_EN, loc)}\n\nWant me to bring some by this Tuesday?`,
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, wir haben ein paar neue Sorten im Angebot. Schau mal rein: ${PRICE_LIST_LINK_DE}\n\nSoll ich Dienstag was vorbeibringen?`,
+      body: `Hi ${loc.contactPerson}, wir haben ein paar neue Sorten im Angebot. Schau mal rein: ${priceLink(BASE_LINK_DE, loc)}\n\nSoll ich Dienstag was vorbeibringen?`,
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
