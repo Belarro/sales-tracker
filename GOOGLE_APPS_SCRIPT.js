@@ -6,7 +6,7 @@
  * - Pipeline stage (row background tint)
  * - Automation status (column X)
  *
- * COLUMN LAYOUT (A-Z, 26 columns):
+ * COLUMN LAYOUT (A-AC, 29 columns):
  * A: timestamp, B: salesRep, C: locationName, D: businessAddress,
  * E: directLink, F: businessPhone, G: businessEmail, H: businessWebsite,
  * I: contactPerson, J: contactTitle, K: directPhone, L: directEmail,
@@ -14,7 +14,9 @@
  * Q: sampleGiven, R: archived,
  * S: pipelineStage, T: followUpCount, U: lastFollowUpDate,
  * V: nextActionDate, W: nextActionType, X: automationStatus,
- * Y: materialsSent, Z: notesInternal
+ * Y: materialsSent, Z: notesInternal,
+ * AA: whatsAppLink (auto-generated), AB: whatToBring (auto-generated),
+ * AC: sentCheckbox (tick when sent, auto-advances pipeline)
  *
  * INSTALLATION INSTRUCTIONS:
  * 1. Open your Google Sheet
@@ -712,8 +714,267 @@ function setupAllTriggers() {
     .atHour(8)
     .create();
 
-  Logger.log('All triggers set up: color coding at midnight, digest at 8am.');
+  // Edit trigger for sent checkbox + interest level changes
+  ScriptApp.newTrigger('onSheetEdit')
+    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    .onEdit()
+    .create();
 
-  // Run digest once to test
+  Logger.log('All triggers set up: color coding at midnight, digest at 8am, edit trigger for checkboxes.');
+
+  // Refresh sheet links and run digest to test
+  refreshSheetLinks();
   sendFollowUpDigest();
+}
+
+// ============================================================
+// IN-SHEET WHATSAPP LINKS + WHAT TO BRING + SENT CHECKBOX
+// ============================================================
+
+/**
+ * Refresh WhatsApp links (AA), what-to-bring reminders (AB),
+ * and ensure sent checkboxes exist (AC) for all rows.
+ * Run manually or on a trigger after new data comes in.
+ */
+function refreshSheetLinks() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+  if (!dataSheet) return;
+
+  var lastRow = dataSheet.getLastRow();
+  if (lastRow < 2) return;
+
+  // Add headers if missing
+  var headers = dataSheet.getRange(1, 27, 1, 3).getValues()[0];
+  if (headers[0] !== 'WhatsApp Link') dataSheet.getRange(1, 27).setValue('WhatsApp Link');
+  if (headers[1] !== 'What To Bring') dataSheet.getRange(1, 28).setValue('What To Bring');
+  if (headers[2] !== 'Sent') dataSheet.getRange(1, 29).setValue('Sent');
+
+  // Read all data (A-Z = 26 columns)
+  var values = dataSheet.getRange(2, 1, lastRow - 1, 26).getValues();
+  // Read existing AC checkboxes
+  var sentValues = dataSheet.getRange(2, 29, lastRow - 1, 1).getValues();
+
+  var waLinks = [];
+  var reminders = [];
+
+  for (var i = 0; i < values.length; i++) {
+    var row = values[i];
+    var locationName  = row[2];  // C
+    var contactPerson = row[8];  // I
+    var directPhone   = row[10]; // K
+    var businessPhone = row[5];  // F
+    var interestLevel = row[13]; // N
+    var sampleGiven   = row[16]; // Q
+    var archived      = row[17]; // R
+    var pipelineStage = row[18]; // S
+    var nextActionDate = row[21]; // V
+    var automationStatus = row[23]; // X
+    var visitNotes    = row[14]; // O
+
+    // Skip archived or closed
+    if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
+      waLinks.push(['']);
+      reminders.push(['']);
+      continue;
+    }
+
+    // Phone number
+    var phone = (directPhone || businessPhone || '').toString().replace(/[^0-9+]/g, '');
+
+    // Language
+    var lang = 'DE';
+    if (visitNotes && visitNotes.toString().toLowerCase().indexOf('[en]') !== -1) lang = 'EN';
+
+    // Generate WhatsApp link
+    var waLink = '';
+    if (phone && pipelineStage) {
+      var message = getMessageForStage(pipelineStage, contactPerson || 'there', locationName, lang);
+      if (message) {
+        var cleanPhone = phone.replace(/^\+/, '');
+        waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message);
+      }
+    }
+    waLinks.push([waLink]);
+
+    // What to bring/send reminder
+    var reminder = [];
+    if (pipelineStage === 'new_visit') {
+      reminder.push('Send varieties link');
+      if (sampleGiven !== 'YES') reminder.push('Bring samples next visit');
+    } else if (pipelineStage === 'follow_up_1') {
+      reminder.push('Ask about samples');
+    } else if (pipelineStage === 'follow_up_2') {
+      reminder.push('Offer smallest box trial');
+    } else if (pipelineStage === 'follow_up_3') {
+      reminder.push('Share new varieties link');
+    } else if (pipelineStage === 'final_touch') {
+      reminder.push('Last message, keep it soft');
+    }
+    reminders.push([reminder.join(', ')]);
+  }
+
+  // Write AA (WhatsApp links) and AB (reminders)
+  dataSheet.getRange(2, 27, waLinks.length, 1).setValues(waLinks);
+  dataSheet.getRange(2, 28, reminders.length, 1).setValues(reminders);
+
+  // Make WhatsApp links clickable with rich text
+  for (var j = 0; j < waLinks.length; j++) {
+    if (waLinks[j][0]) {
+      var cell = dataSheet.getRange(j + 2, 27);
+      var richText = SpreadsheetApp.newRichTextValue()
+        .setText('Send WhatsApp')
+        .setLinkUrl(waLinks[j][0])
+        .build();
+      cell.setRichTextValue(richText);
+      cell.setFontColor('#25D366');
+      cell.setFontWeight('bold');
+    }
+  }
+
+  // Ensure AC column has checkboxes for active rows
+  for (var k = 0; k < values.length; k++) {
+    var rowArchived = values[k][17];
+    var rowStage = values[k][18];
+    if (rowArchived !== 'YES' && rowStage !== 'closed_won' && rowStage !== 'closed_lost') {
+      var sentCell = dataSheet.getRange(k + 2, 29);
+      // Only add checkbox if not already one
+      var validation = sentCell.getDataValidation();
+      if (!validation || validation.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.CHECKBOX) {
+        sentCell.insertCheckboxes();
+        sentCell.setValue(false);
+      }
+    }
+  }
+
+  Logger.log('Sheet links refreshed. Rows: ' + values.length);
+}
+
+/**
+ * onEdit trigger: when you tick the "Sent" checkbox (AC),
+ * auto-advance the pipeline and schedule next follow-up.
+ * Also: when interestLevel (N) changes to "Closed Deal",
+ * set pipeline to closed_won and clear follow-ups.
+ */
+function onSheetEdit(e) {
+  var sheet = e.source.getActiveSheet();
+  if (sheet.getName() !== 'Data') return;
+
+  var col = e.range.getColumn();
+  var row = e.range.getRow();
+  if (row < 2) return;
+
+  // AC = column 29: Sent checkbox ticked
+  if (col === 29 && e.value === 'TRUE') {
+    markRowAsSent(row);
+    // Uncheck the box after processing
+    sheet.getRange(row, 29).setValue(false);
+    // Refresh the WhatsApp link for next stage
+    SpreadsheetApp.flush();
+    refreshSingleRow(row);
+  }
+
+  // N = column 14: Interest level changed
+  if (col === 14) {
+    var newInterest = e.value;
+    if (newInterest === 'Closed Deal') {
+      // Convert to client
+      sheet.getRange(row, 19).setValue('closed_won');   // S: pipelineStage
+      sheet.getRange(row, 22).setValue('');              // V: nextActionDate
+      sheet.getRange(row, 24).setValue('');              // X: automationStatus
+      sheet.getRange(row, 27).setValue('');              // AA: clear WA link
+      sheet.getRange(row, 28).setValue('Client');        // AB: reminder
+      sheet.getRange(row, 29).setValue(false);           // AC: uncheck
+      Logger.log('Row ' + row + ' converted to client (closed_won)');
+    } else if (newInterest === 'Not Interested') {
+      sheet.getRange(row, 19).setValue('closed_lost');
+      sheet.getRange(row, 22).setValue('');
+      sheet.getRange(row, 24).setValue('');
+      sheet.getRange(row, 27).setValue('');
+      sheet.getRange(row, 28).setValue('');
+      sheet.getRange(row, 29).setValue(false);
+      Logger.log('Row ' + row + ' marked as closed_lost');
+    }
+  }
+}
+
+/**
+ * Refresh WhatsApp link and reminder for a single row
+ */
+function refreshSingleRow(rowNum) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+  var row = dataSheet.getRange(rowNum, 1, 1, 26).getValues()[0];
+
+  var locationName  = row[2];
+  var contactPerson = row[8];
+  var directPhone   = row[10];
+  var businessPhone = row[5];
+  var pipelineStage = row[18];
+  var archived      = row[17];
+  var sampleGiven   = row[16];
+  var visitNotes    = row[14];
+
+  if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
+    dataSheet.getRange(rowNum, 27).setValue('');
+    dataSheet.getRange(rowNum, 28).setValue(pipelineStage === 'closed_won' ? 'Client' : '');
+    return;
+  }
+
+  var phone = (directPhone || businessPhone || '').toString().replace(/[^0-9+]/g, '');
+  var lang = 'DE';
+  if (visitNotes && visitNotes.toString().toLowerCase().indexOf('[en]') !== -1) lang = 'EN';
+
+  if (phone && pipelineStage) {
+    var message = getMessageForStage(pipelineStage, contactPerson || 'there', locationName, lang);
+    if (message) {
+      var cleanPhone = phone.replace(/^\+/, '');
+      var waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message);
+      var cell = dataSheet.getRange(rowNum, 27);
+      var richText = SpreadsheetApp.newRichTextValue()
+        .setText('Send WhatsApp')
+        .setLinkUrl(waLink)
+        .build();
+      cell.setRichTextValue(richText);
+      cell.setFontColor('#25D366');
+      cell.setFontWeight('bold');
+    }
+  }
+
+  // Update reminder
+  var reminder = '';
+  if (pipelineStage === 'new_visit') {
+    reminder = 'Send varieties link';
+    if (sampleGiven !== 'YES') reminder += ', Bring samples';
+  } else if (pipelineStage === 'follow_up_1') {
+    reminder = 'Ask about samples';
+  } else if (pipelineStage === 'follow_up_2') {
+    reminder = 'Offer smallest box trial';
+  } else if (pipelineStage === 'follow_up_3') {
+    reminder = 'Share new varieties link';
+  } else if (pipelineStage === 'final_touch') {
+    reminder = 'Last message, keep it soft';
+  }
+  dataSheet.getRange(rowNum, 28).setValue(reminder);
+}
+
+/**
+ * Set up the onEdit trigger for the sent checkbox and interest level changes.
+ * Run this ONCE.
+ */
+function setupEditTrigger() {
+  // Remove existing onSheetEdit triggers
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === 'onSheetEdit') {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+
+  ScriptApp.newTrigger('onSheetEdit')
+    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    .onEdit()
+    .create();
+
+  Logger.log('Edit trigger set up for sent checkbox and interest level changes.');
 }
