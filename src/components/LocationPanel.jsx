@@ -304,13 +304,60 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           <div className="form-row">
             <div className="form-group">
               <label>Phone</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Phone number"
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+                <input
+                  type="tel"
+                  value={(() => {
+                    const match = formData.phone.match(/^(\+\d{1,4})/);
+                    return match ? match[1] : '+49';
+                  })()}
+                  onChange={(e) => {
+                    let code = e.target.value.replace(/[^\d+]/g, '');
+                    if (!code.startsWith('+')) code = '+' + code;
+                    const currentNumber = formData.phone.replace(/^\+\d{1,4}/, '');
+                    setFormData(prev => ({ ...prev, phone: currentNumber ? code + currentNumber : '' }));
+                  }}
+                  onFocus={(e) => {
+                    if (!formData.phone) {
+                      setFormData(prev => ({ ...prev, phone: '+49' }));
+                    }
+                  }}
+                  style={{
+                    width: '58px',
+                    padding: '9px 6px',
+                    textAlign: 'center',
+                    background: 'var(--color-bg-secondary)',
+                    border: '1px solid var(--color-border)',
+                    borderRight: 'none',
+                    borderRadius: 'var(--border-radius-md) 0 0 var(--border-radius-md)',
+                    color: 'var(--color-text-main)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: '600'
+                  }}
+                />
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone.replace(/^\+\d{1,4}/, '')}
+                  onChange={(e) => {
+                    let val = e.target.value.replace(/[^\d\s]/g, '');
+                    val = val.replace(/^0+/, '');
+                    const match = formData.phone.match(/^(\+\d{1,4})/);
+                    const code = match ? match[1] : '+49';
+                    setFormData(prev => ({ ...prev, phone: val ? code + val.replace(/\s/g, '') : '' }));
+                  }}
+                  onFocus={(e) => {
+                    if (!formData.phone) {
+                      setFormData(prev => ({ ...prev, phone: '+49' }));
+                    }
+                  }}
+                  placeholder="170 1234567"
+                  style={{
+                    borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
+                    flex: 1
+                  }}
+                />
+              </div>
             </div>
             <div className="form-group">
               <label>Email</label>

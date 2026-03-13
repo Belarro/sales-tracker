@@ -291,8 +291,10 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
     const timestamp = getCurrentTimestamp();
 
     // Sanitize data to prevent Formula Injection
+    // Phone numbers starting with + are safe, don't prefix them
+    const isPhoneNumber = (val) => /^\+\d/.test(val);
     const sanitize = (val) => {
-      if (typeof val === 'string' && (val.startsWith('=') || val.startsWith('+') || val.startsWith('-') || val.startsWith('@'))) {
+      if (typeof val === 'string' && !isPhoneNumber(val) && (val.startsWith('=') || val.startsWith('+') || val.startsWith('-') || val.startsWith('@'))) {
         return "'" + val;
       }
       return val;

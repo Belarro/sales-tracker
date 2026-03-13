@@ -208,3 +208,512 @@ function manualRun() {
   colorFollowUpDates();
   colorAutomationStatus();
 }
+
+// ============================================================
+// FOLLOW-UP DIGEST — sends you a daily email with WhatsApp links
+// ============================================================
+
+/**
+ * YOUR EMAIL — change this to the email you want to receive the digest at.
+ */
+var DIGEST_EMAIL = 'hello@belarro.com';
+
+/**
+ * Price list links
+ */
+// Links sent to chefs. Using varieties page for now.
+// Switch to /for-chefs once the chef price page is ready.
+var VARIETIES_LINK_EN = 'https://belarro.com/varieties';
+var VARIETIES_LINK_DE = 'https://belarro.com/de/varieties';
+
+/**
+ * Your name for messages
+ */
+var SENDER_NAME = 'Ron';
+
+/**
+ * Follow-up message templates by pipeline stage.
+ * Each returns the message text for WhatsApp.
+ */
+function getMessageForStage(stage, contactName, locationName, lang) {
+  var isDE = (lang || 'DE').toUpperCase() === 'DE';
+
+  var templates = {
+    'new_visit': isDE
+      ? 'Hi ' + contactName + ', hier ist Ron von Belarro.\n\n'
+        + 'Hat mich gefreut dich heute bei ' + locationName + ' kennenzulernen. Danke dass du dir die Zeit genommen hast.\n\n'
+        + 'Hier siehst du was wir alles anbauen:\n' + VARIETIES_LINK_DE + '\n\n'
+        + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Es ist eine wiederkehrende Bestellung, wir bauen es extra fuer dich an. Du kannst jederzeit aendern oder pausieren.\n\n'
+        + 'Wuerde mich freuen wenn du uns ausprobierst.\n\n'
+        + 'Ron Ben\nGruender von Belarro'
+      : 'Hi ' + contactName + ', this is Ron from Belarro.\n\n'
+        + 'It was really nice meeting you today at ' + locationName + '. Thank you for taking the time.\n\n'
+        + 'Here is what we grow:\n' + VARIETIES_LINK_EN + '\n\n'
+        + 'We deliver every Tuesday. No minimum order, no delivery fee. It is a recurring order, we actually grow it for you. You can always change or cancel anytime.\n\n'
+        + 'Would love for you to give us a try.\n\n'
+        + 'Ron Ben\nFounder of Belarro',
+
+    'follow_up_1': isDE
+      ? 'Hi ' + contactName + ', hast du die Proben schon probiert? Wuerde mich freuen zu hoeren wie sie dir geschmeckt haben und ob du irgendwelche Anmerkungen hast.\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', did you get a chance to try the samples? Would love to hear how you liked them and if you have any thoughts.\n\n'
+        + 'Ron',
+
+    'follow_up_2': isDE
+      ? 'Hi ' + contactName + ', wollte nur nochmal erinnern: keine Mindestbestellung, keine Lieferkosten. Du kannst auch einfach die kleinste Box bestellen um uns einmal zu testen. Und du kannst jederzeit aendern oder pausieren.\n\n'
+        + 'Schreib mir einfach wenn du soweit bist.\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', just a quick reminder: no minimum order, no delivery fee. You can order even the smallest box just to give us a try. And you can always change or cancel anytime.\n\n'
+        + 'Just write me whenever you are ready.\n\n'
+        + 'Ron',
+
+    'follow_up_3': isDE
+      ? 'Hi ' + contactName + ', wir haben gerade ein paar neue Sorten dazubekommen. Schau mal rein: ' + VARIETIES_LINK_DE + '\n\n'
+        + 'Soll ich Dienstag was vorbeibringen?\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', we just added some new varieties to the list. Worth a look: ' + VARIETIES_LINK_EN + '\n\n'
+        + 'Want me to bring some by this Tuesday?\n\n'
+        + 'Ron',
+
+    'final_touch': isDE
+      ? 'Hi ' + contactName + ', wir bauen weiterhin tolle Sachen an und wuerden uns freuen mit dir zu arbeiten wenn die Zeit passt. Kein Druck. Ich bin da wenn du mich brauchst.\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', we are still growing great stuff and would love to work with you when the time is right. No pressure. I am here whenever you need us.\n\n'
+        + 'Ron',
+
+    'recurring': isDE
+      ? 'Hi ' + contactName + ', Bestellung fuer Dienstag? Gleich wie letzte Woche oder Aenderungen?\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', order for Tuesday? Same as last week or any changes?\n\n'
+        + 'Ron',
+
+    'inactive_2wk': isDE
+      ? 'Hi ' + contactName + ', alles gut bei euch? Soll ich Dienstag wieder was mitbringen?\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', everything good with you? Want me to bring something this Tuesday?\n\n'
+        + 'Ron',
+
+    'inactive_1mo': isDE
+      ? 'Hi ' + contactName + ', falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', if your menu changed and you need different varieties, happy to adjust. I am here when you need us.\n\n'
+        + 'Ron',
+
+    'post_delivery': isDE
+      ? 'Hi ' + contactName + ', wie war alles? Irgendwas das du fuer naechste Woche aendern wuerdest?\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', how did everything look? Anything you would change for next week?\n\n'
+        + 'Ron',
+
+    'delivery_reminder': isDE
+      ? 'Hi ' + contactName + ', kurze Bestaetigung fuer morgen: deine Bestellung kommt gegen Mittag. Bis dann!\n\n'
+        + 'Ron'
+      : 'Hi ' + contactName + ', just confirming for tomorrow: your order will arrive around noon. See you then!\n\n'
+        + 'Ron'
+  };
+
+  return templates[stage] || null;
+}
+
+/**
+ * Next stage mapping — after sending, what stage comes next
+ */
+function getNextStage(stage) {
+  var map = {
+    'new_visit':         'follow_up_1',
+    'follow_up_1':       'follow_up_2',
+    'follow_up_2':       'follow_up_3',
+    'follow_up_3':       'final_touch',
+    'final_touch':       'closed_lost',
+    'recurring':         'recurring',
+    'inactive_2wk':      'inactive_1mo',
+    'inactive_1mo':      'closed_lost',
+    'post_delivery':     'recurring',
+    'delivery_reminder': 'post_delivery'
+  };
+  return map[stage] || null;
+}
+
+/**
+ * Days until next follow-up after this stage
+ */
+function getNextActionDays(stage) {
+  var map = {
+    'new_visit':         3,
+    'follow_up_1':       4,
+    'follow_up_2':       14,
+    'follow_up_3':       16,
+    'final_touch':       null,
+    'recurring':         7,
+    'inactive_2wk':      14,
+    'inactive_1mo':      null,
+    'post_delivery':     4,
+    'delivery_reminder': 2
+  };
+  return map[stage] !== undefined ? map[stage] : null;
+}
+
+/**
+ * Human-readable stage labels
+ */
+function getStageLabel(stage) {
+  var labels = {
+    'new_visit':         'Send prices & intro',
+    'follow_up_1':       'How were the samples?',
+    'follow_up_2':       'Reminder, just try us',
+    'follow_up_3':       'New varieties',
+    'final_touch':       'Final soft touch',
+    'recurring':         'Weekly order',
+    'inactive_2wk':      'Inactive 2wk',
+    'inactive_1mo':      'Inactive 1mo',
+    'post_delivery':     'Post-delivery',
+    'delivery_reminder': 'Delivery reminder',
+    'order_confirmed':   'Order confirmed'
+  };
+  return labels[stage] || stage;
+}
+
+/**
+ * MAIN FUNCTION: Send Follow-Up Digest Email
+ *
+ * Scans the sheet for contacts due today or overdue,
+ * builds an email with WhatsApp click-to-send links,
+ * and optionally marks rows as "digest_sent" to avoid duplicates.
+ */
+function sendFollowUpDigest() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+
+  if (!dataSheet) {
+    Logger.log('Data sheet not found');
+    return;
+  }
+
+  var lastRow = dataSheet.getLastRow();
+  if (lastRow < 2) {
+    Logger.log('No data rows');
+    return;
+  }
+
+  var dataRange = dataSheet.getRange(2, 1, lastRow - 1, 26);
+  var values = dataRange.getValues();
+
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  var overdue = [];
+  var dueToday = [];
+  var upcoming = []; // next 3 days
+
+  for (var i = 0; i < values.length; i++) {
+    var row = values[i];
+    var rowNum = i + 2;
+
+    var locationName    = row[2];  // C
+    var businessAddress = row[3];  // D
+    var businessPhone   = row[5];  // F
+    var contactPerson   = row[8];  // I
+    var contactTitle    = row[9];  // J
+    var directPhone     = row[10]; // K
+    var directEmail     = row[11]; // L
+    var interestLevel   = row[13]; // N
+    var visitNotes      = row[14]; // O
+    var sampleGiven     = row[16]; // Q
+    var archived        = row[17]; // R
+    var pipelineStage   = row[18]; // S
+    var nextActionDate  = row[21]; // V
+    var nextActionType  = row[22]; // W
+    var automationStatus = row[23]; // X
+
+    // Skip archived, closed, already sent, or no action date
+    if (archived === 'YES') continue;
+    if (pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') continue;
+    if (automationStatus === 'sent' || automationStatus === 'delivered') continue;
+    if (!nextActionDate) continue;
+
+    var actionDate = new Date(nextActionDate);
+    if (isNaN(actionDate.getTime())) continue;
+    actionDate.setHours(0, 0, 0, 0);
+
+    var diffDays = Math.floor((today - actionDate) / 86400000);
+
+    // Only include overdue (diffDays > 0), today (diffDays === 0), and upcoming (diffDays -1 to -3)
+    if (diffDays < -3) continue;
+
+    // Pick the phone number (prefer direct, fallback to business)
+    var phone = (directPhone || businessPhone || '').toString().replace(/[^0-9+]/g, '');
+
+    // Detect language from notes or default to DE
+    var lang = 'DE';
+    if (visitNotes && visitNotes.toString().toLowerCase().indexOf('[en]') !== -1) lang = 'EN';
+
+    // Get the message template
+    var message = getMessageForStage(pipelineStage, contactPerson || 'there', locationName, lang);
+
+    // Build WhatsApp link
+    var waLink = '';
+    if (phone && message) {
+      var cleanPhone = phone.replace(/^\+/, '');
+      waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message);
+    }
+
+    var entry = {
+      rowNum: rowNum,
+      locationName: locationName,
+      businessAddress: businessAddress,
+      contactPerson: contactPerson || '(no name)',
+      contactTitle: contactTitle,
+      phone: phone,
+      email: directEmail,
+      stage: pipelineStage,
+      stageLabel: getStageLabel(pipelineStage),
+      interestLevel: interestLevel,
+      sampleGiven: sampleGiven,
+      visitNotes: visitNotes ? visitNotes.toString().substring(0, 100) : '',
+      nextActionDate: Utilities.formatDate(actionDate, Session.getScriptTimeZone(), 'dd.MM.yyyy'),
+      diffDays: diffDays,
+      waLink: waLink,
+      message: message
+    };
+
+    if (diffDays > 0) {
+      overdue.push(entry);
+    } else if (diffDays === 0) {
+      dueToday.push(entry);
+    } else {
+      upcoming.push(entry);
+    }
+  }
+
+  var totalDue = overdue.length + dueToday.length;
+
+  if (totalDue === 0 && upcoming.length === 0) {
+    Logger.log('No follow-ups due. No email sent.');
+    return;
+  }
+
+  // Build the HTML email
+  var html = '';
+  html += '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">';
+  html += '<h2 style="color:#2d5016;">Belarro Follow-Up Digest</h2>';
+  html += '<p style="color:#666;">' + Utilities.formatDate(today, Session.getScriptTimeZone(), 'EEEE, dd MMMM yyyy') + '</p>';
+
+  if (totalDue > 0) {
+    html += '<p style="font-size:18px;font-weight:bold;">' + totalDue + ' contact' + (totalDue > 1 ? 's' : '') + ' to follow up with today</p>';
+  } else {
+    html += '<p style="color:#666;">No follow-ups due today. Here\'s what\'s coming up:</p>';
+  }
+
+  // Render a section
+  function renderSection(title, color, entries) {
+    if (entries.length === 0) return '';
+    var s = '<h3 style="color:' + color + ';border-bottom:2px solid ' + color + ';padding-bottom:5px;">' + title + ' (' + entries.length + ')</h3>';
+
+    for (var j = 0; j < entries.length; j++) {
+      var e = entries[j];
+      s += '<div style="background:#f9f9f9;border-left:4px solid ' + color + ';padding:12px;margin:10px 0;border-radius:4px;">';
+
+      // Header: restaurant name + contact
+      s += '<div style="font-size:16px;font-weight:bold;">' + e.locationName + '</div>';
+      s += '<div style="color:#555;">' + e.contactPerson;
+      if (e.contactTitle) s += ' (' + e.contactTitle + ')';
+      s += '</div>';
+
+      // Stage + due date
+      s += '<div style="margin:6px 0;">';
+      s += '<span style="background:#e8f5e9;padding:2px 8px;border-radius:3px;font-size:12px;">' + e.stageLabel + '</span>';
+      if (e.diffDays > 0) {
+        s += ' <span style="color:#d32f2f;font-weight:bold;">' + e.diffDays + ' day' + (e.diffDays > 1 ? 's' : '') + ' overdue</span>';
+      } else if (e.diffDays === 0) {
+        s += ' <span style="color:#f57c00;font-weight:bold;">Due today</span>';
+      } else {
+        s += ' <span style="color:#666;">Due ' + e.nextActionDate + '</span>';
+      }
+      s += '</div>';
+
+      // Notes snippet
+      if (e.visitNotes) {
+        s += '<div style="color:#777;font-size:12px;font-style:italic;margin:4px 0;">"' + e.visitNotes + '"</div>';
+      }
+
+      // Sample given
+      if (e.sampleGiven === 'YES') {
+        s += '<div style="color:#2d5016;font-size:12px;">Sample was given</div>';
+      }
+
+      // ACTION BUTTONS
+      s += '<div style="margin-top:10px;">';
+
+      // WhatsApp button (the main one)
+      if (e.waLink) {
+        s += '<a href="' + e.waLink + '" style="display:inline-block;background:#25D366;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:8px;">Send WhatsApp</a>';
+      }
+
+      // If they have email, add email link
+      if (e.email) {
+        var emailSubject = encodeURIComponent('Belarro - ' + e.stageLabel);
+        var emailBody = e.message ? encodeURIComponent(e.message) : '';
+        s += '<a href="mailto:' + e.email + '?subject=' + emailSubject + '&body=' + emailBody + '" style="display:inline-block;background:#1976D2;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:8px;">Send Email</a>';
+      }
+
+      // Phone call link
+      if (e.phone) {
+        s += '<a href="tel:' + e.phone + '" style="display:inline-block;background:#666;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Call</a>';
+      }
+
+      s += '</div>'; // buttons
+      s += '</div>'; // card
+    }
+    return s;
+  }
+
+  html += renderSection('OVERDUE', '#d32f2f', overdue);
+  html += renderSection('DUE TODAY', '#f57c00', dueToday);
+  html += renderSection('COMING UP (next 3 days)', '#666666', upcoming);
+
+  // Footer
+  html += '<hr style="margin:20px 0;border:none;border-top:1px solid #ddd;">';
+  html += '<p style="color:#999;font-size:12px;">After sending each message, open the sheet and update column X (automationStatus) to "sent".</p>';
+  html += '<p style="color:#999;font-size:12px;">Or just reply "done" to this email and I\'ll mark them.</p>';
+  html += '</div>';
+
+  // Send the email
+  var subject = totalDue > 0
+    ? 'Belarro: ' + totalDue + ' follow-up' + (totalDue > 1 ? 's' : '') + ' due today'
+    : 'Belarro: ' + upcoming.length + ' follow-up' + (upcoming.length > 1 ? 's' : '') + ' coming up';
+
+  MailApp.sendEmail({
+    to: DIGEST_EMAIL,
+    subject: subject,
+    htmlBody: html
+  });
+
+  Logger.log('Digest sent to ' + DIGEST_EMAIL + '. Overdue: ' + overdue.length + ', Today: ' + dueToday.length + ', Upcoming: ' + upcoming.length);
+}
+
+/**
+ * Mark a row as "sent" after you've sent the WhatsApp message.
+ * Call from sheet: =markAsSent(rowNumber)
+ * Or run manually and pass the row number.
+ */
+function markRowAsSent(rowNum) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+
+  var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+
+  // Update automationStatus (X = 24) to "sent"
+  dataSheet.getRange(rowNum, 24).setValue('sent');
+
+  // Update lastFollowUpDate (U = 21)
+  dataSheet.getRange(rowNum, 21).setValue(today);
+
+  // Increment followUpCount (T = 20)
+  var currentCount = dataSheet.getRange(rowNum, 20).getValue() || 0;
+  dataSheet.getRange(rowNum, 20).setValue(Number(currentCount) + 1);
+
+  // Advance pipeline stage (S = 19)
+  var currentStage = dataSheet.getRange(rowNum, 19).getValue();
+  var nextStage = getNextStage(currentStage);
+  if (nextStage) {
+    dataSheet.getRange(rowNum, 19).setValue(nextStage);
+  }
+
+  // Set next action date (V = 22)
+  var nextDays = getNextActionDays(currentStage);
+  if (nextDays) {
+    var nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + nextDays);
+    var nextDateStr = Utilities.formatDate(nextDate, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    dataSheet.getRange(rowNum, 22).setValue(nextDateStr);
+    // Reset automationStatus for next round
+    dataSheet.getRange(rowNum, 24).setValue('pending');
+  } else {
+    // No more follow-ups — clear next action date
+    dataSheet.getRange(rowNum, 22).setValue('');
+    dataSheet.getRange(rowNum, 24).setValue('');
+  }
+
+  Logger.log('Row ' + rowNum + ' marked as sent. Next stage: ' + (nextStage || 'none'));
+}
+
+/**
+ * Bulk mark — after you send all messages, run this to mark all
+ * today's due contacts as sent and auto-advance their pipeline.
+ */
+function markAllDueAsSent() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+  var lastRow = dataSheet.getLastRow();
+  if (lastRow < 2) return;
+
+  var values = dataSheet.getRange(2, 1, lastRow - 1, 26).getValues();
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var count = 0;
+
+  for (var i = 0; i < values.length; i++) {
+    var row = values[i];
+    var archived = row[17];
+    var pipelineStage = row[18];
+    var nextActionDate = row[21];
+    var automationStatus = row[23];
+
+    if (archived === 'YES') continue;
+    if (pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') continue;
+    if (automationStatus === 'sent' || automationStatus === 'delivered') continue;
+    if (!nextActionDate) continue;
+
+    var actionDate = new Date(nextActionDate);
+    if (isNaN(actionDate.getTime())) continue;
+    actionDate.setHours(0, 0, 0, 0);
+
+    if (actionDate <= today) {
+      markRowAsSent(i + 2);
+      count++;
+    }
+  }
+
+  Logger.log('Marked ' + count + ' rows as sent and advanced pipeline stages.');
+}
+
+// ============================================================
+// SETUP — run this once to add the digest trigger
+// ============================================================
+
+/**
+ * Set up ALL triggers: color coding (midnight) + follow-up digest (8am).
+ * Run this ONCE after pasting the script.
+ */
+function setupAllTriggers() {
+  // Remove all existing triggers
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    ScriptApp.deleteTrigger(triggers[i]);
+  }
+
+  // Color coding at midnight
+  ScriptApp.newTrigger('colorFollowUpDates')
+    .timeBased()
+    .everyDays(1)
+    .atHour(0)
+    .create();
+
+  ScriptApp.newTrigger('colorAutomationStatus')
+    .timeBased()
+    .everyDays(1)
+    .atHour(0)
+    .create();
+
+  // Follow-up digest at 8am every day
+  ScriptApp.newTrigger('sendFollowUpDigest')
+    .timeBased()
+    .everyDays(1)
+    .atHour(8)
+    .create();
+
+  Logger.log('All triggers set up: color coding at midnight, digest at 8am.');
+
+  // Run digest once to test
+  sendFollowUpDigest();
+}
