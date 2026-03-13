@@ -12,6 +12,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
   const overlayMarkersRef = useRef([]);
+  const userMarkerRef = useRef(null);
   const [showHint, setShowHint] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
@@ -99,7 +100,8 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
           // Use default location (Berlin)
           const defaultLocation = { lat: 52.520008, lng: 13.404954 };
           createMap(defaultLocation);
-        }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
       );
     } else {
       const defaultLocation = { lat: 52.520008, lng: 13.404954 };
@@ -381,7 +383,10 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     overlayMarkersRef.current.push(overlay);
   };
 
-  const createUserLocationMarker = (position, map) => {
+  const createUserLocationMarker = (positionInput, map) => {
+    const position = positionInput instanceof window.google.maps.LatLng
+      ? positionInput
+      : new window.google.maps.LatLng(positionInput.lat, positionInput.lng);
     const markerDiv = document.createElement('div');
     markerDiv.style.position = 'absolute';
     markerDiv.style.width = '20px';
@@ -452,8 +457,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
     const overlay = new UserLocationOverlay(position, markerDiv);
     overlay.setMap(map);
-    // Reuse overlayMarkersRef or make a new one if we want to track it separately
-    // For now, pushing it here ensures it gets cleaned up on unmount
+    userMarkerRef.current = overlay;
     overlayMarkersRef.current.push(overlay);
   };
 
@@ -473,11 +477,17 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
           setUserLocation(newLocation);
           mapInstanceRef.current.setCenter(newLocation);
           mapInstanceRef.current.setZoom(15);
+          // Update the blue user location marker
+          if (userMarkerRef.current) {
+            userMarkerRef.current.position = new window.google.maps.LatLng(newLocation.lat, newLocation.lng);
+            userMarkerRef.current.draw();
+          }
         },
         (error) => {
           console.error('Geolocation error:', error);
           alert('Unable to get your location. Please check your browser permissions.');
-        }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     }
   };
@@ -574,7 +584,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
           alert('Unable to get your location. Please check your browser permissions.');
           setIsLocating(false);
         },
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } catch (error) {
       console.error('Quick Add error:', error);

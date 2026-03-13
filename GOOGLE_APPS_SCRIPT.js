@@ -777,7 +777,6 @@ function refreshSheetLinks() {
     // Skip archived or closed
     if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
       waLinks.push(['']);
-      reminders.push(['']);
       continue;
     }
 

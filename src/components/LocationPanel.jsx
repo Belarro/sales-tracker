@@ -671,8 +671,57 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               marginTop: 'var(--spacing-md)'
             }}
           >
-            {isSaving ? 'Saving...' : 'Save Visit'}
+            {isSaving ? 'Saving...' : (location.visitHistory?.length ? 'Update Visit' : 'Save Visit')}
           </button>
+
+          {/* QUICK WHATSAPP — one-tap send first follow-up */}
+          {formData.phone && formData.contactPerson && (
+            (() => {
+              const locForMsg = {
+                ...location,
+                contactPerson: formData.contactPerson,
+                directPhone: formData.phone,
+                businessPhone: location.businessPhone || '',
+                pipelineStage: location.pipelineStage || 'new_visit',
+                language: formData.language || location.language || 'DE',
+                locationName: location.locationName
+              };
+              const msg = getFollowUpMessage(locForMsg, user?.name);
+              if (!msg || !msg.waLink) return null;
+              return (
+                <a
+                  href={msg.waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    const isAndroid = /android/i.test(navigator.userAgent);
+                    if (isAndroid && msg.phone) {
+                      e.preventDefault();
+                      navigator.clipboard.writeText(msg.body);
+                      window.location.href = `intent://send/${msg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
+                    }
+                  }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'center',
+                    padding: '14px',
+                    borderRadius: 'var(--border-radius-md)',
+                    background: '#25D366',
+                    color: '#fff',
+                    fontWeight: '700',
+                    fontSize: 'var(--font-size-md)',
+                    textDecoration: 'none',
+                    fontFamily: 'inherit',
+                    marginTop: 'var(--spacing-sm)',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  Send WhatsApp Follow-up
+                </a>
+              );
+            })()
+          )}
         </form>
 
         {/* ===== SEND FOLLOW-UP ===== */}
