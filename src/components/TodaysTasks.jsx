@@ -115,10 +115,13 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
   const handleDone = (e) => {
     e.stopPropagation();
     if (marking || !followUp) return;
-    // Pre-fill with auto-calculated date or tomorrow as default
-    const defaultDate = followUp.nextActionDays
-      ? calculateNextActionDate(followUp.nextActionDays)
-      : toISODateString(new Date(Date.now() + 86400000));
+    // Use specific date if template provides one (e.g., Monday before delivery)
+    // Otherwise calculate from nextActionDays, or default to tomorrow
+    const defaultDate = followUp._nextActionDate
+      ? toISODateString(followUp._nextActionDate)
+      : followUp.nextActionDays
+        ? calculateNextActionDate(followUp.nextActionDays)
+        : toISODateString(new Date(Date.now() + 86400000));
     setPickedDate(defaultDate);
     setShowDatePicker(true);
   };

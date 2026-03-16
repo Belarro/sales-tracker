@@ -137,6 +137,9 @@ export const FOLLOW_UP_TEMPLATES = {
     EN: (loc, user, extra) => {
       const delivery = calculateDeliveryDate(extra?.productSlugs || [], new Date());
       const dateStr = delivery.deliveryDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      // Next action = Monday before delivery (1 day before Tuesday)
+      const monday = new Date(delivery.deliveryDate);
+      monday.setDate(monday.getDate() - 1);
       return {
         body: [
           `Hi ${loc.contactPerson}, you're on the schedule.`,
@@ -144,9 +147,10 @@ export const FOLLOW_UP_TEMPLATES = {
           extra?.items ? extra.items : '[Items and prices here]',
           `Invoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.`
         ].join('\n\n'),
-        nextStage: 'post_delivery',
-        nextActionDays: 3,
+        nextStage: 'delivery_reminder',
+        nextActionDays: null, // use _nextActionDate instead
         nextActionType: 'whatsapp',
+        _nextActionDate: monday,
         _deliveryDate: delivery.deliveryISO,
         _slowestProduct: delivery.slowestProduct
       };
@@ -154,6 +158,8 @@ export const FOLLOW_UP_TEMPLATES = {
     DE: (loc, user, extra) => {
       const delivery = calculateDeliveryDate(extra?.productSlugs || [], new Date());
       const dateStr = delivery.deliveryDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+      const monday = new Date(delivery.deliveryDate);
+      monday.setDate(monday.getDate() - 1);
       return {
         body: [
           `Hi ${loc.contactPerson}, du bist im Plan.`,
@@ -161,13 +167,32 @@ export const FOLLOW_UP_TEMPLATES = {
           extra?.items ? extra.items : '[Artikel und Preise hier]',
           `Rechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.`
         ].join('\n\n'),
-        nextStage: 'post_delivery',
-        nextActionDays: 3,
+        nextStage: 'delivery_reminder',
+        nextActionDays: null,
         nextActionType: 'whatsapp',
+        _nextActionDate: monday,
         _deliveryDate: delivery.deliveryISO,
         _slowestProduct: delivery.slowestProduct
       };
     }
+  },
+
+  // ──────────────────────────────────────────
+  // DELIVERY REMINDER — Monday before first Tuesday delivery (one-time)
+  // ──────────────────────────────────────────
+  delivery_reminder: {
+    EN: (loc, user, extra) => ({
+      body: `Hi ${loc.contactPerson}, just confirming — your first delivery is arriving tomorrow (Tuesday). See you then.`,
+      nextStage: 'post_delivery',
+      nextActionDays: 2, // Wednesday after delivery
+      nextActionType: 'whatsapp'
+    }),
+    DE: (loc, user, extra) => ({
+      body: `Hi ${loc.contactPerson}, kurze Bestaetigung — deine erste Lieferung kommt morgen (Dienstag). Bis dann.`,
+      nextStage: 'post_delivery',
+      nextActionDays: 2,
+      nextActionType: 'whatsapp'
+    })
   },
 
   // ──────────────────────────────────────────
@@ -278,6 +303,7 @@ export function getStageLabel(stage) {
     follow_up_2: 'Low barrier — test us',
     follow_up_3: 'Re-engage with something new',
     order_confirmed: 'Confirm order details',
+    delivery_reminder: 'Remind: delivery tomorrow',
     post_delivery: 'Post-delivery check-in',
     active_customer: 'Monthly check-in',
     inactive: 'Inactive — last attempt',
