@@ -139,8 +139,8 @@ export const FOLLOW_UP_TEMPLATES = {
         extra?.items ? extra.items : '[Items and prices here]',
         `Invoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.`
       ].join('\n\n'),
-      nextStage: 'delivery_reminder',
-      nextActionDays: null, // set manually based on next Tuesday
+      nextStage: 'post_delivery',
+      nextActionDays: 3, // check in after first delivery
       nextActionType: 'whatsapp'
     }),
     DE: (loc, user, extra) => ({
@@ -150,96 +150,60 @@ export const FOLLOW_UP_TEMPLATES = {
         extra?.items ? extra.items : '[Artikel und Preise hier]',
         `Rechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.`
       ].join('\n\n'),
-      nextStage: 'delivery_reminder',
-      nextActionDays: null,
+      nextStage: 'post_delivery',
+      nextActionDays: 3,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // DELIVERY REMINDER — Monday before Tuesday delivery
-  // ──────────────────────────────────────────
-  delivery_reminder: {
-    EN: (loc, user, extra) => ({
-      body: `Hi ${loc.contactPerson}, confirming tomorrow: ${extra?.items || 'your order'} around ${extra?.time || 'noon'}. See you then.`,
-      nextStage: 'post_delivery',
-      nextActionDays: 2, // Wednesday
-      nextActionType: 'whatsapp'
-    }),
-    DE: (loc, user, extra) => ({
-      body: `Hi ${loc.contactPerson}, kurze Bestaetigung fuer morgen: ${extra?.items || 'deine Bestellung'} gegen ${extra?.time || 'Mittag'}. Bis dann.`,
-      nextStage: 'post_delivery',
-      nextActionDays: 2,
-      nextActionType: 'whatsapp'
-    })
-  },
-
-  // ──────────────────────────────────────────
-  // POST DELIVERY — Wednesday check-in
+  // POST DELIVERY — one-time check after first delivery
   // ──────────────────────────────────────────
   post_delivery: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, how did everything look yesterday? Anything you'd change for next week?`,
-      nextStage: 'recurring',
-      nextActionDays: 4, // Sunday
+      body: `Hi ${loc.contactPerson}, how did everything look? Anything you'd change for next time?`,
+      nextStage: 'active_customer',
+      nextActionDays: 30,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, wie war alles gestern? Irgendwas das du fuer naechste Woche aendern wuerdest?`,
-      nextStage: 'recurring',
-      nextActionDays: 4,
+      body: `Hi ${loc.contactPerson}, wie war alles? Irgendwas das du beim naechsten Mal aendern wuerdest?`,
+      nextStage: 'active_customer',
+      nextActionDays: 30,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // RECURRING — Sunday order reminder
+  // ACTIVE CUSTOMER — monthly check-in (not weekly!)
   // ──────────────────────────────────────────
-  recurring: {
+  active_customer: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, order for Tuesday? Same as last week or any changes?`,
-      nextStage: 'recurring',
-      nextActionDays: 7,
+      body: `Hi ${loc.contactPerson}, just checking in. Everything working well with the deliveries? Need to swap or add anything?`,
+      nextStage: 'active_customer',
+      nextActionDays: 42, // ~6 weeks until next check-in
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, Bestellung fuer Dienstag? Gleich wie letzte Woche oder Aenderungen?`,
-      nextStage: 'recurring',
-      nextActionDays: 7,
+      body: `Hi ${loc.contactPerson}, kurzes Check-in. Laeuft alles gut mit den Lieferungen? Willst du was tauschen oder dazunehmen?`,
+      nextStage: 'active_customer',
+      nextActionDays: 42,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // INACTIVE 2 WEEKS — gentle check-in
+  // INACTIVE — no orders for a while
   // ──────────────────────────────────────────
-  inactive_2wk: {
+  inactive: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, everything good with you? Want me to bring something this Tuesday?`,
-      nextStage: 'inactive_1mo',
-      nextActionDays: 14,
-      nextActionType: 'whatsapp'
-    }),
-    DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, alles gut bei euch? Soll ich Dienstag wieder was mitbringen?`,
-      nextStage: 'inactive_1mo',
-      nextActionDays: 14,
-      nextActionType: 'whatsapp'
-    })
-  },
-
-  // ──────────────────────────────────────────
-  // INACTIVE 1 MONTH — last attempt
-  // ──────────────────────────────────────────
-  inactive_1mo: {
-    EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, if your menu has changed and you need different varieties, happy to adjust. We're here when you need us.`,
+      body: `Hi ${loc.contactPerson}, haven't heard from you in a while. If your menu has changed and you need different varieties, happy to adjust. We're here when you need us.`,
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.`,
+      body: `Hi ${loc.contactPerson}, lange nichts gehoert. Falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.`,
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
@@ -300,11 +264,9 @@ export function getStageLabel(stage) {
     follow_up_2: 'Low barrier — test us',
     follow_up_3: 'Re-engage with something new',
     order_confirmed: 'Confirm order details',
-    delivery_reminder: 'Delivery reminder (Monday)',
     post_delivery: 'Post-delivery check-in',
-    recurring: 'Weekly order reminder',
-    inactive_2wk: 'Inactive 2 weeks',
-    inactive_1mo: 'Inactive 1 month',
+    active_customer: 'Monthly check-in',
+    inactive: 'Inactive — last attempt',
     closed_won: 'Active customer',
     closed_lost: 'Closed — no follow-up'
   };

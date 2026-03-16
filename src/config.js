@@ -83,12 +83,16 @@ export const CONFIG = {
   // Pipeline stage values (stored in column S)
   // These are the strings n8n will filter on
   PIPELINE_STAGES: {
-    NEW_VISIT:    'new_visit',
-    FOLLOW_UP_1:  'follow_up_1',
-    FOLLOW_UP_2:  'follow_up_2',
-    FOLLOW_UP_3:  'follow_up_3',
-    CLOSED_WON:   'closed_won',
-    CLOSED_LOST:  'closed_lost'
+    NEW_VISIT:        'new_visit',
+    FOLLOW_UP_1:      'follow_up_1',
+    FOLLOW_UP_2:      'follow_up_2',
+    FOLLOW_UP_3:      'follow_up_3',
+    ORDER_CONFIRMED:  'order_confirmed',
+    POST_DELIVERY:    'post_delivery',
+    ACTIVE_CUSTOMER:  'active_customer',
+    INACTIVE:         'inactive',
+    CLOSED_WON:       'closed_won',
+    CLOSED_LOST:      'closed_lost'
   },
 
   // Action type values (stored in column W)
