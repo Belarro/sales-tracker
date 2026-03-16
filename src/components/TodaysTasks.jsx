@@ -36,6 +36,11 @@ const Icons = {
       <polyline points="20 6 9 17 4 12" />
     </svg>
   ),
+  menu: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  ),
 };
 
 // ── Task Card with quick actions ──
@@ -88,6 +93,23 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
       window.location.origin + '/?view=tasks'
     );
     window.open(url, '_blank');
+  };
+
+  const handleSendMenu = (e) => {
+    e.stopPropagation();
+    const lang = (location.language || 'DE').toUpperCase();
+    const base = lang === 'EN' ? 'https://belarro.com/for-chefs' : 'https://belarro.com/de/for-chefs';
+    const params = new URLSearchParams();
+    if (location.locationName) params.set('c', location.locationName);
+    if (location.contactPerson) params.set('n', location.contactPerson);
+    const qs = params.toString();
+    const link = qs ? `${base}?${qs}` : base;
+    const phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+    if (phone) {
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(link)}`, '_blank');
+    } else {
+      navigator.clipboard.writeText(link);
+    }
   };
 
   const handleDone = (e) => {
@@ -245,6 +267,15 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
           >
             {Icons.calendar}
             <span>Calendar</span>
+          </button>
+
+          <button
+            className="task-action-btn task-action-menu"
+            onClick={handleSendMenu}
+            title="Send menu & prices link"
+          >
+            {Icons.menu}
+            <span>Menu</span>
           </button>
 
           <button

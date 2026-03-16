@@ -842,6 +842,15 @@ body {
   background: var(--color-primary-light);
 }
 
+.task-action-menu {
+  color: #7c3aed;
+  border-color: #ede9fe;
+}
+
+.task-action-menu:hover {
+  background: #ede9fe;
+}
+
 /* ============================================
    MORNING SUMMARY BANNER
    ============================================ */
