@@ -13,6 +13,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
   const markersRef = useRef([]);
   const overlayMarkersRef = useRef([]);
   const userMarkerRef = useRef(null);
+  const customMarkerClickedRef = useRef(false);
   const [showHint, setShowHint] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
@@ -126,10 +127,14 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
     // Add click listener for Google Maps POI (Points of Interest) markers
     map.addListener('click', async (event) => {
+      // Skip if a custom marker was just clicked (prevents double-fire)
+      if (customMarkerClickedRef.current) {
+        customMarkerClickedRef.current = false;
+        return;
+      }
       // Check if a POI was clicked
       if (event.placeId) {
         event.stop(); // Prevent default info window
-        console.log('Google Maps POI clicked, Place ID:', event.placeId);
 
         try {
           // Use NEW Places API (not the legacy PlacesService)
@@ -339,6 +344,8 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     if (locationData) {
       markerDiv.addEventListener('click', (e) => {
         e.stopPropagation();
+        customMarkerClickedRef.current = true;
+        setTimeout(() => { customMarkerClickedRef.current = false; }, 300);
         onLocationSelect({
           ...locationData,
           name: locationData.locationName,

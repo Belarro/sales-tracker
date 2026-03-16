@@ -11,6 +11,38 @@ import { calculateNextActionDate } from '../utils/dateUtils.js';
 import { MANUAL_COLOR_OPTIONS, getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
 
+/**
+ * Generate a vCard (.vcf) and trigger Android "Add Contact" dialog.
+ * Includes CATEGORIES and X-ANDROID-CUSTOM for "Belarro" group assignment.
+ */
+function saveToContacts({ contactPerson, contactTitle, phone, email, locationName }) {
+  const [firstName, ...lastParts] = (contactPerson || '').trim().split(/\s+/);
+  const lastName = lastParts.join(' ');
+  const vcf = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    `N:${lastName || ''};${firstName || ''};;;`,
+    `FN:${contactPerson || ''}`,
+    contactTitle ? `TITLE:${contactTitle}` : '',
+    locationName ? `ORG:${locationName}` : '',
+    phone ? `TEL;TYPE=CELL:${phone}` : '',
+    email ? `EMAIL;TYPE=WORK:${email}` : '',
+    'CATEGORIES:Belarro',
+    'X-ANDROID-CUSTOM:vnd.android.cursor.item/group_membership;Belarro;;;;;;;;;;;;;',
+    'END:VCARD'
+  ].filter(Boolean).join('\r\n');
+
+  const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${(contactPerson || 'contact').replace(/\s+/g, '_')}.vcf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     contactPerson: '',
@@ -28,6 +60,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [followUpDate, setFollowUpDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState({ type: '', text: '' });
+  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [noteTemplates, setNoteTemplates] = useState([]);
   const [showFollowUpPreview, setShowFollowUpPreview] = useState(false);
   const [followUpMsg, setFollowUpMsg] = useState(null);
@@ -46,8 +79,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       setFormData({
         contactPerson: location.contactPerson || '',
         contactTitle: location.contactTitle || '',
-        email: location.directEmail || location.businessEmail || '',
-        phone: location.directPhone || location.businessPhone || '',
+        email: location.directEmail || '',
+        phone: location.directPhone || '',
         businessTypes: location.businessTypes || '',
         businessWebsite: location.businessWebsite || '',
         interestLevel: location.interestLevel || 'Follow Up',
@@ -64,6 +97,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         setFollowUpDate('');
       }
       setSaveMessage({ type: '', text: '' });
+      setSavedSuccessfully(false);
     }
   }, [location]);
 
@@ -123,7 +157,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         directEmail: formData.email,
         businessTypes: formData.businessTypes,
         businessWebsite: formData.businessWebsite,
-        // Pipeline fields — auto-set, not manual
+        followUpDate: followUpDate,
         pipelineStage: pipelineStage,
         followUpCount: String(newCount),
         lastFollowUpDate: location.lastFollowUpDate || '',
@@ -142,13 +176,24 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
 
       if (success) {
         setSaveMessage({ type: 'success', text: 'Visit logged' });
-        setTimeout(() => { onSave(); onClose(); }, 1200);
+        setSavedSuccessfully(true);
+        onSave(); // Refresh the locations list
+        setTimeout(() => { onClose(); }, 1200);
       } else {
         setSaveMessage({ type: 'error', text: 'Failed to save. Try again.' });
       }
     } catch (error) {
-      console.error(error);
-      setSaveMessage({ type: 'error', text: 'Error saving data.' });
+      console.error('Save error details:', error);
+      const apiError = error?.result?.error;
+      let msg = 'Error saving data. Check your connection and try again.';
+      if (error.message?.includes('session has expired')) {
+        msg = 'Session expired. Please sign out and sign back in.';
+      } else if (apiError) {
+        msg = `API Error ${apiError.code}: ${apiError.message}`;
+      } else if (error.message) {
+        msg = error.message;
+      }
+      setSaveMessage({ type: 'error', text: msg });
     } finally {
       setIsSaving(false);
     }
@@ -370,6 +415,40 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               />
             </div>
           </div>
+
+          {/* Save to Contacts — shown when there's a name + phone */}
+          {formData.contactPerson && formData.phone && (
+            <button
+              type="button"
+              onClick={() => saveToContacts({
+                contactPerson: formData.contactPerson,
+                contactTitle: formData.contactTitle,
+                phone: formData.phone,
+                email: formData.email,
+                locationName: location.locationName
+              })}
+              style={{
+                width: '100%',
+                padding: '10px',
+                marginBottom: 'var(--spacing-md)',
+                borderRadius: 'var(--border-radius-md)',
+                border: '1.5px solid var(--color-primary)',
+                background: 'var(--color-bg-main)',
+                color: 'var(--color-primary)',
+                fontWeight: '600',
+                fontSize: 'var(--font-size-sm)',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <span style={{ fontSize: '16px' }}>+</span>
+              Save {formData.contactPerson.split(' ')[0]} to Contacts (Belarro)
+            </button>
+          )}
 
           <div className="form-row">
             <div className="form-group">
@@ -671,16 +750,16 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               marginTop: 'var(--spacing-md)'
             }}
           >
-            {isSaving ? 'Saving...' : (location.visitHistory?.length ? 'Update Visit' : 'Save Visit')}
+            {isSaving ? 'Saving...' : savedSuccessfully ? 'Edit Location' : (location.visitHistory?.length ? 'Update Visit' : 'Save Visit')}
           </button>
 
           {/* QUICK WHATSAPP — one-tap send first follow-up */}
-          {formData.phone && formData.contactPerson && (
+          {(formData.phone || location.businessPhone) && formData.contactPerson && (
             (() => {
               const locForMsg = {
                 ...location,
                 contactPerson: formData.contactPerson,
-                directPhone: formData.phone,
+                directPhone: formData.phone || location.businessPhone || '',
                 businessPhone: location.businessPhone || '',
                 pipelineStage: location.pipelineStage || 'new_visit',
                 language: formData.language || location.language || 'DE',

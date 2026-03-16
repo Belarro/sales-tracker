@@ -42,6 +42,8 @@ const Icons = {
 const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
   const [copied, setCopied] = useState(false);
   const [marking, setMarking] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [pickedDate, setPickedDate] = useState('');
   const days = location._daysUntilAction;
 
   let urgencyLabel = '';
@@ -88,16 +90,26 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     window.open(url, '_blank');
   };
 
-  const handleDone = async (e) => {
+  const handleDone = (e) => {
     e.stopPropagation();
     if (marking || !followUp) return;
+    // Pre-fill with auto-calculated date or tomorrow as default
+    const defaultDate = followUp.nextActionDays
+      ? calculateNextActionDate(followUp.nextActionDays)
+      : toISODateString(new Date(Date.now() + 86400000));
+    setPickedDate(defaultDate);
+    setShowDatePicker(true);
+  };
+
+  const handleConfirmDone = async (e) => {
+    e.stopPropagation();
+    if (marking) return;
     setMarking(true);
+    setShowDatePicker(false);
     try {
       const count = parseInt(location.followUpCount || '0', 10) + 1;
       const today = toISODateString(new Date());
-      const nextDate = followUp.nextActionDays
-        ? calculateNextActionDate(followUp.nextActionDays)
-        : '';
+      const nextDate = pickedDate || '';
       // Build follow-up history log in notesInternal (column Z)
       const stageName = (followUp.stage || 'unknown').replace(/_/g, ' ');
       const logEntry = `[${today}] ${stageName} sent`;
@@ -245,6 +257,47 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
             <span>{marking ? 'Saving...' : 'Done'}</span>
           </button>
         </div>
+
+        {/* Date picker for next follow-up */}
+        {showDatePicker && (
+          <div className="task-date-picker" onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: '6px', color: 'var(--color-text-main)' }}>
+              Next follow-up date:
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                type="date"
+                value={pickedDate}
+                onChange={(e) => setPickedDate(e.target.value)}
+                min={toISODateString(new Date())}
+                style={{
+                  flex: 1,
+                  padding: '8px 10px',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--border-radius-md)',
+                  fontSize: 'var(--font-size-sm)',
+                  background: 'var(--color-bg-input, #fff)',
+                }}
+              />
+              <button
+                className="task-action-btn task-action-done"
+                onClick={handleConfirmDone}
+                disabled={marking}
+                style={{ padding: '8px 14px' }}
+              >
+                {Icons.check}
+                <span>Confirm</span>
+              </button>
+              <button
+                className="task-action-btn"
+                onClick={(e) => { e.stopPropagation(); setShowDatePicker(false); }}
+                style={{ padding: '8px 10px' }}
+              >
+                <span>Cancel</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
