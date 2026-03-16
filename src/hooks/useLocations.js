@@ -42,10 +42,10 @@ export const useLocations = () => {
     }, [visitedLocations, searchQuery]);
 
     // Pipeline: locations that need follow-up action
+    // Contacts with no nextActionDate are treated as "due today" (new visits needing first follow-up)
     const taskLocations = useMemo(() => {
         return visitedLocations
             .filter(loc => {
-                if (!loc.nextActionDate) return false;
                 if (['Not Interested', 'Closed Deal'].includes(loc.interestLevel)) return false;
                 if (loc.pipelineStage === 'closed_won' || loc.pipelineStage === 'closed_lost') return false;
                 if (['sent', 'delivered'].includes(loc.automationStatus)) return false;
@@ -53,7 +53,7 @@ export const useLocations = () => {
             })
             .map(loc => ({
                 ...loc,
-                _daysUntilAction: daysFromToday(loc.nextActionDate)
+                _daysUntilAction: loc.nextActionDate ? daysFromToday(loc.nextActionDate) : 0
             }));
     }, [visitedLocations]);
 
