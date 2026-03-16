@@ -1,0 +1,16 @@
+{
+  "name": "Sales Tracker",
+  "short_name": "SalesTracker",
+  "description": "Field sales CRM for food business",
+  "start_url": "/?view=tasks",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

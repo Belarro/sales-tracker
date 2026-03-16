@@ -74,9 +74,9 @@ export function useBackButton({
         return;
       }
 
-      // Priority 4: Go back to map view if on another view
-      if (currentView !== 'map') {
-        setCurrentView('map');
+      // Priority 4: Go back to tasks view if on another view
+      if (currentView !== 'tasks') {
+        setCurrentView('tasks');
         return;
       }
 

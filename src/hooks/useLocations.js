@@ -10,7 +10,9 @@ export const useLocations = () => {
     const [visitedLocations, setVisitedLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [currentView, setCurrentView] = useState('map'); // 'map' or 'list'
+    // Check URL params for view (e.g. from notification tap)
+    const urlView = new URLSearchParams(window.location.search).get('view');
+    const [currentView, setCurrentView] = useState(urlView || 'tasks'); // 'tasks', 'map', or 'list'
     const [loadError, setLoadError] = useState('');
 
     // Fetch locations from Google Sheets

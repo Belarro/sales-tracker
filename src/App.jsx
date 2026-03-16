@@ -21,6 +21,7 @@ import LoadingScreen from './components/LoadingScreen.jsx';
 import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { useLocations } from './hooks/useLocations';
 import { useBackButton } from './hooks/useBackButton';
+import { useSettings } from './hooks/useSettings';
 
 function App() {
   // Use Custom Hooks
@@ -42,8 +43,32 @@ function App() {
     upcomingTasks
   } = useLocations();
 
+  const [settings, updateSetting] = useSettings();
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+
+  // Register service worker for PWA + notifications
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  }, []);
+
+  // Show morning notification on app open (if enabled)
+  useEffect(() => {
+    if (!authorized || !settings.notificationsEnabled) return;
+    if (Notification.permission !== 'granted') return;
+    const today = new Date().toISOString().slice(0, 10);
+    if (settings.lastNotifDate === today) return;
+    const totalTasks = overdueTasks.length + todayTasks.length + upcomingTasks.length;
+    if (totalTasks === 0) return;
+    const parts = [];
+    if (overdueTasks.length) parts.push(`${overdueTasks.length} overdue`);
+    if (todayTasks.length) parts.push(`${todayTasks.length} today`);
+    if (upcomingTasks.length) parts.push(`${upcomingTasks.length} upcoming`);
+    new Notification('Sales Tracker', { body: parts.join(' + '), tag: 'morning-summary' });
+    updateSetting('lastNotifDate', today);
+  }, [authorized, settings.notificationsEnabled, settings.lastNotifDate, overdueTasks.length, todayTasks.length, upcomingTasks.length, updateSetting]);
 
   // Handle mobile back button (double-press to exit)
   useBackButton({
@@ -129,6 +154,8 @@ function App() {
       currentView={currentView}
       onViewChange={setCurrentView}
       overdueCount={overdueTasks.length}
+      settings={settings}
+      onUpdateSetting={updateSetting}
     >
       {/* Dashboard Panel */}
       {showDashboard && (
@@ -190,6 +217,9 @@ function App() {
             upcomingTasks={upcomingTasks}
             onLocationSelect={handleLocationSelect}
             onRefresh={refreshLocations}
+            user={user}
+            settings={settings}
+            onUpdateSetting={updateSetting}
           />
         ) : null}
       </div>
