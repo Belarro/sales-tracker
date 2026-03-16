@@ -20,6 +20,7 @@ import LoadingScreen from './components/LoadingScreen.jsx';
 // Hooks
 import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { useLocations } from './hooks/useLocations';
+import { useBackButton } from './hooks/useBackButton';
 
 function App() {
   // Use Custom Hooks
@@ -43,6 +44,18 @@ function App() {
 
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+
+  // Handle mobile back button (double-press to exit)
+  useBackButton({
+    selectedLocation,
+    clearSelection,
+    showDashboard,
+    setShowDashboard,
+    showAdminSetup,
+    setShowAdminSetup,
+    currentView,
+    setCurrentView,
+  });
 
   // Load locations when authorized
   useEffect(() => {
