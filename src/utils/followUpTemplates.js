@@ -11,6 +11,8 @@
 // - Link to for-chefs page, never PDFs
 // - "du" in German, casual but professional
 
+import { calculateDeliveryDate } from './dateUtils.js';
+
 const BASE_LINK_EN = 'https://belarro.com/for-chefs';
 const BASE_LINK_DE = 'https://belarro.com/de/for-chefs';
 
@@ -132,28 +134,40 @@ export const FOLLOW_UP_TEMPLATES = {
   // ORDER CONFIRMED — confirm items + logistics
   // ──────────────────────────────────────────
   order_confirmed: {
-    EN: (loc, user, extra) => ({
-      body: [
-        `Hi ${loc.contactPerson}, you're on the schedule.`,
-        `First delivery: Tuesday${extra?.time ? ' around ' + extra.time : ''}.`,
-        extra?.items ? extra.items : '[Items and prices here]',
-        `Invoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.`
-      ].join('\n\n'),
-      nextStage: 'post_delivery',
-      nextActionDays: 3, // check in after first delivery
-      nextActionType: 'whatsapp'
-    }),
-    DE: (loc, user, extra) => ({
-      body: [
-        `Hi ${loc.contactPerson}, du bist im Plan.`,
-        `Erste Lieferung: Dienstag${extra?.time ? ' gegen ' + extra.time : ''}.`,
-        extra?.items ? extra.items : '[Artikel und Preise hier]',
-        `Rechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.`
-      ].join('\n\n'),
-      nextStage: 'post_delivery',
-      nextActionDays: 3,
-      nextActionType: 'whatsapp'
-    })
+    EN: (loc, user, extra) => {
+      const delivery = calculateDeliveryDate(extra?.productSlugs || [], new Date());
+      const dateStr = delivery.deliveryDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      return {
+        body: [
+          `Hi ${loc.contactPerson}, you're on the schedule.`,
+          `First delivery: ${dateStr}.`,
+          extra?.items ? extra.items : '[Items and prices here]',
+          `Invoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.`
+        ].join('\n\n'),
+        nextStage: 'post_delivery',
+        nextActionDays: 3,
+        nextActionType: 'whatsapp',
+        _deliveryDate: delivery.deliveryISO,
+        _slowestProduct: delivery.slowestProduct
+      };
+    },
+    DE: (loc, user, extra) => {
+      const delivery = calculateDeliveryDate(extra?.productSlugs || [], new Date());
+      const dateStr = delivery.deliveryDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+      return {
+        body: [
+          `Hi ${loc.contactPerson}, du bist im Plan.`,
+          `Erste Lieferung: ${dateStr}.`,
+          extra?.items ? extra.items : '[Artikel und Preise hier]',
+          `Rechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.`
+        ].join('\n\n'),
+        nextStage: 'post_delivery',
+        nextActionDays: 3,
+        nextActionType: 'whatsapp',
+        _deliveryDate: delivery.deliveryISO,
+        _slowestProduct: delivery.slowestProduct
+      };
+    }
   },
 
   // ──────────────────────────────────────────
