@@ -94,16 +94,25 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     setMarking(true);
     try {
       const count = parseInt(location.followUpCount || '0', 10) + 1;
+      const today = toISODateString(new Date());
       const nextDate = followUp.nextActionDays
         ? calculateNextActionDate(followUp.nextActionDays)
         : '';
+      // Build follow-up history log in notesInternal (column Z)
+      const stageName = (followUp.stage || 'unknown').replace(/_/g, ' ');
+      const logEntry = `[${today}] ${stageName} sent`;
+      const existingNotes = location.notesInternal || '';
+      const updatedNotes = existingNotes
+        ? `${existingNotes} | ${logEntry}`
+        : logEntry;
       await updatePipelineData(location.locationName, location.businessAddress, {
         pipelineStage: followUp.nextStage || location.pipelineStage,
         followUpCount: String(count),
-        lastFollowUpDate: toISODateString(new Date()),
+        lastFollowUpDate: today,
         nextActionDate: nextDate,
         nextActionType: followUp.nextActionType || '',
         automationStatus: 'sent',
+        notesInternal: updatedNotes,
       });
       if (onRefresh) onRefresh();
     } catch (err) {
