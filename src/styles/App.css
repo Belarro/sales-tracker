@@ -713,7 +713,18 @@ body {
    ============================================ */
 @media (min-width: 769px) {
   .bottom-nav {
-    display: none;
+    position: fixed;
+    top: 52px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    z-index: 90;
+    border-top: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .main-content {
+    padding-top: 52px;
   }
 }
 
