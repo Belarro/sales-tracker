@@ -957,3 +957,18 @@ body {
 .notif-settings {
   font-size: var(--font-size-sm);
 }
+
+/* ── Done button on task cards ── */
+.task-action-done {
+  color: var(--color-success);
+  border-color: #05966940;
+}
+
+.task-action-done:hover {
+  background: var(--color-success-light);
+}
+
+.task-action-done:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

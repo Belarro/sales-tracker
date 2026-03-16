@@ -6,6 +6,8 @@ import { useState, useMemo } from 'react';
 import { getFollowUpMessage } from '../utils/followUpTemplates.js';
 import { generateDailySummary } from '../utils/summaryUtils.js';
 import { generateGoogleCalendarUrl } from '../utils/calendarUtils.js';
+import { updatePipelineData } from '../utils/googleSheets.js';
+import { calculateNextActionDate, toISODateString } from '../utils/dateUtils.js';
 
 // ── Inline SVG icons ──
 const Icons = {
@@ -37,8 +39,9 @@ const Icons = {
 };
 
 // ── Task Card with quick actions ──
-const TaskCard = ({ location, accentColor, onSelect, user }) => {
+const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
   const [copied, setCopied] = useState(false);
+  const [marking, setMarking] = useState(false);
   const days = location._daysUntilAction;
 
   let urgencyLabel = '';
@@ -83,6 +86,30 @@ const TaskCard = ({ location, accentColor, onSelect, user }) => {
       window.location.origin + '/?view=tasks'
     );
     window.open(url, '_blank');
+  };
+
+  const handleDone = async (e) => {
+    e.stopPropagation();
+    if (marking || !followUp) return;
+    setMarking(true);
+    try {
+      const count = parseInt(location.followUpCount || '0', 10) + 1;
+      const nextDate = followUp.nextActionDays
+        ? calculateNextActionDate(followUp.nextActionDays)
+        : '';
+      await updatePipelineData(location.locationName, location.businessAddress, {
+        pipelineStage: followUp.nextStage || location.pipelineStage,
+        followUpCount: String(count),
+        lastFollowUpDate: toISODateString(new Date()),
+        nextActionDate: nextDate,
+        nextActionType: followUp.nextActionType || '',
+        automationStatus: 'sent',
+      });
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      console.error('Failed to advance pipeline:', err);
+      setMarking(false);
+    }
   };
 
   const hasPhone = followUp?.phone;
@@ -198,6 +225,16 @@ const TaskCard = ({ location, accentColor, onSelect, user }) => {
             {Icons.calendar}
             <span>Calendar</span>
           </button>
+
+          <button
+            className="task-action-btn task-action-done"
+            onClick={handleDone}
+            disabled={marking}
+            title="Mark as done and advance pipeline"
+          >
+            {Icons.check}
+            <span>{marking ? 'Saving...' : 'Done'}</span>
+          </button>
         </div>
       </div>
     </div>
@@ -205,7 +242,7 @@ const TaskCard = ({ location, accentColor, onSelect, user }) => {
 };
 
 // ── Task Section (Overdue / Today / Upcoming) ──
-const TaskSection = ({ title, items, accentColor, onSelect, user }) => {
+const TaskSection = ({ title, items, accentColor, onSelect, user, onRefresh }) => {
   if (items.length === 0) return null;
 
   return (
@@ -230,6 +267,7 @@ const TaskSection = ({ title, items, accentColor, onSelect, user }) => {
           accentColor={accentColor}
           onSelect={onSelect}
           user={user}
+          onRefresh={onRefresh}
         />
       ))}
     </div>
@@ -368,6 +406,7 @@ const TodaysTasks = ({
         accentColor="var(--color-danger)"
         onSelect={onLocationSelect}
         user={user}
+        onRefresh={onRefresh}
       />
 
       <TaskSection
@@ -376,6 +415,7 @@ const TodaysTasks = ({
         accentColor="var(--color-warning)"
         onSelect={onLocationSelect}
         user={user}
+        onRefresh={onRefresh}
       />
 
       <TaskSection
@@ -384,6 +424,7 @@ const TodaysTasks = ({
         accentColor="var(--color-primary)"
         onSelect={onLocationSelect}
         user={user}
+        onRefresh={onRefresh}
       />
 
       {totalTasks === 0 && (
