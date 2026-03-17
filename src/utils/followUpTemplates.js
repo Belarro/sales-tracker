@@ -11,8 +11,6 @@
 // - Link to for-chefs page, never PDFs
 // - "du" in German, casual but professional
 
-import { calculateDeliveryDate } from './dateUtils.js';
-
 const BASE_LINK_EN = 'https://belarro.com/for-chefs';
 const BASE_LINK_DE = 'https://belarro.com/de/for-chefs';
 
@@ -133,46 +131,52 @@ export const FOLLOW_UP_TEMPLATES = {
   // ──────────────────────────────────────────
   // ORDER CONFIRMED — confirm items + logistics
   // ──────────────────────────────────────────
+  // order_confirmed uses extra.deliveryDate (YYYY-MM-DD) set by the date picker.
+  // The user picks the delivery Tuesday when pressing Done.
   order_confirmed: {
     EN: (loc, user, extra) => {
-      const delivery = calculateDeliveryDate(extra?.productSlugs || [], new Date());
-      const dateStr = delivery.deliveryDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      const deliveryISO = extra?.deliveryDate || '';
+      const deliveryD = deliveryISO ? new Date(deliveryISO + 'T00:00:00') : null;
+      const dateStr = deliveryD
+        ? deliveryD.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+        : '[delivery date]';
       // Next action = Monday before delivery (1 day before Tuesday)
-      const monday = new Date(delivery.deliveryDate);
-      monday.setDate(monday.getDate() - 1);
+      const monday = deliveryD ? new Date(deliveryD) : null;
+      if (monday) monday.setDate(monday.getDate() - 1);
       return {
         body: [
           `Hi ${loc.contactPerson}, you're on the schedule.`,
           `First delivery: ${dateStr}.`,
-          extra?.items ? extra.items : '[Items and prices here]',
           `Invoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.`
         ].join('\n\n'),
         nextStage: 'delivery_reminder',
-        nextActionDays: null, // use _nextActionDate instead
+        nextActionDays: null,
         nextActionType: 'whatsapp',
         _nextActionDate: monday,
-        _deliveryDate: delivery.deliveryISO,
-        _slowestProduct: delivery.slowestProduct
+        _deliveryDate: deliveryISO,
+        _needsDeliveryDate: true,
       };
     },
     DE: (loc, user, extra) => {
-      const delivery = calculateDeliveryDate(extra?.productSlugs || [], new Date());
-      const dateStr = delivery.deliveryDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-      const monday = new Date(delivery.deliveryDate);
-      monday.setDate(monday.getDate() - 1);
+      const deliveryISO = extra?.deliveryDate || '';
+      const deliveryD = deliveryISO ? new Date(deliveryISO + 'T00:00:00') : null;
+      const dateStr = deliveryD
+        ? deliveryD.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+        : '[Lieferdatum]';
+      const monday = deliveryD ? new Date(deliveryD) : null;
+      if (monday) monday.setDate(monday.getDate() - 1);
       return {
         body: [
           `Hi ${loc.contactPerson}, du bist im Plan.`,
           `Erste Lieferung: ${dateStr}.`,
-          extra?.items ? extra.items : '[Artikel und Preise hier]',
           `Rechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.`
         ].join('\n\n'),
         nextStage: 'delivery_reminder',
         nextActionDays: null,
         nextActionType: 'whatsapp',
         _nextActionDate: monday,
-        _deliveryDate: delivery.deliveryISO,
-        _slowestProduct: delivery.slowestProduct
+        _deliveryDate: deliveryISO,
+        _needsDeliveryDate: true,
       };
     }
   },

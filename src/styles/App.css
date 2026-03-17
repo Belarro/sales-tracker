@@ -851,6 +851,15 @@ body {
   background: #ede9fe;
 }
 
+.task-action-email {
+  color: #EA4335;
+  border-color: #EA433540;
+}
+
+.task-action-email:hover {
+  background: #EA433510;
+}
+
 /* ============================================
    MORNING SUMMARY BANNER
    ============================================ */

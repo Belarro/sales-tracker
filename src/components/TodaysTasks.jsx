@@ -41,6 +41,11 @@ const Icons = {
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
     </svg>
   ),
+  email: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 4l-10 8L2 4" />
+    </svg>
+  ),
 };
 
 // ── Task Card with quick actions ──
@@ -85,6 +90,15 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     window.open(followUp.waLink, '_blank');
   };
 
+  const handleSendEmail = (e) => {
+    e.stopPropagation();
+    const email = location.businessEmail || '';
+    if (!email || !followUp?.body) return;
+    const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
+    const body = encodeURIComponent(followUp.body);
+    window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`, '_blank');
+  };
+
   const handleCalendar = (e) => {
     e.stopPropagation();
     const url = generateGoogleCalendarUrl(
@@ -112,17 +126,27 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     }
   };
 
+  // For order_confirmed: user picks delivery Tuesday, not follow-up date
+  const isOrderConfirm = (location.pipelineStage || 'new_visit') === 'order_confirmed';
+
   const handleDone = (e) => {
     e.stopPropagation();
     if (marking || !followUp) return;
-    // Use specific date if template provides one (e.g., Monday before delivery)
-    // Otherwise calculate from nextActionDays, or default to tomorrow
-    const defaultDate = followUp._nextActionDate
-      ? toISODateString(followUp._nextActionDate)
-      : followUp.nextActionDays
-        ? calculateNextActionDate(followUp.nextActionDays)
-        : toISODateString(new Date(Date.now() + 86400000));
-    setPickedDate(defaultDate);
+    if (isOrderConfirm) {
+      // Default to next Tuesday
+      const now = new Date();
+      const daysUntilTue = (2 - now.getDay() + 7) % 7 || 7;
+      const nextTue = new Date(now);
+      nextTue.setDate(nextTue.getDate() + daysUntilTue);
+      setPickedDate(toISODateString(nextTue));
+    } else {
+      const defaultDate = followUp._nextActionDate
+        ? toISODateString(followUp._nextActionDate)
+        : followUp.nextActionDays
+          ? calculateNextActionDate(followUp.nextActionDays)
+          : toISODateString(new Date(Date.now() + 86400000));
+      setPickedDate(defaultDate);
+    }
     setShowDatePicker(true);
   };
 
@@ -134,23 +158,54 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     try {
       const count = parseInt(location.followUpCount || '0', 10) + 1;
       const today = toISODateString(new Date());
-      const nextDate = pickedDate || '';
+
+      let nextDate = pickedDate || '';
+      let finalFollowUp = followUp;
+
+      // For order_confirmed: pickedDate = delivery Tuesday
+      // Regenerate the message with the delivery date included,
+      // and set next action to Monday before delivery
+      if (isOrderConfirm && pickedDate) {
+        finalFollowUp = getFollowUpMessage(
+          location,
+          user?.displayName || user?.name,
+          { deliveryDate: pickedDate }
+        );
+        // Next action = Monday before delivery Tuesday
+        const deliveryD = new Date(pickedDate + 'T00:00:00');
+        const monday = new Date(deliveryD);
+        monday.setDate(monday.getDate() - 1);
+        nextDate = toISODateString(monday);
+      }
+
       // Build follow-up history log in notesInternal (column Z)
-      const stageName = (followUp.stage || 'unknown').replace(/_/g, ' ');
+      const stageName = (finalFollowUp.stage || 'unknown').replace(/_/g, ' ');
       const logEntry = `[${today}] ${stageName} sent`;
       const existingNotes = location.notesInternal || '';
       const updatedNotes = existingNotes
         ? `${existingNotes} | ${logEntry}`
         : logEntry;
       await updatePipelineData(location.locationName, location.businessAddress, {
-        pipelineStage: followUp.nextStage || location.pipelineStage,
+        pipelineStage: finalFollowUp.nextStage || location.pipelineStage,
         followUpCount: String(count),
         lastFollowUpDate: today,
         nextActionDate: nextDate,
-        nextActionType: followUp.nextActionType || '',
+        nextActionType: finalFollowUp.nextActionType || '',
         automationStatus: 'sent',
         notesInternal: updatedNotes,
       });
+
+      // For order_confirmed: open WhatsApp or Gmail with the thank-you + delivery date message
+      if (isOrderConfirm) {
+        if (finalFollowUp.waLink) {
+          window.open(finalFollowUp.waLink, '_blank');
+        } else if (location.businessEmail) {
+          const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
+          const body = encodeURIComponent(finalFollowUp.body);
+          window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(location.businessEmail)}&su=${subject}&body=${body}`, '_blank');
+        }
+      }
+
       if (onRefresh) onRefresh();
     } catch (err) {
       console.error('Failed to advance pipeline:', err);
@@ -159,6 +214,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
   };
 
   const hasPhone = followUp?.phone;
+  const hasEmail = !!location.businessEmail;
 
   return (
     <div className="task-card" onClick={() => onSelect(location)}>
@@ -263,6 +319,17 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
             </button>
           )}
 
+          {hasEmail && !hasPhone && (
+            <button
+              className="task-action-btn task-action-email"
+              onClick={handleSendEmail}
+              title="Send via Gmail"
+            >
+              {Icons.email}
+              <span>Email</span>
+            </button>
+          )}
+
           <button
             className="task-action-btn task-action-cal"
             onClick={handleCalendar}
@@ -296,7 +363,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
         {showDatePicker && (
           <div className="task-date-picker" onClick={(e) => e.stopPropagation()}>
             <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: '6px', color: 'var(--color-text-main)' }}>
-              Next follow-up date:
+              {isOrderConfirm ? 'Pick delivery Tuesday:' : 'Next follow-up date:'}
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <input
