@@ -92,7 +92,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
 
   const handleSendEmail = (e) => {
     e.stopPropagation();
-    const email = location.businessEmail || '';
+    const email = location.businessEmail || location.directEmail || '';
     if (!email || !followUp?.body) return;
     const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
     const body = encodeURIComponent(followUp.body);
@@ -214,7 +214,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
   };
 
   const hasPhone = followUp?.phone;
-  const hasEmail = !!location.businessEmail;
+  const hasEmail = !!(location.businessEmail || location.directEmail);
 
   return (
     <div className="task-card" onClick={() => onSelect(location)}>
@@ -319,7 +319,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
             </button>
           )}
 
-          {hasEmail && !hasPhone && (
+          {hasEmail && (
             <button
               className="task-action-btn task-action-email"
               onClick={handleSendEmail}
@@ -352,7 +352,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
             className="task-action-btn task-action-done"
             onClick={handleDone}
             disabled={marking}
-            title="Mark as done and advance pipeline"
+            title="Follow up done — advance pipeline"
           >
             {Icons.check}
             <span>{marking ? 'Saving...' : 'Done'}</span>

@@ -753,51 +753,78 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             {isSaving ? 'Saving...' : savedSuccessfully ? 'Edit Location' : (location.visitHistory?.length ? 'Update Visit' : 'Save Visit')}
           </button>
 
-          {/* QUICK WHATSAPP — one-tap send first follow-up */}
-          {(formData.phone || location.businessPhone) && formData.contactPerson && (
+          {/* QUICK SEND — one-tap send first follow-up via WhatsApp or Email */}
+          {formData.contactPerson && (formData.phone || location.businessPhone || formData.email || location.directEmail) && (
             (() => {
               const locForMsg = {
                 ...location,
                 contactPerson: formData.contactPerson,
-                directPhone: formData.phone || location.businessPhone || '',
+                directPhone: formData.phone || location.directPhone || '',
                 businessPhone: location.businessPhone || '',
+                directEmail: formData.email || location.directEmail || '',
                 pipelineStage: location.pipelineStage || 'new_visit',
                 language: formData.language || location.language || 'DE',
                 locationName: location.locationName
               };
               const msg = getFollowUpMessage(locForMsg, user?.name);
-              if (!msg || !msg.waLink) return null;
+              if (!msg) return null;
+              const hasPhone = !!msg.waLink;
+              const contactEmail = formData.email || location.directEmail || location.businessEmail || '';
+              const hasEmail = !!contactEmail;
+              if (!hasPhone && !hasEmail) return null;
+
+              const btnStyle = (bg) => ({
+                display: 'block',
+                width: '100%',
+                textAlign: 'center',
+                padding: '14px',
+                borderRadius: 'var(--border-radius-md)',
+                background: bg,
+                color: '#fff',
+                fontWeight: '700',
+                fontSize: 'var(--font-size-md)',
+                textDecoration: 'none',
+                fontFamily: 'inherit',
+                marginTop: 'var(--spacing-sm)',
+                boxSizing: 'border-box',
+                border: 'none',
+                cursor: 'pointer'
+              });
+
               return (
-                <a
-                  href={msg.waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => {
-                    const isAndroid = /android/i.test(navigator.userAgent);
-                    if (isAndroid && msg.phone) {
-                      e.preventDefault();
-                      navigator.clipboard.writeText(msg.body);
-                      window.location.href = `intent://send/${msg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
-                    }
-                  }}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    textAlign: 'center',
-                    padding: '14px',
-                    borderRadius: 'var(--border-radius-md)',
-                    background: '#25D366',
-                    color: '#fff',
-                    fontWeight: '700',
-                    fontSize: 'var(--font-size-md)',
-                    textDecoration: 'none',
-                    fontFamily: 'inherit',
-                    marginTop: 'var(--spacing-sm)',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  Send WhatsApp Follow-up
-                </a>
+                <>
+                  {hasPhone && (
+                    <a
+                      href={msg.waLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => {
+                        const isAndroid = /android/i.test(navigator.userAgent);
+                        if (isAndroid && msg.phone) {
+                          e.preventDefault();
+                          navigator.clipboard.writeText(msg.body);
+                          window.location.href = `intent://send/${msg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
+                        }
+                      }}
+                      style={btnStyle('#25D366')}
+                    >
+                      Send WhatsApp Follow-up
+                    </a>
+                  )}
+                  {hasEmail && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
+                        const body = encodeURIComponent(msg.body);
+                        window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contactEmail)}&su=${subject}&body=${body}`, '_blank');
+                      }}
+                      style={btnStyle('#4285F4')}
+                    >
+                      Send Email Follow-up
+                    </button>
+                  )}
+                </>
               );
             })()
           )}
@@ -837,6 +864,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                     contactPerson: formData.contactPerson || location.contactPerson || 'there',
                     directPhone: formData.phone || location.directPhone || '',
                     businessPhone: location.businessPhone || '',
+                    directEmail: formData.email || location.directEmail || '',
                     pipelineStage: location.pipelineStage || 'new_visit',
                     language: formData.language || location.language || 'DE'
                   };
@@ -848,16 +876,16 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   width: '100%',
                   padding: '12px',
                   borderRadius: 'var(--border-radius-md)',
-                  border: '1.5px solid #25D366',
+                  border: '1.5px solid var(--color-primary, #2d5a3d)',
                   background: '#fff',
-                  color: '#25D366',
+                  color: 'var(--color-primary, #2d5a3d)',
                   fontWeight: '700',
                   fontSize: 'var(--font-size-sm)',
                   cursor: 'pointer',
                   fontFamily: 'inherit'
                 }}
               >
-                Preview WhatsApp Message
+                Preview Message
               </button>
             ) : followUpMsg ? (
               <div>
@@ -887,140 +915,172 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 </div>
 
                 {/* Copy + Send buttons */}
-                {followUpMsg.waLink ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                    {/* Copy message button */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(followUpMsg.body);
-                        const btn = document.getElementById('copy-msg-btn');
-                        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Message'; }, 1500); }
-                      }}
-                      id="copy-msg-btn"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: 'var(--border-radius-md)',
-                        border: '1.5px solid var(--color-border)',
-                        background: 'var(--color-bg-main)',
-                        color: 'var(--color-text-main)',
-                        fontWeight: '600',
-                        fontSize: 'var(--font-size-sm)',
-                        cursor: 'pointer',
-                        fontFamily: 'inherit'
-                      }}
-                    >
-                      Copy Message
-                    </button>
+                {(() => {
+                  const hasPhone = !!followUpMsg.waLink;
+                  const contactEmail = formData.email || location.directEmail || location.businessEmail || '';
+                  const hasEmail = !!contactEmail;
 
-                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      {/* Send via WA Business (primary) */}
-                      <a
-                        href={followUpMsg.waLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={async (e) => {
-                          // On Android, try to open WA Business directly
-                          const isAndroid = /android/i.test(navigator.userAgent);
-                          if (isAndroid && followUpMsg.phone) {
-                            e.preventDefault();
-                            // Copy message first since intent doesn't carry text
-                            await navigator.clipboard.writeText(followUpMsg.body);
-                            window.location.href = `intent://send/${followUpMsg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
-                          }
-                          setSendingFollowUp(true);
-                          try {
-                            const now = new Date().toISOString().split('T')[0];
-                            const nextDate = followUpMsg.nextActionDays
-                              ? calculateNextActionDate(followUpMsg.nextActionDays)
-                              : '';
-                            await updatePipelineData(
-                              location.locationName,
-                              location.businessAddress,
-                              {
-                                pipelineStage: followUpMsg.nextStage,
-                                followUpCount: String((parseInt(location.followUpCount) || 0) + 1),
-                                lastFollowUpDate: now,
-                                nextActionDate: nextDate,
-                                nextActionType: followUpMsg.nextActionType || '',
-                                automationStatus: 'sent'
-                              }
-                            );
-                          } catch (err) {
-                            console.error('Failed to update pipeline:', err);
-                          }
-                          setSendingFollowUp(false);
-                          setShowFollowUpPreview(false);
-                        }}
-                        style={{
-                          flex: 1,
-                          textAlign: 'center',
-                          padding: '14px',
-                          borderRadius: 'var(--border-radius-md)',
-                          background: '#25D366',
-                          color: '#fff',
-                          fontWeight: '700',
-                          fontSize: 'var(--font-size-sm)',
-                          textDecoration: 'none',
-                          fontFamily: 'inherit'
-                        }}
-                      >
-                        {sendingFollowUp ? 'Updating...' : 'Send via WA Business'}
-                      </a>
+                  const advancePipeline = async () => {
+                    setSendingFollowUp(true);
+                    try {
+                      const now = new Date().toISOString().split('T')[0];
+                      const nextDate = followUpMsg.nextActionDays
+                        ? calculateNextActionDate(followUpMsg.nextActionDays)
+                        : '';
+                      await updatePipelineData(
+                        location.locationName,
+                        location.businessAddress,
+                        {
+                          pipelineStage: followUpMsg.nextStage,
+                          followUpCount: String((parseInt(location.followUpCount) || 0) + 1),
+                          lastFollowUpDate: now,
+                          nextActionDate: nextDate,
+                          nextActionType: followUpMsg.nextActionType || '',
+                          automationStatus: 'sent'
+                        }
+                      );
+                    } catch (err) {
+                      console.error('Failed to update pipeline:', err);
+                    }
+                    setSendingFollowUp(false);
+                    setShowFollowUpPreview(false);
+                  };
 
+                  const openEmail = () => {
+                    const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
+                    const body = encodeURIComponent(followUpMsg.body);
+                    window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contactEmail)}&su=${subject}&body=${body}`, '_blank');
+                  };
+
+                  const openWhatsApp = async (e) => {
+                    const isAndroid = /android/i.test(navigator.userAgent);
+                    if (isAndroid && followUpMsg.phone) {
+                      if (e) e.preventDefault();
+                      await navigator.clipboard.writeText(followUpMsg.body);
+                      window.location.href = `intent://send/${followUpMsg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
+                    } else if (followUpMsg.waLink) {
+                      window.open(followUpMsg.waLink, '_blank');
+                    }
+                  };
+
+                  if (!hasPhone && !hasEmail) {
+                    return (
+                      <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+                        <div style={{
+                          flex: 1, textAlign: 'center', padding: '14px',
+                          borderRadius: 'var(--border-radius-md)', background: '#f5f5f5',
+                          color: '#999', fontSize: 'var(--font-size-sm)', fontWeight: '600'
+                        }}>
+                          No phone or email — add one above
+                        </div>
+                        <button type="button" onClick={() => setShowFollowUpPreview(false)}
+                          style={{ padding: '14px 18px', borderRadius: 'var(--border-radius-md)',
+                            border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
+                            color: 'var(--color-text-secondary)', fontWeight: '600',
+                            fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
+                          }}>Cancel</button>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                      {/* Copy message button */}
                       <button
                         type="button"
-                        onClick={() => setShowFollowUpPreview(false)}
+                        onClick={() => {
+                          navigator.clipboard.writeText(followUpMsg.body);
+                          const btn = document.getElementById('copy-msg-btn');
+                          if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Message'; }, 1500); }
+                        }}
+                        id="copy-msg-btn"
                         style={{
-                          padding: '14px 18px',
-                          borderRadius: 'var(--border-radius-md)',
-                          border: '1.5px solid var(--color-border)',
-                          background: 'var(--color-bg-main)',
-                          color: 'var(--color-text-secondary)',
-                          fontWeight: '600',
-                          fontSize: 'var(--font-size-sm)',
-                          cursor: 'pointer',
-                          fontFamily: 'inherit'
+                          width: '100%', padding: '12px', borderRadius: 'var(--border-radius-md)',
+                          border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
+                          color: 'var(--color-text-main)', fontWeight: '600',
+                          fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
                         }}
                       >
-                        Cancel
+                        Copy Message
                       </button>
+
+                      <div style={{ display: 'flex', gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
+                        {/* Send WhatsApp — only if phone exists */}
+                        {hasPhone && (
+                          <a
+                            href={followUpMsg.waLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={async (e) => {
+                              await openWhatsApp(e);
+                              await advancePipeline();
+                            }}
+                            style={{
+                              flex: 1, textAlign: 'center', padding: '14px',
+                              borderRadius: 'var(--border-radius-md)', background: '#25D366',
+                              color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                              textDecoration: 'none', fontFamily: 'inherit', minWidth: '120px'
+                            }}
+                          >
+                            {sendingFollowUp ? 'Updating...' : 'Send WhatsApp'}
+                          </a>
+                        )}
+
+                        {/* Send Email — only if email exists */}
+                        {hasEmail && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              openEmail();
+                              await advancePipeline();
+                            }}
+                            style={{
+                              flex: 1, textAlign: 'center', padding: '14px',
+                              borderRadius: 'var(--border-radius-md)', background: '#4285F4',
+                              color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                              cursor: 'pointer', fontFamily: 'inherit', border: 'none', minWidth: '120px'
+                            }}
+                          >
+                            Send Email
+                          </button>
+                        )}
+
+                        {/* Send Both — only if both phone AND email exist */}
+                        {hasPhone && hasEmail && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              openWhatsApp();
+                              openEmail();
+                              await advancePipeline();
+                            }}
+                            style={{
+                              flex: 1, textAlign: 'center', padding: '14px',
+                              borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-main, #1a1a1a)',
+                              color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                              cursor: 'pointer', fontFamily: 'inherit', border: 'none', minWidth: '120px'
+                            }}
+                          >
+                            Send Both
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => setShowFollowUpPreview(false)}
+                          style={{
+                            padding: '14px 18px', borderRadius: 'var(--border-radius-md)',
+                            border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
+                            color: 'var(--color-text-secondary)', fontWeight: '600',
+                            fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                    <div style={{
-                      flex: 1,
-                      textAlign: 'center',
-                      padding: '14px',
-                      borderRadius: 'var(--border-radius-md)',
-                      background: '#f5f5f5',
-                      color: '#999',
-                      fontSize: 'var(--font-size-sm)',
-                      fontWeight: '600'
-                    }}>
-                      No phone number — add one above
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowFollowUpPreview(false)}
-                      style={{
-                        padding: '14px 18px',
-                        borderRadius: 'var(--border-radius-md)',
-                        border: '1.5px solid var(--color-border)',
-                        background: 'var(--color-bg-main)',
-                        color: 'var(--color-text-secondary)',
-                        fontWeight: '600',
-                        fontSize: 'var(--font-size-sm)',
-                        cursor: 'pointer',
-                        fontFamily: 'inherit'
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             ) : (
               <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
