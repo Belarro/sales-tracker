@@ -92,6 +92,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [noteTemplates, setNoteTemplates] = useState([]);
   const [showFollowUpPreview, setShowFollowUpPreview] = useState(false);
   const [followUpMsg, setFollowUpMsg] = useState(null);
+  const [awaitingSentConfirm, setAwaitingSentConfirm] = useState(false);
+  const [markingSent, setMarkingSent] = useState(false);
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -128,6 +130,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       }
       setSaveMessage({ type: '', text: '' });
       setSavedSuccessfully(false);
+      setAwaitingSentConfirm(false);
+      setShowFollowUpPreview(false);
     }
   }, [location]);
 
@@ -1080,67 +1084,142 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                         Copy Message
                       </button>
 
-                      <div style={{ display: 'flex', gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
-                        {hasPhone && (
-                          <a
-                            href={followUpMsg.waLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => openWhatsApp(e)}
-                            style={{
-                              flex: 1, textAlign: 'center', padding: '14px',
-                              borderRadius: 'var(--border-radius-md)', background: '#25D366',
-                              color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
-                              textDecoration: 'none', fontFamily: 'inherit', minWidth: '120px'
-                            }}
-                          >
-                            Send WhatsApp
-                          </a>
-                        )}
+                      {!awaitingSentConfirm ? (
+                        /* Step 1: Send buttons */
+                        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
+                          {hasPhone && (
+                            <a
+                              href={followUpMsg.waLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => {
+                                openWhatsApp(e);
+                                setAwaitingSentConfirm(true);
+                              }}
+                              style={{
+                                flex: 1, textAlign: 'center', padding: '14px',
+                                borderRadius: 'var(--border-radius-md)', background: '#25D366',
+                                color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                                textDecoration: 'none', fontFamily: 'inherit', minWidth: '120px'
+                              }}
+                            >
+                              Send WhatsApp
+                            </a>
+                          )}
 
-                        {hasEmail && (
+                          {hasEmail && (
+                            <button
+                              type="button"
+                              onClick={() => { openEmail(); setAwaitingSentConfirm(true); }}
+                              style={{
+                                flex: 1, textAlign: 'center', padding: '14px',
+                                borderRadius: 'var(--border-radius-md)', background: '#4285F4',
+                                color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                                cursor: 'pointer', fontFamily: 'inherit', border: 'none', minWidth: '120px'
+                              }}
+                            >
+                              Send Email
+                            </button>
+                          )}
+
+                          {hasPhone && hasEmail && (
+                            <button
+                              type="button"
+                              onClick={() => { openWhatsApp(); openEmail(); setAwaitingSentConfirm(true); }}
+                              style={{
+                                flex: 1, textAlign: 'center', padding: '14px',
+                                borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-main, #1a1a1a)',
+                                color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                                cursor: 'pointer', fontFamily: 'inherit', border: 'none', minWidth: '120px'
+                              }}
+                            >
+                              Send Both
+                            </button>
+                          )}
+
                           <button
                             type="button"
-                            onClick={() => openEmail()}
+                            onClick={() => setShowFollowUpPreview(false)}
                             style={{
-                              flex: 1, textAlign: 'center', padding: '14px',
-                              borderRadius: 'var(--border-radius-md)', background: '#4285F4',
-                              color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
-                              cursor: 'pointer', fontFamily: 'inherit', border: 'none', minWidth: '120px'
+                              padding: '14px 18px', borderRadius: 'var(--border-radius-md)',
+                              border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
+                              color: 'var(--color-text-secondary)', fontWeight: '600',
+                              fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
                             }}
                           >
-                            Send Email
+                            Cancel
                           </button>
-                        )}
+                        </div>
+                      ) : (
+                        /* Step 2: Confirm message was actually sent */
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                          <div style={{
+                            fontSize: 'var(--font-size-sm)', fontWeight: '600',
+                            color: 'var(--color-text-main)', textAlign: 'center'
+                          }}>
+                            Did you send the message?
+                          </div>
+                          <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+                            <button
+                              type="button"
+                              disabled={markingSent}
+                              onClick={async () => {
+                                setMarkingSent(true);
+                                try {
+                                  const nextStage = followUpMsg.nextStage || pipelineStage;
+                                  const nextDate = followUpMsg.nextActionDays
+                                    ? calculateNextActionDate(followUpMsg.nextActionDays)
+                                    : '';
+                                  const today = new Date().toISOString().split('T')[0];
+                                  const count = parseInt(location.followUpCount || '0', 10) + 1;
+                                  const logEntry = `[${today}] ${(followUpMsg.stage || 'unknown').replace(/_/g, ' ')} sent`;
+                                  const existingNotes = location.notesInternal || '';
+                                  const updatedNotes = existingNotes ? `${existingNotes} | ${logEntry}` : logEntry;
 
-                        {hasPhone && hasEmail && (
-                          <button
-                            type="button"
-                            onClick={() => { openWhatsApp(); openEmail(); }}
-                            style={{
-                              flex: 1, textAlign: 'center', padding: '14px',
-                              borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-main, #1a1a1a)',
-                              color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
-                              cursor: 'pointer', fontFamily: 'inherit', border: 'none', minWidth: '120px'
-                            }}
-                          >
-                            Send Both
-                          </button>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={() => setShowFollowUpPreview(false)}
-                          style={{
-                            padding: '14px 18px', borderRadius: 'var(--border-radius-md)',
-                            border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
-                            color: 'var(--color-text-secondary)', fontWeight: '600',
-                            fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
+                                  await updatePipelineData(location.locationName, location.businessAddress, {
+                                    pipelineStage: nextStage,
+                                    followUpCount: String(count),
+                                    lastFollowUpDate: today,
+                                    nextActionDate: nextDate,
+                                    nextActionType: followUpMsg.nextActionType || '',
+                                    automationStatus: 'sent',
+                                    notesInternal: updatedNotes,
+                                  });
+                                  setPipelineStage(nextStage);
+                                  setShowFollowUpPreview(false);
+                                  setAwaitingSentConfirm(false);
+                                } catch (err) {
+                                  console.error('Failed to update pipeline:', err);
+                                }
+                                setMarkingSent(false);
+                              }}
+                              style={{
+                                flex: 1, textAlign: 'center', padding: '14px',
+                                borderRadius: 'var(--border-radius-md)', background: '#25D366',
+                                color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                                cursor: 'pointer', fontFamily: 'inherit', border: 'none'
+                              }}
+                            >
+                              {markingSent ? 'Saving...' : 'Yes, sent'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAwaitingSentConfirm(false);
+                              }}
+                              style={{
+                                flex: 1, textAlign: 'center', padding: '14px',
+                                borderRadius: 'var(--border-radius-md)',
+                                border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
+                                color: 'var(--color-text-secondary)', fontWeight: '600',
+                                fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
+                              }}
+                            >
+                              Not sent
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
