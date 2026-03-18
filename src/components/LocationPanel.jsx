@@ -118,7 +118,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const { code, number } = splitPhone(location.directPhone || '');
       setPhoneCode(code);
       setPhoneNumber(number);
-      setPipelineStage(pipelineStage || 'new_visit');
+      setPipelineStage(location.pipelineStage || 'new_visit');
       // Default follow-up to 1 week if outcome is Follow Up or Interested
       const interest = location.interestLevel || 'Follow Up';
       if (interest === 'Follow Up' || interest === 'Interested') {
@@ -908,13 +908,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                       href={msg.waLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => {
-                        const isAndroid = /android/i.test(navigator.userAgent);
-                        if (isAndroid && msg.phone) {
-                          e.preventDefault();
-                          navigator.clipboard.writeText(msg.body);
-                          window.location.href = `intent://send/${msg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
-                        }
+                      onClick={() => {
+                        navigator.clipboard.writeText(msg.body).catch(() => {});
                       }}
                       style={btnStyle('#25D366')}
                     >
@@ -1037,12 +1032,9 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   };
 
                   const openWhatsApp = (e) => {
-                    const isAndroid = /android/i.test(navigator.userAgent);
-                    if (isAndroid && followUpMsg.phone) {
-                      if (e) e.preventDefault();
-                      navigator.clipboard.writeText(followUpMsg.body);
-                      window.location.href = `intent://send/${followUpMsg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
-                    } else if (followUpMsg.waLink) {
+                    if (e) e.preventDefault();
+                    navigator.clipboard.writeText(followUpMsg.body).catch(() => {});
+                    if (followUpMsg.waLink) {
                       window.open(followUpMsg.waLink, '_blank');
                     }
                   };

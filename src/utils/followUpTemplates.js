@@ -273,28 +273,24 @@ export function getFollowUpMessage(location, userName, extra) {
   const langTemplate = template[lang] || template['DE'];
   const result = langTemplate(location, userName, extra);
 
-  // Build WhatsApp deep links — clean phone and fix double country codes
+  // Build WhatsApp deep links — clean phone for wa.me format (digits only, no +)
   let phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
   // Fix double country code (e.g. 494915906442264 → 4915906442264)
   for (const code of ['972', '44', '43', '49', '1']) {
     if (phone.startsWith(code + code)) { phone = phone.slice(code.length); break; }
   }
+  // Fix local format (leading 0) — assume German if starts with 0
+  if (phone.startsWith('0')) { phone = '49' + phone.slice(1); }
   const encodedText = phone ? encodeURIComponent(result.body) : '';
 
-  // Regular WhatsApp link (fallback / iOS / desktop)
+  // Universal WhatsApp link — works on Android, iOS, desktop
   const waLink = phone
     ? `https://wa.me/${phone}?text=${encodedText}`
-    : null;
-
-  // WhatsApp Business link (Android intent targeting com.whatsapp.w4b)
-  const waBusinessLink = phone
-    ? `intent://send/${phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`
     : null;
 
   return {
     ...result,
     waLink,
-    waBusinessLink,
     phone,
     stage,
     lang
