@@ -43,12 +43,22 @@ function saveToContacts({ contactPerson, contactTitle, phone, email, locationNam
   URL.revokeObjectURL(url);
 }
 
+// Split a full phone string like "+4915157431078" into { code: '+49', number: '15157431078' }
+const KNOWN_CODES = ['+972', '+44', '+43', '+49', '+1'];
+function splitPhone(full) {
+  if (!full) return { code: '+49', number: '' };
+  for (const c of KNOWN_CODES) {
+    if (full.startsWith(c)) return { code: c, number: full.slice(c.length) };
+  }
+  // No known code found — default to +49, keep full string as number
+  return { code: '+49', number: full.replace(/^\+/, '') };
+}
+
 const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     contactPerson: '',
     contactTitle: '',
     email: '',
-    phone: '',
     businessTypes: '',
     businessWebsite: '',
     interestLevel: '',
@@ -57,6 +67,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     pinColor: '',
     language: ''
   });
+  const [phoneCode, setPhoneCode] = useState('+49');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  // Full phone = code + number (only when number exists)
+  const fullPhone = phoneNumber ? phoneCode + phoneNumber : '';
   const [followUpDate, setFollowUpDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState({ type: '', text: '' });
@@ -80,7 +94,6 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         contactPerson: location.contactPerson || '',
         contactTitle: location.contactTitle || '',
         email: location.directEmail || '',
-        phone: location.directPhone || '',
         businessTypes: location.businessTypes || '',
         businessWebsite: location.businessWebsite || '',
         interestLevel: location.interestLevel || 'Follow Up',
@@ -89,6 +102,9 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         pinColor: location.pinColor || '',
         language: location.language || ''
       });
+      const { code, number } = splitPhone(location.directPhone || '');
+      setPhoneCode(code);
+      setPhoneNumber(number);
       // Default follow-up to 1 week if outcome is Follow Up or Interested
       const interest = location.interestLevel || 'Follow Up';
       if (interest === 'Follow Up' || interest === 'Interested') {
@@ -153,7 +169,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         ...location,
         ...formData,
         directLink: directLink,
-        directPhone: formData.phone,
+        directPhone: fullPhone,
         directEmail: formData.email,
         businessTypes: formData.businessTypes,
         businessWebsite: formData.businessWebsite,
@@ -351,28 +367,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               <label>Phone</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
                 <select
-                  value={(() => {
-                    // Extract known country codes (longest match first)
-                    const phone = formData.phone || '';
-                    if (phone.startsWith('+972')) return '+972';
-                    if (phone.startsWith('+44')) return '+44';
-                    if (phone.startsWith('+43')) return '+43';
-                    if (phone.startsWith('+49')) return '+49';
-                    if (phone.startsWith('+1')) return '+1';
-                    return '+49';
-                  })()}
-                  onChange={(e) => {
-                    const newCode = e.target.value;
-                    const phone = formData.phone || '';
-                    // Remove old country code prefix
-                    let number = phone;
-                    for (const c of ['+972', '+44', '+43', '+49', '+1']) {
-                      if (number.startsWith(c)) { number = number.slice(c.length); break; }
-                    }
-                    setFormData(prev => ({ ...prev, phone: number ? newCode + number : '' }));
-                  }}
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value)}
                   style={{
-                    width: '68px',
+                    width: '72px',
                     padding: '9px 4px',
                     textAlign: 'center',
                     background: 'var(--color-bg-secondary)',
@@ -380,7 +378,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                     borderRight: 'none',
                     borderRadius: 'var(--border-radius-md) 0 0 var(--border-radius-md)',
                     color: 'var(--color-text-main)',
-                    fontSize: 'var(--font-size-sm)',
+                    fontSize: '16px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     appearance: 'none',
@@ -395,65 +393,35 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 </select>
                 <input
                   type="tel"
-                  name="phone"
-                  value={(() => {
-                    const phone = formData.phone || '';
-                    // Strip known country code prefix to show only the number
-                    for (const c of ['+972', '+44', '+43', '+49', '+1']) {
-                      if (phone.startsWith(c)) return phone.slice(c.length);
-                    }
-                    // Strip any other + prefix
-                    return phone.replace(/^\+\d{1,4}/, '');
-                  })()}
+                  value={phoneNumber}
                   onChange={(e) => {
-                    let val = e.target.value.replace(/[^\d\s]/g, '');
+                    let val = e.target.value.replace(/[^\d]/g, '');
                     val = val.replace(/^0+/, '');
-                    // Get current country code
-                    const phone = formData.phone || '';
-                    let code = '+49';
-                    for (const c of ['+972', '+44', '+43', '+49', '+1']) {
-                      if (phone.startsWith(c)) { code = c; break; }
-                    }
-                    setFormData(prev => ({ ...prev, phone: val ? code + val.replace(/\s/g, '') : '' }));
+                    setPhoneNumber(val);
                   }}
-                  onFocus={(e) => {
-                    if (!formData.phone) {
-                      setFormData(prev => ({ ...prev, phone: '+49' }));
-                    }
-                  }}
-                  placeholder="15157431078"
+                  placeholder="15906442264"
                   style={{
                     borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
                     flex: 1,
-                    ...((() => {
-                      const digits = (formData.phone || '').replace(/\D/g, '');
-                      // Has some digits (beyond country code) but fewer than 10 total = incomplete
-                      return digits.length > 2 && digits.length < 10
+                    ...(phoneNumber.length > 0 && phoneNumber.length < 8
                         ? { borderColor: '#ef4444', boxShadow: '0 0 0 1px #ef4444' }
-                        : {};
-                    })())
+                        : {})
                   }}
                 />
-                {(() => {
-                  const digits = (formData.phone || '').replace(/\D/g, '');
-                  if (digits.length > 2 && digits.length < 10) {
-                    return (
-                      <div style={{
-                        position: 'absolute',
-                        right: '8px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: '#ef4444',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        pointerEvents: 'none'
-                      }}>
-                        Too short
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
+                {phoneNumber.length > 0 && phoneNumber.length < 8 && (
+                  <div style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#ef4444',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    pointerEvents: 'none'
+                  }}>
+                    Too short
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group">
@@ -469,13 +437,13 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
 
           {/* Save to Contacts — shown when there's a name + phone */}
-          {formData.contactPerson && formData.phone && (
+          {formData.contactPerson && fullPhone && (
             <button
               type="button"
               onClick={() => saveToContacts({
                 contactPerson: formData.contactPerson,
                 contactTitle: formData.contactTitle,
-                phone: formData.phone,
+                phone: fullPhone,
                 email: formData.email,
                 locationName: location.locationName
               })}
@@ -806,12 +774,12 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </button>
 
           {/* QUICK SEND — one-tap send first follow-up via WhatsApp or Email */}
-          {formData.contactPerson && (formData.phone || location.businessPhone || formData.email || location.directEmail) && (
+          {formData.contactPerson && (fullPhone || location.businessPhone || formData.email || location.directEmail) && (
             (() => {
               const locForMsg = {
                 ...location,
                 contactPerson: formData.contactPerson,
-                directPhone: formData.phone || location.directPhone || '',
+                directPhone: fullPhone || location.directPhone || '',
                 businessPhone: location.businessPhone || '',
                 directEmail: formData.email || location.directEmail || '',
                 pipelineStage: location.pipelineStage || 'new_visit',
@@ -914,7 +882,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   const locWithForm = {
                     ...location,
                     contactPerson: formData.contactPerson || location.contactPerson || 'there',
-                    directPhone: formData.phone || location.directPhone || '',
+                    directPhone: fullPhone || location.directPhone || '',
                     businessPhone: location.businessPhone || '',
                     directEmail: formData.email || location.directEmail || '',
                     pipelineStage: location.pipelineStage || 'new_visit',
