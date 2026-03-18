@@ -128,8 +128,10 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     // Add click listener for Google Maps POI (Points of Interest) markers
     map.addListener('click', async (event) => {
       // Skip if a custom marker was just clicked (prevents double-fire)
+      // Use a longer window to account for mobile touch delays
       if (customMarkerClickedRef.current) {
         customMarkerClickedRef.current = false;
+        if (event.placeId) event.stop();
         return;
       }
       // Check if a POI was clicked
@@ -152,28 +154,45 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
           console.log('✅ Google Maps POI details:', place);
 
-          onLocationSelect({
-            locationName: place.displayName || 'Unknown Place',
-            businessAddress: place.formattedAddress || 'Address not available',
-            businessPhone: place.nationalPhoneNumber || '',
-            businessWebsite: place.websiteURI || '',
-            directLink: place.googleMapsURI || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName)}`,
-            placeId: event.placeId,
-            lat: place.location && typeof place.location.lat === 'function' ? place.location.lat() : null,
-            lng: place.location && typeof place.location.lng === 'function' ? place.location.lng() : null,
-            // Add other fields expected by LocationPanel/Schema
-            businessEmail: '',
-            businessTypes: '',
-            contactPerson: '',
-            contactTitle: '',
-            directPhone: '',
-            directEmail: '',
-            visitNotes: '',
-            interestLevel: '',
-            followUpDate: '',
-            sampleGiven: 'NO',
-            archived: 'NO'
-          });
+          // Check if this place already exists in visited locations (use saved data if so)
+          const placeName = place.displayName || '';
+          const placeAddr = place.formattedAddress || '';
+          const existingLocation = visitedLocations.find(loc =>
+            (loc.placeId && loc.placeId === event.placeId) ||
+            (loc.locationName && loc.locationName === placeName) ||
+            (loc.businessAddress && loc.businessAddress === placeAddr)
+          );
+
+          if (existingLocation) {
+            // Open with saved data (contact info, notes, pipeline stage, etc.)
+            onLocationSelect({
+              ...existingLocation,
+              name: existingLocation.locationName,
+              address: existingLocation.businessAddress
+            });
+          } else {
+            onLocationSelect({
+              locationName: placeName || 'Unknown Place',
+              businessAddress: placeAddr || 'Address not available',
+              businessPhone: place.nationalPhoneNumber || '',
+              businessWebsite: place.websiteURI || '',
+              directLink: place.googleMapsURI || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeName)}`,
+              placeId: event.placeId,
+              lat: place.location && typeof place.location.lat === 'function' ? place.location.lat() : null,
+              lng: place.location && typeof place.location.lng === 'function' ? place.location.lng() : null,
+              businessEmail: '',
+              businessTypes: '',
+              contactPerson: '',
+              contactTitle: '',
+              directPhone: '',
+              directEmail: '',
+              visitNotes: '',
+              interestLevel: '',
+              followUpDate: '',
+              sampleGiven: 'NO',
+              archived: 'NO'
+            });
+          }
         } catch (error) {
           console.error('Places API error:', error);
         }
@@ -345,7 +364,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
       markerDiv.addEventListener('click', (e) => {
         e.stopPropagation();
         customMarkerClickedRef.current = true;
-        setTimeout(() => { customMarkerClickedRef.current = false; }, 300);
+        setTimeout(() => { customMarkerClickedRef.current = false; }, 1000);
         onLocationSelect({
           ...locationData,
           name: locationData.locationName,
