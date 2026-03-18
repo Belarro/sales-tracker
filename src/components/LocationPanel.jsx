@@ -84,6 +84,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   // Full phone = code + number (only when number exists)
   const fullPhone = phoneNumber ? phoneCode + phoneNumber : '';
+  const [pipelineStage, setPipelineStage] = useState('new_visit');
   const [followUpDate, setFollowUpDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState({ type: '', text: '' });
@@ -91,7 +92,6 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [noteTemplates, setNoteTemplates] = useState([]);
   const [showFollowUpPreview, setShowFollowUpPreview] = useState(false);
   const [followUpMsg, setFollowUpMsg] = useState(null);
-  const [sendingFollowUp, setSendingFollowUp] = useState(false);
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -118,6 +118,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const { code, number } = splitPhone(location.directPhone || '');
       setPhoneCode(code);
       setPhoneNumber(number);
+      setPipelineStage(pipelineStage || 'new_visit');
       // Default follow-up to 1 week if outcome is Follow Up or Interested
       const interest = location.interestLevel || 'Follow Up';
       if (interest === 'Follow Up' || interest === 'Interested') {
@@ -158,12 +159,14 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     setSaveMessage({ type: '', text: '' });
 
     try {
-      // Auto-set pipeline stage based on outcome
-      let pipelineStage = location.pipelineStage || CONFIG.PIPELINE_STAGES.NEW_VISIT;
+      // Use manually-set pipeline stage, but auto-set for terminal outcomes
+      let finalStage = pipelineStage;
       if (formData.interestLevel === 'Closed Deal') {
-        pipelineStage = CONFIG.PIPELINE_STAGES.CLOSED_WON;
+        finalStage = CONFIG.PIPELINE_STAGES.CLOSED_WON;
+        setPipelineStage(finalStage);
       } else if (formData.interestLevel === 'Not Interested') {
-        pipelineStage = CONFIG.PIPELINE_STAGES.CLOSED_LOST;
+        finalStage = CONFIG.PIPELINE_STAGES.CLOSED_LOST;
+        setPipelineStage(finalStage);
       }
 
       // Auto-increment follow-up count if there was a previous follow-up
@@ -187,7 +190,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         businessTypes: formData.businessTypes,
         businessWebsite: formData.businessWebsite,
         followUpDate: followUpDate,
-        pipelineStage: pipelineStage,
+        pipelineStage: finalStage,
         followUpCount: String(newCount),
         lastFollowUpDate: location.lastFollowUpDate || '',
         nextActionDate: followUpDate,
@@ -326,6 +329,74 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
           <button className="close-panel" onClick={onClose}>×</button>
         </div>
+
+        {/* PIPELINE STAGE — manual control */}
+        {(() => {
+          const stages = [
+            { key: 'new_visit',           label: 'New',       color: '#9e9e9e' },
+            { key: 'follow_up_1',         label: 'FU 1',      color: '#ffc107' },
+            { key: 'follow_up_2',         label: 'FU 2',      color: '#ffa000' },
+            { key: 'follow_up_3',         label: 'FU 3',      color: '#ff8f00' },
+            { key: 'order_confirmed',     label: 'Ordered',   color: '#2196F3' },
+            { key: 'delivery_reminder',   label: 'Delivery',  color: '#1976D2' },
+            { key: 'post_delivery',       label: 'Post-Del',  color: '#1565C0' },
+            { key: 'active_customer',     label: 'Active',    color: '#4caf50' },
+            { key: 'inactive',            label: 'Inactive',  color: '#757575' },
+            { key: 'closed_won',          label: 'Won',       color: '#2e7d32' },
+            { key: 'closed_lost',         label: 'Lost',      color: '#c62828' }
+          ];
+          return (
+            <div style={{
+              display: 'flex',
+              gap: '6px',
+              overflowX: 'auto',
+              padding: '8px 0',
+              marginBottom: '4px',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}>
+              {stages.map(s => {
+                const isActive = pipelineStage === s.key;
+                return (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={async () => {
+                      setPipelineStage(s.key);
+                      // Save immediately to Google Sheets
+                      try {
+                        await updatePipelineData(
+                          location.locationName,
+                          location.businessAddress,
+                          { pipelineStage: s.key }
+                        );
+                      } catch (err) {
+                        console.error('Failed to update stage:', err);
+                      }
+                    }}
+                    style={{
+                      flexShrink: 0,
+                      padding: '5px 10px',
+                      borderRadius: 'var(--border-radius-full)',
+                      border: isActive ? `2px solid ${s.color}` : '1.5px solid var(--color-border)',
+                      background: isActive ? s.color : 'var(--color-bg-main)',
+                      color: isActive ? '#fff' : 'var(--color-text-muted)',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      fontFamily: 'inherit',
+                      transition: 'all 150ms ease'
+                    }}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* FEEDBACK */}
         {saveMessage.text && (
@@ -801,7 +872,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 directPhone: fullPhone || location.directPhone || '',
                 businessPhone: location.businessPhone || '',
                 directEmail: formData.email || location.directEmail || '',
-                pipelineStage: location.pipelineStage || 'new_visit',
+                pipelineStage: pipelineStage || 'new_visit',
                 language: formData.language || location.language || 'DE',
                 locationName: location.locationName
               };
@@ -870,7 +941,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         </form>
 
         {/* ===== SEND FOLLOW-UP ===== */}
-        {(location.pipelineStage || 'new_visit') !== 'closed_won' && (location.pipelineStage || 'new_visit') !== 'closed_lost' && (
+        {(pipelineStage || 'new_visit') !== 'closed_won' && (pipelineStage || 'new_visit') !== 'closed_lost' && (
           <div style={{
             marginTop: 'var(--spacing-lg)',
             borderTop: '1px solid var(--color-border)',
@@ -891,7 +962,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               color: 'var(--color-text-secondary)',
               marginBottom: 'var(--spacing-sm)'
             }}>
-              {getStageLabel(location.pipelineStage || 'new_visit')}
+              {getStageLabel(pipelineStage || 'new_visit')}
             </div>
 
             {!showFollowUpPreview ? (
@@ -904,7 +975,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                     directPhone: fullPhone || location.directPhone || '',
                     businessPhone: location.businessPhone || '',
                     directEmail: formData.email || location.directEmail || '',
-                    pipelineStage: location.pipelineStage || 'new_visit',
+                    pipelineStage: pipelineStage || 'new_visit',
                     language: formData.language || location.language || 'DE'
                   };
                   const msg = getFollowUpMessage(locWithForm, user?.name);
@@ -953,37 +1024,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   {followUpMsg.nextStage && ` → Next: ${getStageLabel(followUpMsg.nextStage)}`}
                 </div>
 
-                {/* Copy + Send buttons */}
+                {/* Copy + Send buttons — NO auto-advance, use pipeline chips above */}
                 {(() => {
                   const hasPhone = !!followUpMsg.waLink;
                   const contactEmail = formData.email || location.directEmail || location.businessEmail || '';
                   const hasEmail = !!contactEmail;
-
-                  const advancePipeline = async () => {
-                    setSendingFollowUp(true);
-                    try {
-                      const now = new Date().toISOString().split('T')[0];
-                      const nextDate = followUpMsg.nextActionDays
-                        ? calculateNextActionDate(followUpMsg.nextActionDays)
-                        : '';
-                      await updatePipelineData(
-                        location.locationName,
-                        location.businessAddress,
-                        {
-                          pipelineStage: followUpMsg.nextStage,
-                          followUpCount: String((parseInt(location.followUpCount) || 0) + 1),
-                          lastFollowUpDate: now,
-                          nextActionDate: nextDate,
-                          nextActionType: followUpMsg.nextActionType || '',
-                          automationStatus: 'sent'
-                        }
-                      );
-                    } catch (err) {
-                      console.error('Failed to update pipeline:', err);
-                    }
-                    setSendingFollowUp(false);
-                    setShowFollowUpPreview(false);
-                  };
 
                   const openEmail = () => {
                     const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
@@ -991,11 +1036,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                     window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contactEmail)}&su=${subject}&body=${body}`, '_blank');
                   };
 
-                  const openWhatsApp = async (e) => {
+                  const openWhatsApp = (e) => {
                     const isAndroid = /android/i.test(navigator.userAgent);
                     if (isAndroid && followUpMsg.phone) {
                       if (e) e.preventDefault();
-                      await navigator.clipboard.writeText(followUpMsg.body);
+                      navigator.clipboard.writeText(followUpMsg.body);
                       window.location.href = `intent://send/${followUpMsg.phone}#Intent;scheme=smsto;package=com.whatsapp.w4b;action=android.intent.action.SENDTO;end`;
                     } else if (followUpMsg.waLink) {
                       window.open(followUpMsg.waLink, '_blank');
@@ -1044,16 +1089,12 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                       </button>
 
                       <div style={{ display: 'flex', gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
-                        {/* Send WhatsApp — only if phone exists */}
                         {hasPhone && (
                           <a
                             href={followUpMsg.waLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            onClick={async (e) => {
-                              await openWhatsApp(e);
-                              await advancePipeline();
-                            }}
+                            onClick={(e) => openWhatsApp(e)}
                             style={{
                               flex: 1, textAlign: 'center', padding: '14px',
                               borderRadius: 'var(--border-radius-md)', background: '#25D366',
@@ -1061,18 +1102,14 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                               textDecoration: 'none', fontFamily: 'inherit', minWidth: '120px'
                             }}
                           >
-                            {sendingFollowUp ? 'Updating...' : 'Send WhatsApp'}
+                            Send WhatsApp
                           </a>
                         )}
 
-                        {/* Send Email — only if email exists */}
                         {hasEmail && (
                           <button
                             type="button"
-                            onClick={async () => {
-                              openEmail();
-                              await advancePipeline();
-                            }}
+                            onClick={() => openEmail()}
                             style={{
                               flex: 1, textAlign: 'center', padding: '14px',
                               borderRadius: 'var(--border-radius-md)', background: '#4285F4',
@@ -1084,15 +1121,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                           </button>
                         )}
 
-                        {/* Send Both — only if both phone AND email exist */}
                         {hasPhone && hasEmail && (
                           <button
                             type="button"
-                            onClick={async () => {
-                              openWhatsApp();
-                              openEmail();
-                              await advancePipeline();
-                            }}
+                            onClick={() => { openWhatsApp(); openEmail(); }}
                             style={{
                               flex: 1, textAlign: 'center', padding: '14px',
                               borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-main, #1a1a1a)',
