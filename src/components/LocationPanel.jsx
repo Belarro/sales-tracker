@@ -47,6 +47,8 @@ function saveToContacts({ contactPerson, contactTitle, phone, email, locationNam
 const KNOWN_CODES = ['+972', '+44', '+43', '+49', '+1'];
 function splitPhone(full) {
   if (!full) return { code: '+49', number: '' };
+  // Strip spaces
+  full = full.replace(/\s/g, '');
   for (const c of KNOWN_CODES) {
     if (full.startsWith(c)) {
       let number = full.slice(c.length);
@@ -55,11 +57,14 @@ function splitPhone(full) {
       if (number.startsWith(digits)) {
         number = number.slice(digits.length);
       }
+      // Strip leading zeros (e.g. +49 0159... → 159...)
+      number = number.replace(/^0+/, '');
       return { code: c, number };
     }
   }
-  // No known code found — default to +49, keep full string as number
-  return { code: '+49', number: full.replace(/^\+/, '') };
+  // No known code found — default to +49, strip leading + and zeros
+  let number = full.replace(/^\+/, '').replace(/^0+/, '');
+  return { code: '+49', number };
 }
 
 const LocationPanel = ({ location, user, onClose, onSave }) => {
@@ -370,80 +375,84 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Phone</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
-                <select
-                  value={phoneCode}
-                  onChange={(e) => setPhoneCode(e.target.value)}
-                  style={{
-                    width: '58px',
-                    minWidth: '58px',
-                    padding: '9px 2px',
-                    textAlign: 'center',
-                    background: 'var(--color-bg-secondary)',
-                    border: '1px solid var(--color-border)',
-                    borderRight: 'none',
-                    borderRadius: 'var(--border-radius-md) 0 0 var(--border-radius-md)',
-                    color: 'var(--color-text-main)',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    flexShrink: 0
-                  }}
-                >
-                  <option value="+49">+49</option>
-                  <option value="+43">+43</option>
-                  <option value="+44">+44</option>
-                  <option value="+1">+1</option>
-                  <option value="+972">+972</option>
-                </select>
-                <input
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => {
-                    let val = e.target.value.replace(/[^\d]/g, '');
-                    val = val.replace(/^0+/, '');
-                    setPhoneNumber(val);
-                  }}
-                  placeholder="15906442264"
-                  style={{
-                    borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
-                    flex: 1,
-                    ...(phoneNumber.length > 0 && phoneNumber.length < 8
-                        ? { borderColor: '#ef4444', boxShadow: '0 0 0 1px #ef4444' }
-                        : {})
-                  }}
-                />
-                {phoneNumber.length > 0 && phoneNumber.length < 8 && (
-                  <div style={{
-                    position: 'absolute',
-                    right: '8px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#ef4444',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    pointerEvents: 'none'
-                  }}>
-                    Too short
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Email</label>
+          <div className="form-group">
+            <label>Phone</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
+              <select
+                value={phoneCode}
+                onChange={(e) => setPhoneCode(e.target.value)}
+                style={{
+                  width: '58px',
+                  minWidth: '58px',
+                  padding: '9px 2px',
+                  textAlign: 'center',
+                  background: 'var(--color-bg-secondary)',
+                  border: '1px solid var(--color-border)',
+                  borderRight: 'none',
+                  borderRadius: 'var(--border-radius-md) 0 0 var(--border-radius-md)',
+                  color: 'var(--color-text-main)',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  flexShrink: 0
+                }}
+              >
+                <option value="+49">+49</option>
+                <option value="+43">+43</option>
+                <option value="+44">+44</option>
+                <option value="+1">+1</option>
+                <option value="+972">+972</option>
+              </select>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email address"
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => {
+                  let val = e.target.value.replace(/[^\d]/g, '');
+                  val = val.replace(/^0+/, '');
+                  setPhoneNumber(val);
+                }}
+                placeholder="15906442264"
+                style={{
+                  borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
+                  flex: 1,
+                  ...(phoneNumber.length > 0 && phoneNumber.length < 8
+                      ? { borderColor: '#ef4444', boxShadow: '0 0 0 1px #ef4444' }
+                      : {})
+                }}
               />
+              {phoneNumber.length > 0 && phoneNumber.length < 8 && (
+                <div style={{
+                  position: 'absolute',
+                  right: '8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#ef4444',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  pointerEvents: 'none'
+                }}>
+                  Too short
+                </div>
+              )}
             </div>
+            {fullPhone && (
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '3px' }}>
+                Sending to: {fullPhone}
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email address"
+            />
           </div>
 
           {/* Save to Contacts — shown when there's a name + phone */}
