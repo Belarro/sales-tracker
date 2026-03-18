@@ -118,7 +118,11 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     if (location.contactPerson) params.set('n', location.contactPerson);
     const qs = params.toString();
     const link = qs ? `${base}?${qs}` : base;
-    const phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+    let phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+    // Fix double country code
+    for (const code of ['972', '44', '43', '49', '1']) {
+      if (phone.startsWith(code + code)) { phone = phone.slice(code.length); break; }
+    }
     if (phone) {
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(link)}`, '_blank');
     } else {

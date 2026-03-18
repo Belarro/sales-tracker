@@ -273,8 +273,12 @@ export function getFollowUpMessage(location, userName, extra) {
   const langTemplate = template[lang] || template['DE'];
   const result = langTemplate(location, userName, extra);
 
-  // Build WhatsApp deep links
-  const phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+  // Build WhatsApp deep links — clean phone and fix double country codes
+  let phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+  // Fix double country code (e.g. 494915906442264 → 4915906442264)
+  for (const code of ['972', '44', '43', '49', '1']) {
+    if (phone.startsWith(code + code)) { phone = phone.slice(code.length); break; }
+  }
   const encodedText = phone ? encodeURIComponent(result.body) : '';
 
   // Regular WhatsApp link (fallback / iOS / desktop)

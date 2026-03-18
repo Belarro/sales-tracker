@@ -48,7 +48,15 @@ const KNOWN_CODES = ['+972', '+44', '+43', '+49', '+1'];
 function splitPhone(full) {
   if (!full) return { code: '+49', number: '' };
   for (const c of KNOWN_CODES) {
-    if (full.startsWith(c)) return { code: c, number: full.slice(c.length) };
+    if (full.startsWith(c)) {
+      let number = full.slice(c.length);
+      // Fix double country code (e.g. +49 49 15906442264 → strip the extra 49)
+      const digits = c.replace('+', '');
+      if (number.startsWith(digits)) {
+        number = number.slice(digits.length);
+      }
+      return { code: c, number };
+    }
   }
   // No known code found — default to +49, keep full string as number
   return { code: '+49', number: full.replace(/^\+/, '') };
@@ -370,19 +378,21 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   value={phoneCode}
                   onChange={(e) => setPhoneCode(e.target.value)}
                   style={{
-                    width: '72px',
-                    padding: '9px 4px',
+                    width: '58px',
+                    minWidth: '58px',
+                    padding: '9px 2px',
                     textAlign: 'center',
                     background: 'var(--color-bg-secondary)',
                     border: '1px solid var(--color-border)',
                     borderRight: 'none',
                     borderRadius: 'var(--border-radius-md) 0 0 var(--border-radius-md)',
                     color: 'var(--color-text-main)',
-                    fontSize: '16px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     appearance: 'none',
-                    WebkitAppearance: 'none'
+                    WebkitAppearance: 'none',
+                    flexShrink: 0
                   }}
                 >
                   <option value="+49">+49</option>
