@@ -23,6 +23,7 @@ export const CONFIG = {
   // Contact role options for the dropdown
   CONTACT_ROLES: [
     'Owner',
+    'Owner/Chef',
     'Head Chef',
     'Sous Chef',
     'Manager',
