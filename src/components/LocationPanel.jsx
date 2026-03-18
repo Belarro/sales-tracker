@@ -349,7 +349,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           <div className="form-row">
             <div className="form-group">
               <label>Phone</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
                 <select
                   value={(() => {
                     // Extract known country codes (longest match first)
@@ -424,9 +424,36 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   placeholder="15157431078"
                   style={{
                     borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
-                    flex: 1
+                    flex: 1,
+                    ...((() => {
+                      const digits = (formData.phone || '').replace(/\D/g, '');
+                      // Has some digits (beyond country code) but fewer than 10 total = incomplete
+                      return digits.length > 2 && digits.length < 10
+                        ? { borderColor: '#ef4444', boxShadow: '0 0 0 1px #ef4444' }
+                        : {};
+                    })())
                   }}
                 />
+                {(() => {
+                  const digits = (formData.phone || '').replace(/\D/g, '');
+                  if (digits.length > 2 && digits.length < 10) {
+                    return (
+                      <div style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#ef4444',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        pointerEvents: 'none'
+                      }}>
+                        Too short
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
             </div>
             <div className="form-group">
