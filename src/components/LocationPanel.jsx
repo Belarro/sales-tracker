@@ -350,26 +350,30 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             <div className="form-group">
               <label>Phone</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-                <input
-                  type="tel"
+                <select
                   value={(() => {
-                    const match = formData.phone.match(/^(\+\d{1,4})/);
-                    return match ? match[1] : '+49';
+                    // Extract known country codes (longest match first)
+                    const phone = formData.phone || '';
+                    if (phone.startsWith('+972')) return '+972';
+                    if (phone.startsWith('+44')) return '+44';
+                    if (phone.startsWith('+43')) return '+43';
+                    if (phone.startsWith('+49')) return '+49';
+                    if (phone.startsWith('+1')) return '+1';
+                    return '+49';
                   })()}
                   onChange={(e) => {
-                    let code = e.target.value.replace(/[^\d+]/g, '');
-                    if (!code.startsWith('+')) code = '+' + code;
-                    const currentNumber = formData.phone.replace(/^\+\d{1,4}/, '');
-                    setFormData(prev => ({ ...prev, phone: currentNumber ? code + currentNumber : '' }));
-                  }}
-                  onFocus={(e) => {
-                    if (!formData.phone) {
-                      setFormData(prev => ({ ...prev, phone: '+49' }));
+                    const newCode = e.target.value;
+                    const phone = formData.phone || '';
+                    // Remove old country code prefix
+                    let number = phone;
+                    for (const c of ['+972', '+44', '+43', '+49', '+1']) {
+                      if (number.startsWith(c)) { number = number.slice(c.length); break; }
                     }
+                    setFormData(prev => ({ ...prev, phone: number ? newCode + number : '' }));
                   }}
                   style={{
-                    width: '58px',
-                    padding: '9px 6px',
+                    width: '68px',
+                    padding: '9px 4px',
                     textAlign: 'center',
                     background: 'var(--color-bg-secondary)',
                     border: '1px solid var(--color-border)',
@@ -377,18 +381,39 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                     borderRadius: 'var(--border-radius-md) 0 0 var(--border-radius-md)',
                     color: 'var(--color-text-main)',
                     fontSize: 'var(--font-size-sm)',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    appearance: 'none',
+                    WebkitAppearance: 'none'
                   }}
-                />
+                >
+                  <option value="+49">+49</option>
+                  <option value="+43">+43</option>
+                  <option value="+44">+44</option>
+                  <option value="+1">+1</option>
+                  <option value="+972">+972</option>
+                </select>
                 <input
                   type="tel"
                   name="phone"
-                  value={formData.phone.replace(/^\+\d{1,4}/, '')}
+                  value={(() => {
+                    const phone = formData.phone || '';
+                    // Strip known country code prefix to show only the number
+                    for (const c of ['+972', '+44', '+43', '+49', '+1']) {
+                      if (phone.startsWith(c)) return phone.slice(c.length);
+                    }
+                    // Strip any other + prefix
+                    return phone.replace(/^\+\d{1,4}/, '');
+                  })()}
                   onChange={(e) => {
                     let val = e.target.value.replace(/[^\d\s]/g, '');
                     val = val.replace(/^0+/, '');
-                    const match = formData.phone.match(/^(\+\d{1,4})/);
-                    const code = match ? match[1] : '+49';
+                    // Get current country code
+                    const phone = formData.phone || '';
+                    let code = '+49';
+                    for (const c of ['+972', '+44', '+43', '+49', '+1']) {
+                      if (phone.startsWith(c)) { code = c; break; }
+                    }
                     setFormData(prev => ({ ...prev, phone: val ? code + val.replace(/\s/g, '') : '' }));
                   }}
                   onFocus={(e) => {
@@ -396,7 +421,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                       setFormData(prev => ({ ...prev, phone: '+49' }));
                     }
                   }}
-                  placeholder="170 1234567"
+                  placeholder="15157431078"
                   style={{
                     borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
                     flex: 1
