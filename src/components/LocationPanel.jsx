@@ -65,8 +65,8 @@ function splitPhone(full) {
       return { code: c, number };
     }
   }
-  // No known code found — default to +49, strip leading + and zeros
-  let number = full.replace(/^\+/, '').replace(/^0+/, '');
+  // No known code found — default to +49, keep as-is for display
+  let number = full.replace(/^\+/, '');
   return { code: '+49', number };
 }
 
