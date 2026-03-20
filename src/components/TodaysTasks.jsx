@@ -96,7 +96,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     if (!email || !followUp?.body) return;
     const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
     const body = encodeURIComponent(followUp.body);
-    window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`, '_blank');
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   };
 
   const handleCalendar = (e) => {
@@ -206,7 +206,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
         } else if (location.businessEmail) {
           const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
           const body = encodeURIComponent(finalFollowUp.body);
-          window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(location.businessEmail)}&su=${subject}&body=${body}`, '_blank');
+          window.location.href = `mailto:${location.businessEmail}?subject=${subject}&body=${body}`;
         }
       }
 

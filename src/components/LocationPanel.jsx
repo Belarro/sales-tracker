@@ -926,7 +926,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                       onClick={() => {
                         const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
                         const body = encodeURIComponent(msg.body);
-                        window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contactEmail)}&su=${subject}&body=${body}`, '_blank');
+                        window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
                       }}
                       style={btnStyle('#4285F4')}
                     >
@@ -1032,7 +1032,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   const openEmail = () => {
                     const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
                     const body = encodeURIComponent(followUpMsg.body);
-                    window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contactEmail)}&su=${subject}&body=${body}`, '_blank');
+                    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
                   };
 
                   const openWhatsApp = (e) => {
