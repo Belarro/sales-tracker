@@ -43,7 +43,8 @@ function saveToContacts({ contactPerson, contactTitle, phone, email, locationNam
   URL.revokeObjectURL(url);
 }
 
-// Split a full phone string like "+4915157431078" into { code: '+49', number: '15157431078' }
+// Split a full phone string like "+4915157431078" into { code: '+49', number: '015157431078' }
+// Adds leading 0 for German mobile display (0159...) while storing +49159... internally
 const KNOWN_CODES = ['+972', '+44', '+43', '+49', '+1'];
 function splitPhone(full) {
   if (!full) return { code: '+49', number: '' };
@@ -57,8 +58,10 @@ function splitPhone(full) {
       if (number.startsWith(digits)) {
         number = number.slice(digits.length);
       }
-      // Strip leading zeros (e.g. +49 0159... → 159...)
-      number = number.replace(/^0+/, '');
+      // Add leading 0 for display (German convention: 0159...)
+      if (c === '+49' && number && !number.startsWith('0')) {
+        number = '0' + number;
+      }
       return { code: c, number };
     }
   }
@@ -82,8 +85,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   });
   const [phoneCode, setPhoneCode] = useState('+49');
   const [phoneNumber, setPhoneNumber] = useState('');
-  // Full phone = code + number (only when number exists)
-  const fullPhone = phoneNumber ? phoneCode + phoneNumber : '';
+  // Full phone = code + number (strip leading 0 for international format)
+  const fullPhone = phoneNumber ? phoneCode + phoneNumber.replace(/^0+/, '') : '';
   const [pipelineStage, setPipelineStage] = useState('new_visit');
   const [followUpDate, setFollowUpDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -451,7 +454,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
 
           <div className="form-group">
-            <label>Phone</label>
+            <label>Mobile phone</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
               <select
                 value={phoneCode}
@@ -485,10 +488,9 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 value={phoneNumber}
                 onChange={(e) => {
                   let val = e.target.value.replace(/[^\d]/g, '');
-                  val = val.replace(/^0+/, '');
                   setPhoneNumber(val);
                 }}
-                placeholder="15906442264"
+                placeholder="015906442264"
                 style={{
                   borderRadius: '0 var(--border-radius-md) var(--border-radius-md) 0',
                   flex: 1,
@@ -512,11 +514,6 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 </div>
               )}
             </div>
-            {fullPhone && (
-              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '3px' }}>
-                Sending to: {fullPhone}
-              </div>
-            )}
           </div>
 
           <div className="form-group">
