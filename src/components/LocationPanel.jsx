@@ -454,7 +454,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
 
           <div className="form-group">
-            <label>Mobile phone</label>
+            <label>Handy Nummer</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
               <select
                 value={phoneCode}
