@@ -8,7 +8,7 @@ import { generateDailySummary } from '../utils/summaryUtils.js';
 import { generateGoogleCalendarUrl } from '../utils/calendarUtils.js';
 import { createFollowUpEvent } from '../utils/googleCalendar.js';
 import { updatePipelineData } from '../utils/googleSheets.js';
-import { calculateNextActionDate, calculateSnappedFollowUpDate, toISODateString } from '../utils/dateUtils.js';
+import { calculateNextActionDate, calculateSnappedFollowUpDate, toISODateString, toEUDateString } from '../utils/dateUtils.js';
 
 // ── Inline SVG icons ──
 const Icons = {
@@ -162,9 +162,10 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     setShowDatePicker(false);
     try {
       const count = parseInt(location.followUpCount || '0', 10) + 1;
-      const today = toISODateString(new Date());
+      const todayEU = toEUDateString(new Date());
 
-      let nextDate = pickedDate || '';
+      let nextDate = pickedDate || '';  // pickedDate is ISO from date picker
+      let nextDateEU = nextDate ? toEUDateString(new Date(nextDate + 'T00:00:00')) : '';
       let finalFollowUp = followUp;
 
       // For order_confirmed: pickedDate = delivery Tuesday
@@ -181,11 +182,12 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
         const monday = new Date(deliveryD);
         monday.setDate(monday.getDate() - 1);
         nextDate = toISODateString(monday);
+        nextDateEU = toEUDateString(monday);
       }
 
       // Build follow-up history log in notesInternal (column Z)
       const stageName = (finalFollowUp.stage || 'unknown').replace(/_/g, ' ');
-      const logEntry = `[${today}] ${stageName} sent → next: ${finalFollowUp.nextStage?.replace(/_/g, ' ') || 'done'} on ${nextDate || 'n/a'}`;
+      const logEntry = `[${todayEU}] ${stageName} sent → next: ${finalFollowUp.nextStage?.replace(/_/g, ' ') || 'done'} on ${nextDateEU || 'n/a'}`;
       const existingNotes = location.notesInternal || '';
       const updatedNotes = existingNotes
         ? `${existingNotes}\n${logEntry}`
@@ -193,8 +195,8 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
       await updatePipelineData(location.locationName, location.businessAddress, {
         pipelineStage: finalFollowUp.nextStage || location.pipelineStage,
         followUpCount: String(count),
-        lastFollowUpDate: today,
-        nextActionDate: nextDate,
+        lastFollowUpDate: todayEU,
+        nextActionDate: nextDateEU,
         nextActionType: finalFollowUp.nextActionType || '',
         automationStatus: 'sent',
         notesInternal: updatedNotes,

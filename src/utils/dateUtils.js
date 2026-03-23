@@ -73,7 +73,7 @@ export const getCurrentTimestamp = () => {
 // ============================================
 
 /**
- * Convert a Date object to YYYY-MM-DD string (ISO format for n8n compatibility)
+ * Convert a Date object to YYYY-MM-DD string (for HTML date inputs)
  */
 export const toISODateString = (date) => {
   const d = typeof date === 'string' ? new Date(date) : date;
@@ -81,6 +81,17 @@ export const toISODateString = (date) => {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day   = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+};
+
+/**
+ * Convert a Date object to DD.MM.YYYY string (European format for sheet storage)
+ */
+export const toEUDateString = (date) => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const day   = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year  = d.getFullYear();
+  return `${day}.${month}.${year}`;
 };
 
 /**
@@ -131,7 +142,7 @@ export const snapToFollowUpDay = (date) => {
 /**
  * Calculate the next follow-up date snapped to Monday or Thursday.
  * First adds daysAhead calendar days, then snaps to the next Mon/Thu.
- * Returns YYYY-MM-DD format.
+ * Returns YYYY-MM-DD format (ISO, for date picker and calendar API).
  */
 export const calculateSnappedFollowUpDate = (daysAhead) => {
   const date = new Date();
@@ -141,8 +152,8 @@ export const calculateSnappedFollowUpDate = (daysAhead) => {
 };
 
 /**
- * Parse either DD-MM-YYYY (existing app format) or YYYY-MM-DD (pipeline format)
- * into a JS Date object. Returns null on failure.
+ * Parse DD.MM.YYYY, DD-MM-YYYY, or YYYY-MM-DD into a JS Date object.
+ * Returns null on failure.
  */
 export const parseAppDate = (dateStr) => {
   if (!dateStr) return null;
@@ -150,7 +161,12 @@ export const parseAppDate = (dateStr) => {
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
     return new Date(dateStr + 'T00:00:00');
   }
-  // Existing DD-MM-YYYY format
+  // European DD.MM.YYYY format
+  if (/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
+    const [dd, mm, yyyy] = dateStr.split('.');
+    return new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+  }
+  // Legacy DD-MM-YYYY format
   if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
     const [dd, mm, yyyy] = dateStr.split('-');
     return new Date(`${yyyy}-${mm}-${dd}T00:00:00`);

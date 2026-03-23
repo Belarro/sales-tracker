@@ -798,3 +798,114 @@ function removeAllTriggers() {
     Logger.log('Removed: ' + triggers[i].getHandlerFunction());
   }
 }
+
+// ============================================================
+// ONE-TIME: REORDER COLUMNS
+// ============================================================
+// Run this ONCE to rearrange the Data sheet columns.
+// It reads all data, reorders columns in memory, and writes back.
+// A backup tab "Data_backup" is created first.
+//
+// OLD ORDER (A-R):
+//   A:Timestamp B:SalesRep C:LocationName D:BusinessAddress
+//   E:DirectLink F:BusinessPhone G:BusinessEmail H:BusinessWebsite
+//   I:ContactPerson J:ContactTitle K:DirectPhone L:DirectEmail
+//   M:BusinessTypes N:InterestLevel O:VisitNotes P:FollowUpDate
+//   Q:SampleGiven R:Archived
+//
+// NEW ORDER (A-R):
+//   A:LocationName B:BusinessAddress C:ContactPerson D:ContactTitle
+//   E:DirectPhone F:DirectEmail G:BusinessTypes H:InterestLevel
+//   I:VisitNotes J:Timestamp K:FollowUpDate L:SampleGiven
+//   M:SalesRep N:DirectLink O:BusinessPhone P:BusinessEmail
+//   Q:BusinessWebsite R:Archived
+//
+// Columns S-Z (pipeline) stay exactly where they are.
+
+function reorderColumns() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+  if (!dataSheet) {
+    Logger.log('Data sheet not found!');
+    return;
+  }
+
+  var lastRow = dataSheet.getLastRow();
+  var lastCol = dataSheet.getLastColumn();
+  if (lastRow < 1) {
+    Logger.log('Sheet is empty');
+    return;
+  }
+
+  // 1. Create backup
+  var backup = dataSheet.copyTo(ss);
+  backup.setName('Data_backup_' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd_HHmm'));
+  Logger.log('Backup created: ' + backup.getName());
+
+  // 2. Read ALL data including headers (A through last column)
+  var allData = dataSheet.getRange(1, 1, lastRow, lastCol).getValues();
+
+  // 3. Define the column reorder map for columns A-R (indices 0-17)
+  // Maps NEW index → OLD index
+  // New A (0) = Old C (2) = LocationName
+  // New B (1) = Old D (3) = BusinessAddress
+  // New C (2) = Old I (8) = ContactPerson
+  // New D (3) = Old J (9) = ContactTitle
+  // New E (4) = Old K (10) = DirectPhone
+  // New F (5) = Old L (11) = DirectEmail
+  // New G (6) = Old M (12) = BusinessTypes
+  // New H (7) = Old N (13) = InterestLevel
+  // New I (8) = Old O (14) = VisitNotes
+  // New J (9) = Old A (0) = Timestamp
+  // New K (10) = Old P (15) = FollowUpDate
+  // New L (11) = Old Q (16) = SampleGiven
+  // New M (12) = Old B (1) = SalesRep
+  // New N (13) = Old E (4) = DirectLink
+  // New O (14) = Old F (5) = BusinessPhone
+  // New P (15) = Old G (6) = BusinessEmail
+  // New Q (16) = Old H (7) = BusinessWebsite
+  // New R (17) = Old R (17) = Archived
+  var reorderMap = [2, 3, 8, 9, 10, 11, 12, 13, 14, 0, 15, 16, 1, 4, 5, 6, 7, 17];
+
+  // 4. Reorder each row
+  var newData = [];
+  for (var r = 0; r < allData.length; r++) {
+    var oldRow = allData[r];
+    var newRow = [];
+
+    // Reorder columns 0-17 (A-R)
+    for (var c = 0; c < reorderMap.length; c++) {
+      newRow.push(oldRow[reorderMap[c]]);
+    }
+
+    // Keep columns 18+ (S onward) as-is
+    for (var c = 18; c < lastCol; c++) {
+      newRow.push(oldRow[c]);
+    }
+
+    newData.push(newRow);
+  }
+
+  // 5. Update the new headers for row 1
+  var newHeaders = [
+    'Location Name', 'Business Address', 'Contact Person', 'Contact Title',
+    'Direct Phone', 'Direct Email', 'Business Types', 'Interest Level',
+    'Visit Notes', 'Timestamp', 'Follow-up Date', 'Sample Given',
+    'Sales Rep', 'DirectLink', 'Business Phone', 'Business Email',
+    'Business Website', 'Archived'
+  ];
+  for (var h = 0; h < newHeaders.length; h++) {
+    newData[0][h] = newHeaders[h];
+  }
+
+  // 6. Write back
+  dataSheet.getRange(1, 1, newData.length, newData[0].length).setValues(newData);
+
+  Logger.log('Columns reordered successfully! ' + newData.length + ' rows updated.');
+  Logger.log('Backup saved as: Data_backup_*');
+  Logger.log('');
+  Logger.log('NEXT STEPS:');
+  Logger.log('1. Verify the data looks correct');
+  Logger.log('2. Run setupAllTriggers() to refresh everything');
+  Logger.log('3. Delete the backup tab when satisfied');
+}

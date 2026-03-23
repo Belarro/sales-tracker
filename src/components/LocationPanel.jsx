@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
 import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData } from '../utils/googleSheets.js';
-import { calculateNextActionDate, calculateSnappedFollowUpDate } from '../utils/dateUtils.js';
+import { calculateNextActionDate, calculateSnappedFollowUpDate, toEUDateString } from '../utils/dateUtils.js';
 import { MANUAL_COLOR_OPTIONS, getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
 import { createFollowUpEvent } from '../utils/googleCalendar.js';
@@ -1165,29 +1165,30 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                                 setMarkingSent(true);
                                 try {
                                   const nextStage = followUpMsg.nextStage || pipelineStage;
-                                  const nextDate = followUpMsg.nextActionDays
+                                  const nextDateISO = followUpMsg.nextActionDays
                                     ? calculateSnappedFollowUpDate(followUpMsg.nextActionDays)
                                     : '';
-                                  const today = new Date().toISOString().split('T')[0];
+                                  const nextDateEU = nextDateISO ? toEUDateString(new Date(nextDateISO + 'T00:00:00')) : '';
+                                  const todayEU = toEUDateString(new Date());
                                   const count = parseInt(location.followUpCount || '0', 10) + 1;
                                   const nextStageLabel = (followUpMsg.nextStage || '').replace(/_/g, ' ');
-                                  const logEntry = `[${today}] ${(followUpMsg.stage || 'unknown').replace(/_/g, ' ')} sent → next: ${nextStageLabel || 'done'} on ${nextDate || 'n/a'}`;
+                                  const logEntry = `[${todayEU}] ${(followUpMsg.stage || 'unknown').replace(/_/g, ' ')} sent → next: ${nextStageLabel || 'done'} on ${nextDateEU || 'n/a'}`;
                                   const existingNotes = location.notesInternal || '';
                                   const updatedNotes = existingNotes ? `${existingNotes}\n${logEntry}` : logEntry;
 
                                   await updatePipelineData(location.locationName, location.businessAddress, {
                                     pipelineStage: nextStage,
                                     followUpCount: String(count),
-                                    lastFollowUpDate: today,
-                                    nextActionDate: nextDate,
+                                    lastFollowUpDate: todayEU,
+                                    nextActionDate: nextDateEU,
                                     nextActionType: followUpMsg.nextActionType || '',
                                     automationStatus: 'sent',
                                     notesInternal: updatedNotes,
                                   });
-                                  // Auto-create Google Calendar event for next follow-up
-                                  if (nextDate && nextStage !== 'closed_lost' && nextStage !== 'closed_won') {
+                                  // Auto-create Google Calendar event for next follow-up (needs ISO date)
+                                  if (nextDateISO && nextStage !== 'closed_lost' && nextStage !== 'closed_won') {
                                     createFollowUpEvent(
-                                      location, nextDate, nextStage,
+                                      location, nextDateISO, nextStage,
                                       `Follow up with ${location.contactPerson} at ${location.locationName}`
                                     ).catch(err => console.error('Failed to create calendar event:', err));
                                   }
