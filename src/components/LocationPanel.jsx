@@ -87,7 +87,18 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [phoneCode, setPhoneCode] = useState('+49');
   const [phoneNumber, setPhoneNumber] = useState('');
   // Full phone = code + number (strip leading 0 for international format)
-  const fullPhone = phoneNumber ? phoneCode + phoneNumber.replace(/^0+/, '') : '';
+  // Also prevent double country code (e.g. +49 + 4930... → +494930...)
+  const buildFullPhone = () => {
+    if (!phoneNumber) return '';
+    const stripped = phoneNumber.replace(/^0+/, '');
+    const codeDigits = phoneCode.replace('+', '');
+    // If number already starts with country code digits, don't add code again
+    if (stripped.startsWith(codeDigits)) {
+      return '+' + stripped;
+    }
+    return phoneCode + stripped;
+  };
+  const fullPhone = buildFullPhone();
   const [pipelineStage, setPipelineStage] = useState('new_visit');
   const [followUpDate, setFollowUpDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
