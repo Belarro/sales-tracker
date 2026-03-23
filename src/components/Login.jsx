@@ -37,7 +37,7 @@ const Login = ({ onLogin }) => {
       try {
         window.tokenClient = window.google.accounts.oauth2.initTokenClient({
           client_id: CONFIG.GOOGLE_CLIENT_ID,
-          scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+          scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar.events',
           error_callback: (err) => {
             console.error('OAuth error_callback:', err);
             setError('Sign-in error: ' + (err.message || err.type || 'Unknown error. Please try again.'));

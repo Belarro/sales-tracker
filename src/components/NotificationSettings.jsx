@@ -3,6 +3,8 @@
 // ============================================
 
 import { useState } from 'react';
+import { createRecurringReminder } from '../utils/googleCalendar.js';
+import { toISODateString } from '../utils/dateUtils.js';
 
 const NotificationSettings = ({ settings, onUpdateSetting, onClose }) => {
   const [permissionState, setPermissionState] = useState(
@@ -90,6 +92,58 @@ const NotificationSettings = ({ settings, onUpdateSetting, onClose }) => {
           )}
         </>
       )}
+
+      {/* Set up recurring Monday + Thursday calendar reminders */}
+      <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid var(--color-border)' }}>
+        <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: '6px' }}>
+          Follow-up day reminders
+        </div>
+        <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', margin: '0 0 8px 0', lineHeight: '1.4' }}>
+          Add recurring Monday + Thursday 8am events to Google Calendar so you never forget to open Sales Tracker.
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: '12px', padding: '8px 14px' }}
+            disabled={settings.mondayReminderSet}
+            onClick={async () => {
+              try {
+                const now = new Date();
+                const daysToMon = (1 - now.getDay() + 7) % 7 || 7;
+                const nextMon = new Date(now);
+                nextMon.setDate(nextMon.getDate() + daysToMon);
+                await createRecurringReminder('MO', toISODateString(nextMon));
+                onUpdateSetting('mondayReminderSet', true);
+              } catch (err) {
+                console.error('Failed to create Monday reminder:', err);
+                alert('Failed to create calendar event. Please sign out and sign back in.');
+              }
+            }}
+          >
+            {settings.mondayReminderSet ? 'Monday added' : 'Add Monday 8am'}
+          </button>
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: '12px', padding: '8px 14px' }}
+            disabled={settings.thursdayReminderSet}
+            onClick={async () => {
+              try {
+                const now = new Date();
+                const daysToThu = (4 - now.getDay() + 7) % 7 || 7;
+                const nextThu = new Date(now);
+                nextThu.setDate(nextThu.getDate() + daysToThu);
+                await createRecurringReminder('TH', toISODateString(nextThu));
+                onUpdateSetting('thursdayReminderSet', true);
+              } catch (err) {
+                console.error('Failed to create Thursday reminder:', err);
+                alert('Failed to create calendar event. Please sign out and sign back in.');
+              }
+            }}
+          >
+            {settings.thursdayReminderSet ? 'Thursday added' : 'Add Thursday 8am'}
+          </button>
+        </div>
+      </div>
 
       {/* Phone number for WhatsApp summary */}
       <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid var(--color-border)' }}>

@@ -7,9 +7,10 @@
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
 import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData } from '../utils/googleSheets.js';
-import { calculateNextActionDate } from '../utils/dateUtils.js';
+import { calculateNextActionDate, calculateSnappedFollowUpDate } from '../utils/dateUtils.js';
 import { MANUAL_COLOR_OPTIONS, getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
+import { createFollowUpEvent } from '../utils/googleCalendar.js';
 
 /**
  * Generate a vCard (.vcf) and trigger Android "Add Contact" dialog.
@@ -127,7 +128,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       // Default follow-up to 1 week if outcome is Follow Up or Interested
       const interest = location.interestLevel || 'Follow Up';
       if (interest === 'Follow Up' || interest === 'Interested') {
-        setFollowUpDate(calculateNextActionDate(7));
+        setFollowUpDate(calculateSnappedFollowUpDate(7));
       } else {
         setFollowUpDate('');
       }
@@ -147,12 +148,12 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     setFormData(prev => ({ ...prev, interestLevel: level }));
     // Auto-set a default follow-up date when Follow Up or Interested is selected
     if ((level === 'Follow Up' || level === 'Interested') && !followUpDate) {
-      setFollowUpDate(calculateNextActionDate(7)); // Default: 1 week
+      setFollowUpDate(calculateSnappedFollowUpDate(7)); // Default: 1 week
     }
   };
 
   const handleFollowUpPreset = (days) => {
-    setFollowUpDate(calculateNextActionDate(days));
+    setFollowUpDate(calculateSnappedFollowUpDate(days));
   };
 
   const handleSubmit = async (e) => {
@@ -815,7 +816,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   <button
                     key={preset.days}
                     type="button"
-                    className={`action-preset-btn ${followUpDate === calculateNextActionDate(preset.days) ? 'selected' : ''}`}
+                    className={`action-preset-btn ${followUpDate === calculateSnappedFollowUpDate(preset.days) ? 'selected' : ''}`}
                     onClick={() => handleFollowUpPreset(preset.days)}
                   >
                     {preset.label}
@@ -1165,7 +1166,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                                 try {
                                   const nextStage = followUpMsg.nextStage || pipelineStage;
                                   const nextDate = followUpMsg.nextActionDays
-                                    ? calculateNextActionDate(followUpMsg.nextActionDays)
+                                    ? calculateSnappedFollowUpDate(followUpMsg.nextActionDays)
                                     : '';
                                   const today = new Date().toISOString().split('T')[0];
                                   const count = parseInt(location.followUpCount || '0', 10) + 1;
@@ -1182,6 +1183,13 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                                     automationStatus: 'sent',
                                     notesInternal: updatedNotes,
                                   });
+                                  // Auto-create Google Calendar event for next follow-up
+                                  if (nextDate && nextStage !== 'closed_lost' && nextStage !== 'closed_won') {
+                                    createFollowUpEvent(
+                                      location, nextDate, nextStage,
+                                      `Follow up with ${location.contactPerson} at ${location.locationName}`
+                                    ).catch(err => console.error('Failed to create calendar event:', err));
+                                  }
                                   setPipelineStage(nextStage);
                                   setShowFollowUpPreview(false);
                                   setAwaitingSentConfirm(false);

@@ -51,7 +51,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you'd like to test us.`
       ].join('\n\n'),
       nextStage: 'follow_up_1',
-      nextActionDays: 2,
+      nextActionDays: 2,  // snaps to next Mon/Thu
       nextActionType: 'whatsapp'
     }),
     DE: (loc, user) => ({
@@ -63,7 +63,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.`
       ].join('\n\n'),
       nextStage: 'follow_up_1',
-      nextActionDays: 2,
+      nextActionDays: 2,  // snaps to next Mon/Thu
       nextActionType: 'whatsapp'
     })
   },
@@ -75,13 +75,13 @@ export const FOLLOW_UP_TEMPLATES = {
     EN: (loc) => ({
       body: `Hi ${loc.contactPerson}, did the samples make it onto a plate? Curious what you thought.`,
       nextStage: 'follow_up_2',
-      nextActionDays: 3,
+      nextActionDays: 5,  // snaps to next Mon/Thu
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
       body: `Hi ${loc.contactPerson}, haben es die Proben auf einen Teller geschafft? Wuerde mich interessieren wie sie dir gefallen haben.`,
       nextStage: 'follow_up_2',
-      nextActionDays: 3,
+      nextActionDays: 5,  // snaps to next Mon/Thu
       nextActionType: 'whatsapp'
     })
   },
@@ -96,7 +96,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Just want you to test us once — see how the process and quality works for your kitchen. Whenever you're ready, just message me.`
       ].join('\n\n'),
       nextStage: 'follow_up_3',
-      nextActionDays: 14,
+      nextActionDays: 7,  // snaps to next Mon/Thu
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
@@ -105,7 +105,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Probier uns einfach einmal aus — und schau wie der Ablauf und die Qualitaet fuer deine Kueche passt. Meld dich einfach wenn du soweit bist.`
       ].join('\n\n'),
       nextStage: 'follow_up_3',
-      nextActionDays: 14,
+      nextActionDays: 7,  // snaps to next Mon/Thu
       nextActionType: 'whatsapp'
     })
   },

@@ -98,6 +98,48 @@ export const calculateNextActionDate = (daysAhead) => {
   return toISODateString(date);
 };
 
+// ============================================
+// FOLLOW-UP DAY SNAPPING (Monday + Thursday)
+// ============================================
+// Follow-ups are batched to Monday and Thursday mornings.
+// Field visit days: Wednesday, Thursday, Friday.
+// This ensures max 3 business days between action and follow-up.
+
+const FOLLOW_UP_DAYS = [1, 4]; // Monday = 1, Thursday = 4
+
+/**
+ * Find the next Monday or Thursday on or after a given date.
+ * If the date itself is a follow-up day, returns that date.
+ */
+export const snapToFollowUpDay = (date) => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const dow = d.getDay();
+
+  if (FOLLOW_UP_DAYS.includes(dow)) return d;
+
+  // Find the closest upcoming Monday or Thursday
+  let bestDiff = Infinity;
+  for (const target of FOLLOW_UP_DAYS) {
+    const diff = (target - dow + 7) % 7;
+    if (diff > 0 && diff < bestDiff) bestDiff = diff;
+  }
+  d.setDate(d.getDate() + bestDiff);
+  return d;
+};
+
+/**
+ * Calculate the next follow-up date snapped to Monday or Thursday.
+ * First adds daysAhead calendar days, then snaps to the next Mon/Thu.
+ * Returns YYYY-MM-DD format.
+ */
+export const calculateSnappedFollowUpDate = (daysAhead) => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysAhead);
+  const snapped = snapToFollowUpDay(date);
+  return toISODateString(snapped);
+};
+
 /**
  * Parse either DD-MM-YYYY (existing app format) or YYYY-MM-DD (pipeline format)
  * into a JS Date object. Returns null on failure.

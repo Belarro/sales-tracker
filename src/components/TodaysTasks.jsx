@@ -6,8 +6,9 @@ import { useState, useMemo } from 'react';
 import { getFollowUpMessage } from '../utils/followUpTemplates.js';
 import { generateDailySummary } from '../utils/summaryUtils.js';
 import { generateGoogleCalendarUrl } from '../utils/calendarUtils.js';
+import { createFollowUpEvent } from '../utils/googleCalendar.js';
 import { updatePipelineData } from '../utils/googleSheets.js';
-import { calculateNextActionDate, toISODateString } from '../utils/dateUtils.js';
+import { calculateNextActionDate, calculateSnappedFollowUpDate, toISODateString } from '../utils/dateUtils.js';
 
 // ── Inline SVG icons ──
 const Icons = {
@@ -147,7 +148,7 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
       const defaultDate = followUp._nextActionDate
         ? toISODateString(followUp._nextActionDate)
         : followUp.nextActionDays
-          ? calculateNextActionDate(followUp.nextActionDays)
+          ? calculateSnappedFollowUpDate(followUp.nextActionDays)
           : toISODateString(new Date(Date.now() + 86400000));
       setPickedDate(defaultDate);
     }
@@ -208,6 +209,24 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
           const body = encodeURIComponent(finalFollowUp.body);
           window.location.href = `mailto:${location.businessEmail}?subject=${subject}&body=${body}`;
         }
+      }
+
+      // Auto-create Google Calendar event for the next follow-up (silent — no tab opens)
+      console.log('Calendar check:', { nextDate, nextStage: finalFollowUp.nextStage, location: location.locationName });
+      if (nextDate && finalFollowUp.nextStage && finalFollowUp.nextStage !== 'closed_lost' && finalFollowUp.nextStage !== 'closed_won') {
+        const nextLocation = { ...location, nextActionDate: nextDate, pipelineStage: finalFollowUp.nextStage };
+        const nextFollowUp = getFollowUpMessage(nextLocation, user?.displayName || user?.name, null);
+        console.log('Creating calendar event for:', nextDate, finalFollowUp.nextStage);
+        createFollowUpEvent(
+          nextLocation,
+          nextDate,
+          finalFollowUp.nextStage,
+          nextFollowUp?.body || `Follow up with ${location.contactPerson} at ${location.locationName}`
+        ).then(event => {
+          console.log('Calendar event created:', event.htmlLink);
+        }).catch(err => console.error('Failed to create calendar event:', err));
+      } else {
+        console.log('Skipped calendar event — no nextDate or stage is terminal');
       }
 
       if (onRefresh) onRefresh();

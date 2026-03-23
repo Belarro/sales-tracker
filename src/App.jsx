@@ -54,21 +54,41 @@ function App() {
     }
   }, []);
 
-  // Show morning notification on app open (if enabled)
+  // Show morning notification — fires at the configured time (or on app open if past that time)
   useEffect(() => {
     if (!authorized || !settings.notificationsEnabled) return;
-    if (Notification.permission !== 'granted') return;
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
     const today = new Date().toISOString().slice(0, 10);
     if (settings.lastNotifDate === today) return;
+
     const totalTasks = overdueTasks.length + todayTasks.length + upcomingTasks.length;
     if (totalTasks === 0) return;
-    const parts = [];
-    if (overdueTasks.length) parts.push(`${overdueTasks.length} overdue`);
-    if (todayTasks.length) parts.push(`${todayTasks.length} today`);
-    if (upcomingTasks.length) parts.push(`${upcomingTasks.length} upcoming`);
-    new Notification('Sales Tracker', { body: parts.join(' + '), tag: 'morning-summary' });
-    updateSetting('lastNotifDate', today);
-  }, [authorized, settings.notificationsEnabled, settings.lastNotifDate, overdueTasks.length, todayTasks.length, upcomingTasks.length, updateSetting]);
+
+    const showNotif = () => {
+      const parts = [];
+      if (overdueTasks.length) parts.push(`${overdueTasks.length} overdue`);
+      if (todayTasks.length) parts.push(`${todayTasks.length} today`);
+      if (upcomingTasks.length) parts.push(`${upcomingTasks.length} upcoming`);
+      new Notification('Sales Tracker', { body: parts.join(' + '), tag: 'morning-summary' });
+      updateSetting('lastNotifDate', today);
+    };
+
+    // Parse configured time (e.g. "08:00")
+    const [hours, minutes] = (settings.notificationTime || '08:00').split(':').map(Number);
+    const now = new Date();
+    const targetTime = new Date();
+    targetTime.setHours(hours, minutes, 0, 0);
+
+    if (now >= targetTime) {
+      // Already past the configured time — show immediately
+      showNotif();
+    } else {
+      // Schedule for later today
+      const delay = targetTime - now;
+      const timer = setTimeout(showNotif, delay);
+      return () => clearTimeout(timer);
+    }
+  }, [authorized, settings.notificationsEnabled, settings.notificationTime, settings.lastNotifDate, overdueTasks.length, todayTasks.length, upcomingTasks.length, updateSetting]);
 
   // Handle mobile back button (double-press to exit)
   useBackButton({
