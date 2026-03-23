@@ -10,11 +10,11 @@
  * - Follow-ups snap to Monday or Thursday (follow-up days)
  *
  * COLUMN LAYOUT (A-AB, 28 columns):
- * A: timestamp, B: salesRep, C: locationName, D: businessAddress,
- * E: directLink, F: businessPhone, G: businessEmail, H: businessWebsite,
- * I: contactPerson, J: contactTitle, K: directPhone, L: directEmail,
- * M: businessTypes, N: interestLevel, O: visitNotes, P: followUpDate,
- * Q: sampleGiven, R: archived,
+ * A: locationName, B: businessAddress, C: contactPerson, D: contactTitle,
+ * E: directPhone, F: directEmail, G: businessTypes, H: interestLevel,
+ * I: visitNotes, J: timestamp, K: followUpDate, L: sampleGiven,
+ * M: salesRep, N: directLink, O: businessPhone, P: businessEmail,
+ * Q: businessWebsite, R: archived,
  * S: pipelineStage, T: followUpCount, U: lastFollowUpDate,
  * V: nextActionDate, W: nextActionType, X: automationStatus,
  * Y: materialsSent, Z: notesInternal,
@@ -269,8 +269,8 @@ function colorFollowUpDates() {
       }
     }
 
-    // 3. Color legacy followUpDate (P = 16)
-    var legacyFollowUp = row[15];
+    // 3. Color legacy followUpDate (K = 11, index 10)
+    var legacyFollowUp = row[10];
     if (legacyFollowUp && !archived) {
       var legacyDate = parseDate(legacyFollowUp);
       if (legacyDate) {
@@ -278,7 +278,7 @@ function colorFollowUpDates() {
         var legacyColor = rowBg;
         if (legacyDiff >= 8) legacyColor = colors.red;
         else if (legacyDiff >= 1) legacyColor = colors.yellow;
-        dataSheet.getRange(rowNum, 16, 1, 1).setBackground(legacyColor);
+        dataSheet.getRange(rowNum, 11, 1, 1).setBackground(legacyColor);
       }
     }
   }
@@ -403,18 +403,18 @@ function sendFollowUpDigest() {
     var row = values[i];
     var rowNum = i + 2;
 
-    var locationName     = row[2];
-    var businessPhone    = row[5];
-    var contactPerson    = row[8];
-    var contactTitle     = row[9];
-    var directPhone      = row[10];
-    var directEmail      = row[11];
-    var visitNotes       = row[14];
-    var sampleGiven      = row[16];
-    var archived         = row[17];
-    var pipelineStage    = row[18];
-    var nextActionDate   = row[21];
-    var automationStatus = row[23];
+    var locationName     = row[0];  // A
+    var contactPerson    = row[2];  // C
+    var contactTitle     = row[3];  // D
+    var directPhone      = row[4];  // E
+    var directEmail      = row[5];  // F
+    var visitNotes       = row[8];  // I
+    var sampleGiven      = row[11]; // L
+    var archived         = row[17]; // R
+    var pipelineStage    = row[18]; // S
+    var nextActionDate   = row[21]; // V
+    var businessPhone    = row[14]; // O
+    var automationStatus = row[23]; // X
 
     if (archived === 'YES') continue;
     if (pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') continue;
@@ -632,13 +632,13 @@ function refreshSheetLinks() {
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
-    var locationName  = row[2];
-    var contactPerson = row[8];
-    var directPhone   = row[10];
-    var businessPhone = row[5];
-    var pipelineStage = row[18];
-    var archived      = row[17];
-    var visitNotes    = row[14];
+    var locationName  = row[0];  // A
+    var contactPerson = row[2];  // C
+    var directPhone   = row[4];  // E
+    var businessPhone = row[14]; // O
+    var pipelineStage = row[18]; // S
+    var archived      = row[17]; // R
+    var visitNotes    = row[8];  // I
 
     if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
       richTexts.push([SpreadsheetApp.newRichTextValue().setText('').build()]);
@@ -681,13 +681,13 @@ function refreshSingleRow(rowNum) {
   var dataSheet = ss.getSheetByName('Data');
   var row = dataSheet.getRange(rowNum, 1, 1, 26).getValues()[0];
 
-  var locationName  = row[2];
-  var contactPerson = row[8];
-  var directPhone   = row[10];
-  var businessPhone = row[5];
-  var pipelineStage = row[18];
-  var archived      = row[17];
-  var visitNotes    = row[14];
+  var locationName  = row[0];  // A
+  var contactPerson = row[2];  // C
+  var directPhone   = row[4];  // E
+  var businessPhone = row[14]; // O
+  var pipelineStage = row[18]; // S
+  var archived      = row[17]; // R
+  var visitNotes    = row[8];  // I
 
   if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
     dataSheet.getRange(rowNum, 27).setValue('');
@@ -731,8 +731,8 @@ function onSheetEdit(e) {
     refreshSingleRow(row);
   }
 
-  // N = 14: Interest level changed
-  if (col === 14) {
+  // H = 8: Interest level changed
+  if (col === 8) {
     var val = e.value;
     if (val === 'Closed Deal') {
       sheet.getRange(row, 19).setValue('closed_won');

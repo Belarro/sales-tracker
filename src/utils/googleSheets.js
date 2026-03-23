@@ -160,52 +160,52 @@ export const removeAuthorizedUser = async (email) => {
 // ============================================
 // LOCATIONS — column indices match actual sheet headers
 // ============================================
-// Col 0:  Timestamp
-// Col 1:  Sales Rep
-// Col 2:  Location Name
-// Col 3:  Business Address
-// Col 4:  DirectLink
-// Col 5:  Business Phone
-// Col 6:  Business Email
-// Col 7:  Business Website
-// Col 8:  Contact Person
-// Col 9:  Contact Title
-// Col 10: Direct Phone
-// Col 11: Direct Email
-// Col 12: Business Types
-// Col 13: Interest Level
-// Col 14: Visit Notes
-// Col 15: Follow-up Date
-// Col 16: Sample Given
-// Col 17: (empty header — Archived)
-// Col 18: pipelineStage
-// Col 19: followUpCount
-// Col 20: lastFollowUpDate
-// Col 21: nextActionDate
-// Col 22: nextActionType
-// Col 23: automationStatus
-// Col 24: materialsSent
-// Col 25: notesInternal
+// Col 0  (A):  Location Name
+// Col 1  (B):  Business Address
+// Col 2  (C):  Contact Person
+// Col 3  (D):  Contact Title
+// Col 4  (E):  Direct Phone
+// Col 5  (F):  Direct Email
+// Col 6  (G):  Business Types
+// Col 7  (H):  Interest Level
+// Col 8  (I):  Visit Notes
+// Col 9  (J):  Timestamp (visit date)
+// Col 10 (K):  Follow-up Date
+// Col 11 (L):  Sample Given
+// Col 12 (M):  Sales Rep
+// Col 13 (N):  DirectLink
+// Col 14 (O):  Business Phone
+// Col 15 (P):  Business Email
+// Col 16 (Q):  Business Website
+// Col 17 (R):  Archived
+// Col 18 (S):  pipelineStage
+// Col 19 (T):  followUpCount
+// Col 20 (U):  lastFollowUpDate
+// Col 21 (V):  nextActionDate
+// Col 22 (W):  nextActionType
+// Col 23 (X):  automationStatus
+// Col 24 (Y):  materialsSent
+// Col 25 (Z):  notesInternal
 
 function parseRow(row) {
   return {
-    timestamp: row[0] || '',
-    salesRep: row[1] || '',
-    locationName: row[2] || '',
-    businessAddress: row[3] || '',
-    directLink: row[4] || '',
-    businessPhone: row[5] || '',
-    businessEmail: row[6] || '',
-    businessWebsite: row[7] || '',
-    contactPerson: row[8] || '',
-    contactTitle: row[9] || '',
-    directPhone: row[10] || '',
-    directEmail: row[11] || '',
-    businessTypes: row[12] || '',
-    interestLevel: row[13] || '',
-    visitNotes: row[14] || '',
-    followUpDate: row[15] || '',
-    sampleGiven: row[16] || '',
+    locationName: row[0] || '',
+    businessAddress: row[1] || '',
+    contactPerson: row[2] || '',
+    contactTitle: row[3] || '',
+    directPhone: row[4] || '',
+    directEmail: row[5] || '',
+    businessTypes: row[6] || '',
+    interestLevel: row[7] || '',
+    visitNotes: row[8] || '',
+    timestamp: row[9] || '',
+    followUpDate: row[10] || '',
+    sampleGiven: row[11] || '',
+    salesRep: row[12] || '',
+    directLink: row[13] || '',
+    businessPhone: row[14] || '',
+    businessEmail: row[15] || '',
+    businessWebsite: row[16] || '',
     archived: row[17] || '',
     pipelineStage: row[18] || '',
     followUpCount: row[19] || '0',
@@ -220,14 +220,8 @@ function parseRow(row) {
 
 function buildValues(d) {
   return [
-    d.timestamp || '',
-    d.salesRep || '',
     d.locationName || '',
     d.businessAddress || '',
-    d.directLink || '',
-    d.businessPhone || '',
-    d.businessEmail || '',
-    d.businessWebsite || '',
     d.contactPerson || '',
     d.contactTitle || '',
     d.directPhone || '',
@@ -235,8 +229,14 @@ function buildValues(d) {
     d.businessTypes || '',
     d.interestLevel || '',
     d.visitNotes || '',
+    d.timestamp || '',
     d.followUpDate || '',
     d.sampleGiven || '',
+    d.salesRep || '',
+    d.directLink || '',
+    d.businessPhone || '',
+    d.businessEmail || '',
+    d.businessWebsite || '',
     d.archived || '',
     d.pipelineStage || CONFIG.PIPELINE_STAGES.NEW_VISIT,
     String(d.followUpCount || '0'),

@@ -103,7 +103,7 @@ export const CONFIG = {
     'Not interested at all'
   ],
 
-  // Pipeline stage values (stored in column S)
+  // Pipeline stage values (stored in column S = index 18)
   // These are the strings n8n will filter on
   PIPELINE_STAGES: {
     NEW_VISIT:        'new_visit',
@@ -119,7 +119,7 @@ export const CONFIG = {
     CLOSED_LOST:      'closed_lost'
   },
 
-  // Action type values (stored in column W)
+  // Action type values (stored in column W = index 22)
   ACTION_TYPES: [
     'physical_visit',
     'call',
@@ -129,7 +129,7 @@ export const CONFIG = {
     'send_materials'
   ],
 
-  // Automation status values (stored in column X)
+  // Automation status values (stored in column X = index 23)
   // App writes 'pending'; n8n reads 'pending', then writes 'sent'/'failed'
   AUTOMATION_STATUS: {
     PENDING:   'pending',
@@ -139,7 +139,7 @@ export const CONFIG = {
     SKIPPED:   'skipped'
   },
 
-  // Materials that can be sent (stored comma-separated in column Y)
+  // Materials that can be sent (stored comma-separated in column Y = index 24)
   MATERIALS_LIST: [
     'samples',
     'catalog',
