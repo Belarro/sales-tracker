@@ -1,10 +1,13 @@
 /**
- * GOOGLE APPS SCRIPT FOR SALES TRACKER - PIPELINE & FOLLOW-UP COLOR CODING
+ * GOOGLE APPS SCRIPT FOR SALES TRACKER - PIPELINE & FOLLOW-UP SYSTEM
  *
- * This script automatically colors cells in the Data sheet based on:
- * - Follow-up date status (column P - legacy, column V - pipeline)
- * - Pipeline stage (row background tint)
- * - Automation status (column X)
+ * Features:
+ * - Color-codes rows by pipeline stage and urgency
+ * - Sends daily follow-up digest email at 8am (Mon + Thu only)
+ * - In-sheet WhatsApp links with pre-filled messages
+ * - Checkbox to mark as sent and auto-advance pipeline
+ * - All dates in European format (DD.MM.YYYY) for display
+ * - Follow-ups snap to Monday or Thursday (follow-up days)
  *
  * COLUMN LAYOUT (A-AB, 28 columns):
  * A: timestamp, B: salesRep, C: locationName, D: businessAddress,
@@ -17,314 +20,123 @@
  * Y: materialsSent, Z: notesInternal,
  * AA: whatsAppLink (auto-generated), AB: sentCheckbox (tick when sent)
  *
- * INSTALLATION INSTRUCTIONS:
- * 1. Open your Google Sheet
- * 2. Go to Extensions > Apps Script
- * 3. Delete any existing code
- * 4. Copy and paste this entire script
- * 5. Click "Save" (disk icon)
- * 6. Click "Run" > "setupDailyTrigger" (authorize when prompted)
- * 7. The script will now run automatically every day at midnight
+ * INSTALLATION:
+ * 1. Open your Google Sheet → Extensions → Apps Script
+ * 2. Delete any existing code, paste this entire script
+ * 3. Click Save, then Run → setupAllTriggers (authorize when prompted)
  */
-
-function colorFollowUpDates() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var dataSheet = ss.getSheetByName('Data');
-
-  if (!dataSheet) {
-    Logger.log('Data sheet not found');
-    return;
-  }
-
-  var lastRow = dataSheet.getLastRow();
-  if (lastRow < 2) {
-    Logger.log('No data rows found');
-    return;
-  }
-
-  // Read all 26 columns (A-Z)
-  var dataRange = dataSheet.getRange(2, 1, lastRow - 1, 26);
-  var values = dataRange.getValues();
-
-  var today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Color palette
-  var colors = {
-    white:      '#ffffff',
-    yellow:     '#fff3cd',
-    red:        '#f8d7da',
-    // Pipeline stage row tints (very subtle)
-    newVisit:   '#ffffff',
-    followUp1:  '#fffde7',
-    followUp2:  '#fff8e1',
-    followUp3:  '#fff3e0',
-    closedWon:  '#e8f5e9',
-    closedLost: '#fce4ec'
-  };
-
-  var pipelineRowColors = {
-    'new_visit':    colors.newVisit,
-    'follow_up_1':  colors.followUp1,
-    'follow_up_2':  colors.followUp2,
-    'follow_up_3':  colors.followUp3,
-    'closed_won':   colors.closedWon,
-    'closed_lost':  colors.closedLost
-  };
-
-  for (var i = 0; i < values.length; i++) {
-    var row = values[i];
-    var rowNum = i + 2;
-
-    // Column indices (0-based)
-    var interestLevel    = row[13]; // N
-    var legacyFollowUp   = row[15]; // P
-    var archived         = row[17]; // R
-    var pipelineStage    = row[18]; // S
-    var nextActionDate   = row[21]; // V
-    var automationStatus = row[23]; // X
-
-    // 1. Apply pipeline stage row background (entire row A-Z)
-    var rowBg = pipelineRowColors[pipelineStage] || colors.white;
-    if (archived === 'YES') rowBg = colors.white;
-    dataSheet.getRange(rowNum, 1, 1, 26).setBackground(rowBg);
-
-    // 2. Color nextActionDate cell (column V = 22) by urgency
-    if (!archived && nextActionDate && automationStatus !== 'sent' && automationStatus !== 'delivered') {
-      var actionDate = new Date(nextActionDate);
-      if (!isNaN(actionDate.getTime())) {
-        actionDate.setHours(0, 0, 0, 0);
-        var diffDays = Math.floor((today - actionDate) / 86400000);
-
-        var cellColor = rowBg;
-        if (diffDays >= 8) {
-          cellColor = colors.red;
-        } else if (diffDays >= 1) {
-          cellColor = colors.yellow;
-        }
-        dataSheet.getRange(rowNum, 22, 1, 1).setBackground(cellColor);
-      }
-    }
-
-    // 3. Color legacy followUpDate (column P = 16) for backward compatibility
-    if (legacyFollowUp && !archived) {
-      var legacyDate = new Date(legacyFollowUp);
-      if (!isNaN(legacyDate.getTime())) {
-        legacyDate.setHours(0, 0, 0, 0);
-        var legacyDiff = Math.floor((today - legacyDate) / 86400000);
-        var legacyColor = rowBg;
-        if (legacyDiff >= 8) legacyColor = colors.red;
-        else if (legacyDiff >= 1) legacyColor = colors.yellow;
-        dataSheet.getRange(rowNum, 16, 1, 1).setBackground(legacyColor);
-      }
-    }
-  }
-
-  Logger.log('Pipeline color coding complete. Rows processed: ' + values.length);
-}
-
-/**
- * Color automation status column (X = column 24)
- * Amber for pending, green for sent/delivered, red for failed
- */
-function colorAutomationStatus() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var dataSheet = ss.getSheetByName('Data');
-
-  if (!dataSheet) return;
-
-  var lastRow = dataSheet.getLastRow();
-  if (lastRow < 2) return;
-
-  var statusRange = dataSheet.getRange(2, 24, lastRow - 1, 1); // Column X
-  var statuses = statusRange.getValues();
-
-  var pendingColor  = '#fff3cd';
-  var sentColor     = '#d4edda';
-  var failedColor   = '#f8d7da';
-  var whiteColor    = '#ffffff';
-
-  for (var i = 0; i < statuses.length; i++) {
-    var status = statuses[i][0];
-    var cell = dataSheet.getRange(i + 2, 24, 1, 1);
-
-    if (status === 'pending')                            cell.setBackground(pendingColor);
-    else if (status === 'sent' || status === 'delivered') cell.setBackground(sentColor);
-    else if (status === 'failed')                        cell.setBackground(failedColor);
-    else                                                 cell.setBackground(whiteColor);
-  }
-
-  Logger.log('Automation status coloring complete.');
-}
-
-/**
- * Set up daily triggers to run color coding functions
- * Run this function ONCE to set up automatic daily triggers
- */
-function setupDailyTrigger() {
-  // Delete any existing triggers to avoid duplicates
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    var fn = triggers[i].getHandlerFunction();
-    if (fn === 'colorFollowUpDates' || fn === 'colorAutomationStatus') {
-      ScriptApp.deleteTrigger(triggers[i]);
-    }
-  }
-
-  // Create daily triggers (run at midnight)
-  ScriptApp.newTrigger('colorFollowUpDates')
-    .timeBased()
-    .everyDays(1)
-    .atHour(0)
-    .create();
-
-  ScriptApp.newTrigger('colorAutomationStatus')
-    .timeBased()
-    .everyDays(1)
-    .atHour(0)
-    .create();
-
-  Logger.log('Daily triggers set up successfully.');
-
-  // Run once immediately to test
-  colorFollowUpDates();
-  colorAutomationStatus();
-}
-
-/**
- * Remove all daily triggers
- */
-function removeDailyTrigger() {
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    ScriptApp.deleteTrigger(triggers[i]);
-    Logger.log('Trigger removed: ' + triggers[i].getHandlerFunction());
-  }
-}
-
-/**
- * Manual run - test both functions
- */
-function manualRun() {
-  colorFollowUpDates();
-  colorAutomationStatus();
-}
 
 // ============================================================
-// FOLLOW-UP DIGEST — sends you a daily email with WhatsApp links
+// CONFIGURATION
 // ============================================================
 
-/**
- * YOUR EMAIL — change this to the email you want to receive the digest at.
- */
 var DIGEST_EMAIL = 'hello@belarro.com';
-
-/**
- * Price list links
- */
-// Links sent to chefs — for-chefs page with ordering system
+var SENDER_NAME = 'Ron';
 var CHEF_LINK_EN = 'https://belarro.com/for-chefs';
 var CHEF_LINK_DE = 'https://belarro.com/de/for-chefs';
 
+// Follow-up days: Monday (1) and Thursday (4)
+var FOLLOW_UP_DAYS = [1, 4];
+
+// ============================================================
+// DATE UTILITIES
+// ============================================================
+
 /**
- * Build personalized for-chefs link with pre-filled restaurant/contact
+ * Parse a date string in YYYY-MM-DD or DD.MM.YYYY or DD-MM-YYYY format.
+ * Also handles native Date objects from Sheets.
  */
-function chefLink(base, contactName, locationName) {
-  var parts = [];
-  if (locationName) parts.push('c=' + encodeURIComponent(locationName));
-  if (contactName) parts.push('n=' + encodeURIComponent(contactName));
-  return parts.length > 0 ? base + '?' + parts.join('&') : base;
+function parseDate(value) {
+  if (!value) return null;
+  if (value instanceof Date) {
+    if (isNaN(value.getTime())) return null;
+    value.setHours(0, 0, 0, 0);
+    return value;
+  }
+  var str = value.toString().trim();
+  var d;
+  // YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    var parts = str.split('-');
+    d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  }
+  // DD.MM.YYYY
+  else if (/^\d{2}\.\d{2}\.\d{4}$/.test(str)) {
+    var parts = str.split('.');
+    d = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+  }
+  // DD-MM-YYYY
+  else if (/^\d{2}-\d{2}-\d{4}$/.test(str)) {
+    var parts = str.split('-');
+    d = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+  }
+  else {
+    d = new Date(str);
+  }
+  if (isNaN(d.getTime())) return null;
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 /**
- * Your name for messages
+ * Format a Date to DD.MM.YYYY (European format)
  */
-var SENDER_NAME = 'Ron';
-
-/**
- * Follow-up message templates by pipeline stage.
- * Each returns the message text for WhatsApp.
- */
-function getMessageForStage(stage, contactName, locationName, lang) {
-  var isDE = (lang || 'DE').toUpperCase() === 'DE';
-
-  var templates = {
-    'new_visit': isDE
-      ? 'Hi ' + contactName + ', hier ist Ron von Belarro.\n\n'
-        + 'Hat mich gefreut dich heute bei ' + locationName + ' kennenzulernen. Danke dass du dir die Zeit genommen hast.\n\n'
-        + 'Hier ist alles was wir anbauen mit Preisen — du kannst auch direkt bestellen:\n' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\n'
-        + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.\n\n'
-        + 'Ron Ben\nGruender von Belarro'
-      : 'Hi ' + contactName + ', this is Ron from Belarro.\n\n'
-        + 'It was really nice meeting you today at ' + locationName + '. Thank you for taking the time.\n\n'
-        + 'Here is everything we grow with prices — you can also order directly:\n' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\n'
-        + 'We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you\'d like to test us.\n\n'
-        + 'Ron Ben\nFounder of Belarro',
-
-    'follow_up_1': isDE
-      ? 'Hi ' + contactName + ', hast du die Proben schon probiert? Wuerde mich freuen zu hoeren wie sie dir geschmeckt haben und ob du irgendwelche Anmerkungen hast.\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', did you get a chance to try the samples? Would love to hear how you liked them and if you have any thoughts.\n\n'
-        + 'Ron',
-
-    'follow_up_2': isDE
-      ? 'Hi ' + contactName + ', wollte nur nochmal erinnern: keine Mindestbestellung, keine Lieferkosten. Du kannst auch einfach die kleinste Box bestellen um uns einmal zu testen. Und du kannst jederzeit aendern oder pausieren.\n\n'
-        + 'Schreib mir einfach wenn du soweit bist.\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', just a quick reminder: no minimum order, no delivery fee. You can order even the smallest box just to give us a try. And you can always change or cancel anytime.\n\n'
-        + 'Just write me whenever you are ready.\n\n'
-        + 'Ron',
-
-    'follow_up_3': isDE
-      ? 'Hi ' + contactName + ', wir haben ein paar neue Sorten im Angebot. Schau mal rein: ' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\n'
-        + 'Soll ich Dienstag was vorbeibringen?\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', we just started growing some new varieties. Worth a look: ' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\n'
-        + 'Want me to bring some by this Tuesday?\n\n'
-        + 'Ron',
-
-    'order_confirmed': isDE
-      ? 'Hi ' + contactName + ', du bist im Plan.\n\nErste Lieferung: Dienstag.\n\nRechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', you\'re on the schedule.\n\nFirst delivery: Tuesday.\n\nInvoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.\n\n'
-        + 'Ron',
-
-    'recurring': isDE
-      ? 'Hi ' + contactName + ', Bestellung fuer Dienstag? Gleich wie letzte Woche oder Aenderungen?\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', order for Tuesday? Same as last week or any changes?\n\n'
-        + 'Ron',
-
-    'inactive_2wk': isDE
-      ? 'Hi ' + contactName + ', alles gut bei euch? Soll ich Dienstag wieder was mitbringen?\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', everything good with you? Want me to bring something this Tuesday?\n\n'
-        + 'Ron',
-
-    'inactive_1mo': isDE
-      ? 'Hi ' + contactName + ', falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', if your menu changed and you need different varieties, happy to adjust. I am here when you need us.\n\n'
-        + 'Ron',
-
-    'post_delivery': isDE
-      ? 'Hi ' + contactName + ', wie war alles? Irgendwas das du fuer naechste Woche aendern wuerdest?\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', how did everything look? Anything you would change for next week?\n\n'
-        + 'Ron',
-
-    'delivery_reminder': isDE
-      ? 'Hi ' + contactName + ', kurze Bestaetigung fuer morgen: deine Bestellung kommt gegen Mittag. Bis dann!\n\n'
-        + 'Ron'
-      : 'Hi ' + contactName + ', just confirming for tomorrow: your order will arrive around noon. See you then!\n\n'
-        + 'Ron'
-  };
-
-  return templates[stage] || null;
+function formatEU(date) {
+  if (!date) return '';
+  var dd = String(date.getDate()).padStart(2, '0');
+  var mm = String(date.getMonth() + 1).padStart(2, '0');
+  var yyyy = date.getFullYear();
+  return dd + '.' + mm + '.' + yyyy;
 }
 
 /**
- * Next stage mapping — after sending, what stage comes next
+ * Format a Date to YYYY-MM-DD (ISO, for storage in sheet)
+ */
+function formatISO(date) {
+  if (!date) return '';
+  var dd = String(date.getDate()).padStart(2, '0');
+  var mm = String(date.getMonth() + 1).padStart(2, '0');
+  var yyyy = date.getFullYear();
+  return yyyy + '-' + mm + '-' + dd;
+}
+
+/**
+ * Snap a date to the next Monday or Thursday (on or after).
+ * If the date is already Mon or Thu, returns that date.
+ */
+function snapToFollowUpDay(date) {
+  var d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  var dow = d.getDay();
+
+  if (FOLLOW_UP_DAYS.indexOf(dow) !== -1) return d;
+
+  var bestDiff = 999;
+  for (var i = 0; i < FOLLOW_UP_DAYS.length; i++) {
+    var diff = (FOLLOW_UP_DAYS[i] - dow + 7) % 7;
+    if (diff > 0 && diff < bestDiff) bestDiff = diff;
+  }
+  d.setDate(d.getDate() + bestDiff);
+  return d;
+}
+
+/**
+ * Calculate next follow-up date: add daysAhead calendar days, then snap to Mon/Thu.
+ * Returns YYYY-MM-DD string.
+ */
+function calculateNextFollowUpDate(daysAhead) {
+  var d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  var snapped = snapToFollowUpDay(d);
+  return formatISO(snapped);
+}
+
+// ============================================================
+// PIPELINE STAGE CONFIGURATION (synced with app)
+// ============================================================
+
+/**
+ * Next stage mapping
  */
 function getNextStage(stage) {
   var map = {
@@ -333,30 +145,29 @@ function getNextStage(stage) {
     'follow_up_2':       'follow_up_3',
     'follow_up_3':       'closed_lost',
     'order_confirmed':   'delivery_reminder',
-    'recurring':         'recurring',
-    'inactive_2wk':      'inactive_1mo',
-    'inactive_1mo':      'closed_lost',
-    'post_delivery':     'recurring',
-    'delivery_reminder': 'post_delivery'
+    'delivery_reminder': 'post_delivery',
+    'post_delivery':     'active_customer',
+    'active_customer':   'active_customer',
+    'inactive':          'closed_lost'
   };
   return map[stage] || null;
 }
 
 /**
- * Days until next follow-up after this stage
+ * Days until next follow-up (before snapping to Mon/Thu)
+ * Synced with followUpTemplates.js in the app
  */
 function getNextActionDays(stage) {
   var map = {
     'new_visit':         2,
-    'follow_up_1':       3,
-    'follow_up_2':       14,
+    'follow_up_1':       5,
+    'follow_up_2':       7,
     'follow_up_3':       null,
     'order_confirmed':   null,
-    'recurring':         7,
-    'inactive_2wk':      14,
-    'inactive_1mo':      null,
-    'post_delivery':     4,
-    'delivery_reminder': 2
+    'delivery_reminder': 2,
+    'post_delivery':     30,
+    'active_customer':   42,
+    'inactive':          null
   };
   return map[stage] !== undefined ? map[stage] : null;
 }
@@ -368,40 +179,30 @@ function getStageLabel(stage) {
   var labels = {
     'new_visit':         'Send prices & intro',
     'follow_up_1':       'How were the samples?',
-    'follow_up_2':       'Reminder, just try us',
-    'follow_up_3':       'New varieties',
-    'final_touch':       'Final soft touch',
-    'recurring':         'Weekly order',
-    'inactive_2wk':      'Inactive 2wk',
-    'inactive_1mo':      'Inactive 1mo',
-    'post_delivery':     'Post-delivery',
+    'follow_up_2':       'Low barrier — just try us',
+    'follow_up_3':       'Re-engage with new varieties',
+    'order_confirmed':   'Confirm order details',
     'delivery_reminder': 'Delivery reminder',
-    'order_confirmed':   'Order confirmed'
+    'post_delivery':     'Post-delivery check-in',
+    'active_customer':   'Monthly check-in',
+    'inactive':          'Inactive — last attempt',
+    'closed_won':        'Active customer',
+    'closed_lost':       'Closed — no follow-up'
   };
   return labels[stage] || stage;
 }
 
-/**
- * MAIN FUNCTION: Send Follow-Up Digest Email
- *
- * Scans the sheet for contacts due today or overdue,
- * builds an email with WhatsApp click-to-send links,
- * and optionally marks rows as "digest_sent" to avoid duplicates.
- */
-function sendFollowUpDigest() {
+// ============================================================
+// COLOR CODING
+// ============================================================
+
+function colorFollowUpDates() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var dataSheet = ss.getSheetByName('Data');
-
-  if (!dataSheet) {
-    Logger.log('Data sheet not found');
-    return;
-  }
+  if (!dataSheet) return;
 
   var lastRow = dataSheet.getLastRow();
-  if (lastRow < 2) {
-    Logger.log('No data rows');
-    return;
-  }
+  if (lastRow < 2) return;
 
   var dataRange = dataSheet.getRange(2, 1, lastRow - 1, 26);
   var values = dataRange.getValues();
@@ -409,56 +210,229 @@ function sendFollowUpDigest() {
   var today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  var overdue = [];
-  var dueToday = [];
-  var upcoming = []; // next 3 days
+  var colors = {
+    white:      '#ffffff',
+    yellow:     '#fff3cd',
+    red:        '#f8d7da',
+    green:      '#d4edda',
+    newVisit:   '#ffffff',
+    followUp1:  '#fffde7',
+    followUp2:  '#fff8e1',
+    followUp3:  '#fff3e0',
+    orderConf:  '#e3f2fd',
+    delivery:   '#e8eaf6',
+    postDel:    '#f3e5f5',
+    active:     '#e8f5e9',
+    closedWon:  '#a5d6a7',  // strong green — client!
+    closedLost: '#ef9a9a',  // strong red — not interested
+    inactive:   '#f5f5f5'
+  };
+
+  var pipelineRowColors = {
+    'new_visit':         colors.newVisit,
+    'follow_up_1':       colors.followUp1,
+    'follow_up_2':       colors.followUp2,
+    'follow_up_3':       colors.followUp3,
+    'order_confirmed':   colors.orderConf,
+    'delivery_reminder': colors.delivery,
+    'post_delivery':     colors.postDel,
+    'active_customer':   colors.active,
+    'inactive':          colors.inactive,
+    'closed_won':        colors.closedWon,
+    'closed_lost':       colors.closedLost
+  };
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
     var rowNum = i + 2;
 
-    var locationName    = row[2];  // C
-    var businessAddress = row[3];  // D
-    var businessPhone   = row[5];  // F
-    var contactPerson   = row[8];  // I
-    var contactTitle    = row[9];  // J
-    var directPhone     = row[10]; // K
-    var directEmail     = row[11]; // L
-    var interestLevel   = row[13]; // N
-    var visitNotes      = row[14]; // O
-    var sampleGiven     = row[16]; // Q
-    var archived        = row[17]; // R
-    var pipelineStage   = row[18]; // S
-    var nextActionDate  = row[21]; // V
-    var nextActionType  = row[22]; // W
+    var archived         = row[17]; // R
+    var pipelineStage    = row[18]; // S
+    var nextActionDate   = row[21]; // V
     var automationStatus = row[23]; // X
 
-    // Skip archived, closed, already sent, or no action date
+    // 1. Pipeline stage row background
+    var rowBg = pipelineRowColors[pipelineStage] || colors.white;
+    if (archived === 'YES') rowBg = colors.white;
+    dataSheet.getRange(rowNum, 1, 1, 26).setBackground(rowBg);
+
+    // 2. Color nextActionDate cell (V = 22) by urgency
+    if (!archived && nextActionDate && automationStatus !== 'sent' && automationStatus !== 'delivered') {
+      var actionDate = parseDate(nextActionDate);
+      if (actionDate) {
+        var diffDays = Math.floor((today - actionDate) / 86400000);
+        var cellColor = rowBg;
+        if (diffDays >= 8) cellColor = colors.red;
+        else if (diffDays >= 1) cellColor = colors.yellow;
+        else if (diffDays === 0) cellColor = colors.green;
+        dataSheet.getRange(rowNum, 22, 1, 1).setBackground(cellColor);
+      }
+    }
+
+    // 3. Color legacy followUpDate (P = 16)
+    var legacyFollowUp = row[15];
+    if (legacyFollowUp && !archived) {
+      var legacyDate = parseDate(legacyFollowUp);
+      if (legacyDate) {
+        var legacyDiff = Math.floor((today - legacyDate) / 86400000);
+        var legacyColor = rowBg;
+        if (legacyDiff >= 8) legacyColor = colors.red;
+        else if (legacyDiff >= 1) legacyColor = colors.yellow;
+        dataSheet.getRange(rowNum, 16, 1, 1).setBackground(legacyColor);
+      }
+    }
+  }
+
+  Logger.log('Color coding complete. Rows: ' + values.length);
+}
+
+function colorAutomationStatus() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+  if (!dataSheet) return;
+
+  var lastRow = dataSheet.getLastRow();
+  if (lastRow < 2) return;
+
+  var statusRange = dataSheet.getRange(2, 24, lastRow - 1, 1);
+  var statuses = statusRange.getValues();
+
+  for (var i = 0; i < statuses.length; i++) {
+    var status = statuses[i][0];
+    var cell = dataSheet.getRange(i + 2, 24, 1, 1);
+    if (status === 'pending')                             cell.setBackground('#fff3cd');
+    else if (status === 'sent' || status === 'delivered') cell.setBackground('#d4edda');
+    else if (status === 'failed')                         cell.setBackground('#f8d7da');
+    else                                                  cell.setBackground('#ffffff');
+  }
+  Logger.log('Automation status coloring complete.');
+}
+
+// ============================================================
+// MESSAGE TEMPLATES (synced with followUpTemplates.js)
+// ============================================================
+
+function chefLink(base, contactName, locationName) {
+  var parts = [];
+  if (locationName) parts.push('c=' + encodeURIComponent(locationName));
+  if (contactName) parts.push('n=' + encodeURIComponent(contactName));
+  return parts.length > 0 ? base + '?' + parts.join('&') : base;
+}
+
+function getMessageForStage(stage, contactName, locationName, lang) {
+  var isDE = (lang || 'DE').toUpperCase() === 'DE';
+
+  var templates = {
+    'new_visit': isDE
+      ? 'Hi ' + contactName + ', hier ist ' + SENDER_NAME + ' von Belarro.\n\n'
+        + 'Hat mich gefreut dich bei ' + locationName + ' kennenzulernen. Danke fuer deine Zeit.\n\n'
+        + 'Hier ist unsere komplette Liste mit Preisen — du kannst auch direkt bestellen:\n' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\n'
+        + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.'
+      : 'Hi ' + contactName + ', this is ' + SENDER_NAME + ' from Belarro.\n\n'
+        + 'Great meeting you at ' + locationName + ' today. Thanks for your time.\n\n'
+        + 'Here\'s everything we grow with prices — you can also order directly:\n' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\n'
+        + 'We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you\'d like to test us.',
+
+    'follow_up_1': isDE
+      ? 'Hi ' + contactName + ', haben es die Proben auf einen Teller geschafft? Wuerde mich interessieren wie sie dir gefallen haben.'
+      : 'Hi ' + contactName + ', did the samples make it onto a plate? Curious what you thought.',
+
+    'follow_up_2': isDE
+      ? 'Hi ' + contactName + ', keine Mindestbestellung, keine Lieferkosten. Auch eine einzelne 12 EUR Packung geht.\n\n'
+        + 'Probier uns einfach einmal aus — und schau wie der Ablauf und die Qualitaet fuer deine Kueche passt. Meld dich einfach wenn du soweit bist.'
+      : 'Hi ' + contactName + ', no minimum order, no delivery cost. Even a single 12 EUR pack works.\n\n'
+        + 'Just want you to test us once — see how the process and quality works for your kitchen. Whenever you\'re ready, just message me.',
+
+    'follow_up_3': isDE
+      ? 'Hi ' + contactName + ', wir haben ein paar neue Sorten im Angebot. Schau mal rein: ' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\nSoll ich Dienstag was vorbeibringen?'
+      : 'Hi ' + contactName + ', we just started growing some new varieties. Worth a look: ' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\nWant me to bring some by this Tuesday?',
+
+    'order_confirmed': isDE
+      ? 'Hi ' + contactName + ', du bist im Plan.\n\nErste Lieferung: Dienstag.\n\nRechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.'
+      : 'Hi ' + contactName + ', you\'re on the schedule.\n\nFirst delivery: Tuesday.\n\nInvoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.',
+
+    'delivery_reminder': isDE
+      ? 'Hi ' + contactName + ', kurze Bestaetigung — deine erste Lieferung kommt morgen (Dienstag). Bis dann.'
+      : 'Hi ' + contactName + ', just confirming — your first delivery is arriving tomorrow (Tuesday). See you then.',
+
+    'post_delivery': isDE
+      ? 'Hi ' + contactName + ', wie war alles? Irgendwas das du beim naechsten Mal aendern wuerdest?'
+      : 'Hi ' + contactName + ', how did everything look? Anything you\'d change for next time?',
+
+    'active_customer': isDE
+      ? 'Hi ' + contactName + ', kurzes Check-in. Laeuft alles gut mit den Lieferungen? Willst du was tauschen oder dazunehmen?'
+      : 'Hi ' + contactName + ', just checking in. Everything working well with the deliveries? Need to swap or add anything?',
+
+    'inactive': isDE
+      ? 'Hi ' + contactName + ', falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.'
+      : 'Hi ' + contactName + ', if your menu has changed and you need different varieties, happy to adjust. We\'re here when you need us.'
+  };
+
+  return templates[stage] || null;
+}
+
+// ============================================================
+// FOLLOW-UP DIGEST EMAIL
+// ============================================================
+
+function sendFollowUpDigest() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var dataSheet = ss.getSheetByName('Data');
+  if (!dataSheet) return;
+
+  // Only send on Monday and Thursday
+  var dayOfWeek = new Date().getDay();
+  if (FOLLOW_UP_DAYS.indexOf(dayOfWeek) === -1) {
+    Logger.log('Not a follow-up day (Mon/Thu). Skipping digest.');
+    return;
+  }
+
+  var lastRow = dataSheet.getLastRow();
+  if (lastRow < 2) return;
+
+  var values = dataSheet.getRange(2, 1, lastRow - 1, 26).getValues();
+
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  var overdue = [];
+  var dueToday = [];
+  var upcoming = [];
+
+  for (var i = 0; i < values.length; i++) {
+    var row = values[i];
+    var rowNum = i + 2;
+
+    var locationName     = row[2];
+    var businessPhone    = row[5];
+    var contactPerson    = row[8];
+    var contactTitle     = row[9];
+    var directPhone      = row[10];
+    var directEmail      = row[11];
+    var visitNotes       = row[14];
+    var sampleGiven      = row[16];
+    var archived         = row[17];
+    var pipelineStage    = row[18];
+    var nextActionDate   = row[21];
+    var automationStatus = row[23];
+
     if (archived === 'YES') continue;
     if (pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') continue;
     if (automationStatus === 'sent' || automationStatus === 'delivered') continue;
     if (!nextActionDate) continue;
 
-    var actionDate = new Date(nextActionDate);
-    if (isNaN(actionDate.getTime())) continue;
-    actionDate.setHours(0, 0, 0, 0);
+    var actionDate = parseDate(nextActionDate);
+    if (!actionDate) continue;
 
     var diffDays = Math.floor((today - actionDate) / 86400000);
-
-    // Only include overdue (diffDays > 0), today (diffDays === 0), and upcoming (diffDays -1 to -3)
     if (diffDays < -3) continue;
 
-    // Pick the phone number (prefer direct, fallback to business)
     var phone = (directPhone || businessPhone || '').toString().replace(/[^0-9+]/g, '');
-
-    // Detect language from notes or default to DE
     var lang = 'DE';
     if (visitNotes && visitNotes.toString().toLowerCase().indexOf('[en]') !== -1) lang = 'EN';
 
-    // Get the message template
     var message = getMessageForStage(pipelineStage, contactPerson || 'there', locationName, lang);
 
-    // Build WhatsApp link
     var waLink = '';
     if (phone && message) {
       var cleanPhone = phone.replace(/^\+/, '');
@@ -468,43 +442,35 @@ function sendFollowUpDigest() {
     var entry = {
       rowNum: rowNum,
       locationName: locationName,
-      businessAddress: businessAddress,
       contactPerson: contactPerson || '(no name)',
       contactTitle: contactTitle,
       phone: phone,
       email: directEmail,
       stage: pipelineStage,
       stageLabel: getStageLabel(pipelineStage),
-      interestLevel: interestLevel,
       sampleGiven: sampleGiven,
       visitNotes: visitNotes ? visitNotes.toString().substring(0, 100) : '',
-      nextActionDate: Utilities.formatDate(actionDate, Session.getScriptTimeZone(), 'dd.MM.yyyy'),
+      nextActionDate: formatEU(actionDate),
       diffDays: diffDays,
       waLink: waLink,
       message: message
     };
 
-    if (diffDays > 0) {
-      overdue.push(entry);
-    } else if (diffDays === 0) {
-      dueToday.push(entry);
-    } else {
-      upcoming.push(entry);
-    }
+    if (diffDays > 0) overdue.push(entry);
+    else if (diffDays === 0) dueToday.push(entry);
+    else upcoming.push(entry);
   }
 
   var totalDue = overdue.length + dueToday.length;
-
   if (totalDue === 0 && upcoming.length === 0) {
     Logger.log('No follow-ups due. No email sent.');
     return;
   }
 
-  // Build the HTML email
-  var html = '';
-  html += '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">';
+  // Build HTML email
+  var html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">';
   html += '<h2 style="color:#2d5016;">Belarro Follow-Up Digest</h2>';
-  html += '<p style="color:#666;">' + Utilities.formatDate(today, Session.getScriptTimeZone(), 'EEEE, dd MMMM yyyy') + '</p>';
+  html += '<p style="color:#666;">' + formatEU(today) + ' (' + ['So','Mo','Di','Mi','Do','Fr','Sa'][today.getDay()] + ')</p>';
 
   if (totalDue > 0) {
     html += '<p style="font-size:18px;font-weight:bold;">' + totalDue + ' contact' + (totalDue > 1 ? 's' : '') + ' to follow up with today</p>';
@@ -512,7 +478,6 @@ function sendFollowUpDigest() {
     html += '<p style="color:#666;">No follow-ups due today. Here\'s what\'s coming up:</p>';
   }
 
-  // Render a section
   function renderSection(title, color, entries) {
     if (entries.length === 0) return '';
     var s = '<h3 style="color:' + color + ';border-bottom:2px solid ' + color + ';padding-bottom:5px;">' + title + ' (' + entries.length + ')</h3>';
@@ -520,14 +485,11 @@ function sendFollowUpDigest() {
     for (var j = 0; j < entries.length; j++) {
       var e = entries[j];
       s += '<div style="background:#f9f9f9;border-left:4px solid ' + color + ';padding:12px;margin:10px 0;border-radius:4px;">';
-
-      // Header: restaurant name + contact
       s += '<div style="font-size:16px;font-weight:bold;">' + e.locationName + '</div>';
       s += '<div style="color:#555;">' + e.contactPerson;
       if (e.contactTitle) s += ' (' + e.contactTitle + ')';
       s += '</div>';
 
-      // Stage + due date
       s += '<div style="margin:6px 0;">';
       s += '<span style="background:#e8f5e9;padding:2px 8px;border-radius:3px;font-size:12px;">' + e.stageLabel + '</span>';
       if (e.diffDays > 0) {
@@ -539,38 +501,18 @@ function sendFollowUpDigest() {
       }
       s += '</div>';
 
-      // Notes snippet
-      if (e.visitNotes) {
-        s += '<div style="color:#777;font-size:12px;font-style:italic;margin:4px 0;">"' + e.visitNotes + '"</div>';
-      }
+      if (e.visitNotes) s += '<div style="color:#777;font-size:12px;font-style:italic;margin:4px 0;">"' + e.visitNotes + '"</div>';
+      if (e.sampleGiven === 'YES') s += '<div style="color:#2d5016;font-size:12px;">Sample was given</div>';
 
-      // Sample given
-      if (e.sampleGiven === 'YES') {
-        s += '<div style="color:#2d5016;font-size:12px;">Sample was given</div>';
-      }
-
-      // ACTION BUTTONS
       s += '<div style="margin-top:10px;">';
-
-      // WhatsApp button (the main one)
-      if (e.waLink) {
-        s += '<a href="' + e.waLink + '" style="display:inline-block;background:#25D366;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:8px;">Send WhatsApp</a>';
-      }
-
-      // If they have email, add email link
+      if (e.waLink) s += '<a href="' + e.waLink + '" style="display:inline-block;background:#25D366;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:8px;">Send WhatsApp</a>';
       if (e.email) {
         var emailSubject = encodeURIComponent('Belarro - ' + e.stageLabel);
         var emailBody = e.message ? encodeURIComponent(e.message) : '';
         s += '<a href="mailto:' + e.email + '?subject=' + emailSubject + '&body=' + emailBody + '" style="display:inline-block;background:#1976D2;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:8px;">Send Email</a>';
       }
-
-      // Phone call link
-      if (e.phone) {
-        s += '<a href="tel:' + e.phone + '" style="display:inline-block;background:#666;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Call</a>';
-      }
-
-      s += '</div>'; // buttons
-      s += '</div>'; // card
+      if (e.phone) s += '<a href="tel:' + e.phone + '" style="display:inline-block;background:#666;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Call</a>';
+      s += '</div></div>';
     }
     return s;
   }
@@ -579,38 +521,28 @@ function sendFollowUpDigest() {
   html += renderSection('DUE TODAY', '#f57c00', dueToday);
   html += renderSection('COMING UP (next 3 days)', '#666666', upcoming);
 
-  // Footer
   html += '<hr style="margin:20px 0;border:none;border-top:1px solid #ddd;">';
-  html += '<p style="color:#999;font-size:12px;">After sending each message, open the sheet and update column X (automationStatus) to "sent".</p>';
-  html += '<p style="color:#999;font-size:12px;">Or just reply "done" to this email and I\'ll mark them.</p>';
+  html += '<p style="color:#999;font-size:12px;">After sending each message, tick the checkbox in column AB to auto-advance the pipeline.</p>';
   html += '</div>';
 
-  // Send the email
   var subject = totalDue > 0
     ? 'Belarro: ' + totalDue + ' follow-up' + (totalDue > 1 ? 's' : '') + ' due today'
     : 'Belarro: ' + upcoming.length + ' follow-up' + (upcoming.length > 1 ? 's' : '') + ' coming up';
 
-  MailApp.sendEmail({
-    to: DIGEST_EMAIL,
-    subject: subject,
-    htmlBody: html
-  });
-
-  Logger.log('Digest sent to ' + DIGEST_EMAIL + '. Overdue: ' + overdue.length + ', Today: ' + dueToday.length + ', Upcoming: ' + upcoming.length);
+  MailApp.sendEmail({ to: DIGEST_EMAIL, subject: subject, htmlBody: html });
+  Logger.log('Digest sent. Overdue: ' + overdue.length + ', Today: ' + dueToday.length + ', Upcoming: ' + upcoming.length);
 }
 
-/**
- * Mark a row as "sent" after you've sent the WhatsApp message.
- * Call from sheet: =markAsSent(rowNumber)
- * Or run manually and pass the row number.
- */
+// ============================================================
+// MARK AS SENT + ADVANCE PIPELINE
+// ============================================================
+
 function markRowAsSent(rowNum) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var dataSheet = ss.getSheetByName('Data');
+  var today = formatISO(new Date());
 
-  var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
-
-  // Update automationStatus (X = 24) to "sent"
+  // Update automationStatus (X = 24)
   dataSheet.getRange(rowNum, 24).setValue('sent');
 
   // Update lastFollowUpDate (U = 21)
@@ -627,28 +559,28 @@ function markRowAsSent(rowNum) {
     dataSheet.getRange(rowNum, 19).setValue(nextStage);
   }
 
-  // Set next action date (V = 22)
+  // Set next action date snapped to Mon/Thu (V = 22)
   var nextDays = getNextActionDays(currentStage);
   if (nextDays) {
-    var nextDate = new Date();
-    nextDate.setDate(nextDate.getDate() + nextDays);
-    var nextDateStr = Utilities.formatDate(nextDate, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    var nextDateStr = calculateNextFollowUpDate(nextDays);
     dataSheet.getRange(rowNum, 22).setValue(nextDateStr);
-    // Reset automationStatus for next round
     dataSheet.getRange(rowNum, 24).setValue('pending');
   } else {
-    // No more follow-ups — clear next action date
     dataSheet.getRange(rowNum, 22).setValue('');
     dataSheet.getRange(rowNum, 24).setValue('');
   }
 
+  // Log to notesInternal (Z = 26)
+  var existingNotes = dataSheet.getRange(rowNum, 26).getValue() || '';
+  var nextLabel = nextStage ? nextStage.replace(/_/g, ' ') : 'done';
+  var nextDate = nextDays ? calculateNextFollowUpDate(nextDays) : 'n/a';
+  var logEntry = '[' + today + '] ' + currentStage.replace(/_/g, ' ') + ' sent → next: ' + nextLabel + ' on ' + nextDate;
+  var updatedNotes = existingNotes ? existingNotes + '\n' + logEntry : logEntry;
+  dataSheet.getRange(rowNum, 26).setValue(updatedNotes);
+
   Logger.log('Row ' + rowNum + ' marked as sent. Next stage: ' + (nextStage || 'none'));
 }
 
-/**
- * Bulk mark — after you send all messages, run this to mark all
- * today's due contacts as sent and auto-advance their pipeline.
- */
 function markAllDueAsSent() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var dataSheet = ss.getSheetByName('Data');
@@ -662,85 +594,27 @@ function markAllDueAsSent() {
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
-    var archived = row[17];
-    var pipelineStage = row[18];
-    var nextActionDate = row[21];
-    var automationStatus = row[23];
+    if (row[17] === 'YES') continue;
+    var stage = row[18];
+    if (stage === 'closed_won' || stage === 'closed_lost') continue;
+    var status = row[23];
+    if (status === 'sent' || status === 'delivered') continue;
+    if (!row[21]) continue;
 
-    if (archived === 'YES') continue;
-    if (pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') continue;
-    if (automationStatus === 'sent' || automationStatus === 'delivered') continue;
-    if (!nextActionDate) continue;
-
-    var actionDate = new Date(nextActionDate);
-    if (isNaN(actionDate.getTime())) continue;
-    actionDate.setHours(0, 0, 0, 0);
-
+    var actionDate = parseDate(row[21]);
+    if (!actionDate) continue;
     if (actionDate <= today) {
       markRowAsSent(i + 2);
       count++;
     }
   }
-
-  Logger.log('Marked ' + count + ' rows as sent and advanced pipeline stages.');
+  Logger.log('Marked ' + count + ' rows as sent.');
 }
 
 // ============================================================
-// SETUP — run this once to add the digest trigger
+// IN-SHEET WHATSAPP LINKS + SENT CHECKBOX
 // ============================================================
 
-/**
- * Set up ALL triggers: color coding (midnight) + follow-up digest (8am).
- * Run this ONCE after pasting the script.
- */
-function setupAllTriggers() {
-  // Remove all existing triggers
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    ScriptApp.deleteTrigger(triggers[i]);
-  }
-
-  // Color coding at midnight
-  ScriptApp.newTrigger('colorFollowUpDates')
-    .timeBased()
-    .everyDays(1)
-    .atHour(0)
-    .create();
-
-  ScriptApp.newTrigger('colorAutomationStatus')
-    .timeBased()
-    .everyDays(1)
-    .atHour(0)
-    .create();
-
-  // Follow-up digest at 8am every day
-  ScriptApp.newTrigger('sendFollowUpDigest')
-    .timeBased()
-    .everyDays(1)
-    .atHour(8)
-    .create();
-
-  // Edit trigger for sent checkbox + interest level changes
-  ScriptApp.newTrigger('onSheetEdit')
-    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
-    .onEdit()
-    .create();
-
-  Logger.log('All triggers set up: color coding at midnight, digest at 8am, edit trigger for checkboxes.');
-
-  // Refresh sheet links
-  refreshSheetLinks();
-}
-
-// ============================================================
-// IN-SHEET WHATSAPP LINKS + WHAT TO BRING + SENT CHECKBOX
-// ============================================================
-
-/**
- * Refresh WhatsApp links (AA), what-to-bring reminders (AB),
- * and ensure sent checkboxes exist (AC) for all rows.
- * Run manually or on a trigger after new data comes in.
- */
 function refreshSheetLinks() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var dataSheet = ss.getSheetByName('Data');
@@ -749,47 +623,32 @@ function refreshSheetLinks() {
   var lastRow = dataSheet.getLastRow();
   if (lastRow < 2) return;
 
-  // Add headers if missing
-  var headers = dataSheet.getRange(1, 27, 1, 2).getValues()[0];
-  if (headers[0] !== 'WhatsApp Link') dataSheet.getRange(1, 27).setValue('WhatsApp Link');
-  if (headers[1] !== 'Sent') dataSheet.getRange(1, 28).setValue('Sent');
-  // Clear old column AC header and AB "What To Bring" if they exist
-  var oldHeaders = dataSheet.getRange(1, 29, 1, 1).getValues()[0];
-  if (oldHeaders[0] === 'Sent' || oldHeaders[0] === 'What To Bring') dataSheet.getRange(1, 29).setValue('');
+  // Headers
+  if (dataSheet.getRange(1, 27).getValue() !== 'WhatsApp Link') dataSheet.getRange(1, 27).setValue('WhatsApp Link');
+  if (dataSheet.getRange(1, 28).getValue() !== 'Sent') dataSheet.getRange(1, 28).setValue('Sent');
 
-  // Read all data (A-Z = 26 columns)
   var values = dataSheet.getRange(2, 1, lastRow - 1, 26).getValues();
-
-  var waLinks = [];
+  var richTexts = [];
 
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
-    var locationName  = row[2];  // C
-    var contactPerson = row[8];  // I
-    var directPhone   = row[10]; // K
-    var businessPhone = row[5];  // F
-    var interestLevel = row[13]; // N
-    var sampleGiven   = row[16]; // Q
-    var archived      = row[17]; // R
-    var pipelineStage = row[18]; // S
-    var nextActionDate = row[21]; // V
-    var automationStatus = row[23]; // X
-    var visitNotes    = row[14]; // O
+    var locationName  = row[2];
+    var contactPerson = row[8];
+    var directPhone   = row[10];
+    var businessPhone = row[5];
+    var pipelineStage = row[18];
+    var archived      = row[17];
+    var visitNotes    = row[14];
 
-    // Skip archived or closed
     if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
-      waLinks.push(['']);
+      richTexts.push([SpreadsheetApp.newRichTextValue().setText('').build()]);
       continue;
     }
 
-    // Phone number
     var phone = (directPhone || businessPhone || '').toString().replace(/[^0-9+]/g, '');
-
-    // Language
     var lang = 'DE';
     if (visitNotes && visitNotes.toString().toLowerCase().indexOf('[en]') !== -1) lang = 'EN';
 
-    // Generate WhatsApp link
     var waLink = '';
     if (phone && pipelineStage) {
       var message = getMessageForStage(pipelineStage, contactPerson || 'there', locationName, lang);
@@ -798,88 +657,25 @@ function refreshSheetLinks() {
         waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message);
       }
     }
-    waLinks.push([waLink]);
-  }
 
-  // Build rich text values for AA (WhatsApp links) in one batch
-  var richTexts = [];
-  for (var j = 0; j < waLinks.length; j++) {
-    if (waLinks[j][0]) {
-      richTexts.push([SpreadsheetApp.newRichTextValue()
-        .setText('Send WhatsApp')
-        .setLinkUrl(waLinks[j][0])
-        .build()]);
+    if (waLink) {
+      richTexts.push([SpreadsheetApp.newRichTextValue().setText('Send WhatsApp').setLinkUrl(waLink).build()]);
     } else {
       richTexts.push([SpreadsheetApp.newRichTextValue().setText('').build()]);
     }
   }
+
   dataSheet.getRange(2, 27, richTexts.length, 1).setRichTextValues(richTexts);
-  // Style the whole AA column at once
   var aaRange = dataSheet.getRange(2, 27, richTexts.length, 1);
   aaRange.setFontColor('#25D366');
   aaRange.setFontWeight('bold');
 
-  // Add checkboxes to AB column (28) in one batch
-  var abRange = dataSheet.getRange(2, 28, values.length, 1);
-  abRange.insertCheckboxes();
-  // Clear old column AC if it had checkboxes
-  if (lastRow > 1) {
-    dataSheet.getRange(2, 29, lastRow - 1, 1).clearContent();
-    dataSheet.getRange(2, 29, lastRow - 1, 1).clearDataValidations();
-  }
+  // Checkboxes in AB
+  dataSheet.getRange(2, 28, values.length, 1).insertCheckboxes();
 
   Logger.log('Sheet links refreshed. Rows: ' + values.length);
 }
 
-/**
- * onEdit trigger: when you tick the "Sent" checkbox (AC),
- * auto-advance the pipeline and schedule next follow-up.
- * Also: when interestLevel (N) changes to "Closed Deal",
- * set pipeline to closed_won and clear follow-ups.
- */
-function onSheetEdit(e) {
-  var sheet = e.source.getActiveSheet();
-  if (sheet.getName() !== 'Data') return;
-
-  var col = e.range.getColumn();
-  var row = e.range.getRow();
-  if (row < 2) return;
-
-  // AB = column 28: Sent checkbox ticked
-  if (col === 28 && e.value === 'TRUE') {
-    markRowAsSent(row);
-    // Uncheck the box after processing
-    sheet.getRange(row, 28).setValue(false);
-    // Refresh the WhatsApp link for next stage
-    SpreadsheetApp.flush();
-    refreshSingleRow(row);
-  }
-
-  // N = column 14: Interest level changed
-  if (col === 14) {
-    var newInterest = e.value;
-    if (newInterest === 'Closed Deal') {
-      // Convert to client
-      sheet.getRange(row, 19).setValue('closed_won');   // S: pipelineStage
-      sheet.getRange(row, 22).setValue('');              // V: nextActionDate
-      sheet.getRange(row, 24).setValue('');              // X: automationStatus
-      sheet.getRange(row, 27).setValue('');              // AA: clear WA link
-      sheet.getRange(row, 28).setValue(false);           // AB: uncheck
-      Logger.log('Row ' + row + ' converted to client (closed_won)');
-    } else if (newInterest === 'Not Interested') {
-      sheet.getRange(row, 19).setValue('closed_lost');
-      sheet.getRange(row, 22).setValue('');
-      sheet.getRange(row, 24).setValue('');
-      sheet.getRange(row, 27).setValue('');
-      sheet.getRange(row, 28).setValue(false);
-      Logger.log('Row ' + row + ' marked as closed_lost');
-    }
-  }
-}
-
-/**
- * Refresh WhatsApp link and reminder for a single row
- */
 function refreshSingleRow(rowNum) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var dataSheet = ss.getSheetByName('Data');
@@ -891,7 +687,6 @@ function refreshSingleRow(rowNum) {
   var businessPhone = row[5];
   var pipelineStage = row[18];
   var archived      = row[17];
-  var sampleGiven   = row[16];
   var visitNotes    = row[14];
 
   if (archived === 'YES' || pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') {
@@ -909,34 +704,97 @@ function refreshSingleRow(rowNum) {
       var cleanPhone = phone.replace(/^\+/, '');
       var waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message);
       var cell = dataSheet.getRange(rowNum, 27);
-      var richText = SpreadsheetApp.newRichTextValue()
-        .setText('Send WhatsApp')
-        .setLinkUrl(waLink)
-        .build();
-      cell.setRichTextValue(richText);
+      cell.setRichTextValue(SpreadsheetApp.newRichTextValue().setText('Send WhatsApp').setLinkUrl(waLink).build());
       cell.setFontColor('#25D366');
       cell.setFontWeight('bold');
     }
   }
 }
 
-/**
- * Set up the onEdit trigger for the sent checkbox and interest level changes.
- * Run this ONCE.
- */
-function setupEditTrigger() {
-  // Remove existing onSheetEdit triggers
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    if (triggers[i].getHandlerFunction() === 'onSheetEdit') {
-      ScriptApp.deleteTrigger(triggers[i]);
-    }
+// ============================================================
+// EDIT TRIGGER — checkbox + interest level changes
+// ============================================================
+
+function onSheetEdit(e) {
+  var sheet = e.source.getActiveSheet();
+  if (sheet.getName() !== 'Data') return;
+
+  var col = e.range.getColumn();
+  var row = e.range.getRow();
+  if (row < 2) return;
+
+  // AB = 28: Sent checkbox ticked
+  if (col === 28 && e.value === 'TRUE') {
+    markRowAsSent(row);
+    sheet.getRange(row, 28).setValue(false);
+    SpreadsheetApp.flush();
+    refreshSingleRow(row);
   }
 
-  ScriptApp.newTrigger('onSheetEdit')
-    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
-    .onEdit()
-    .create();
+  // N = 14: Interest level changed
+  if (col === 14) {
+    var val = e.value;
+    if (val === 'Closed Deal') {
+      sheet.getRange(row, 19).setValue('closed_won');
+      sheet.getRange(row, 22).setValue('');
+      sheet.getRange(row, 24).setValue('');
+      sheet.getRange(row, 27).setValue('');
+      sheet.getRange(row, 28).setValue(false);
+    } else if (val === 'Not Interested') {
+      sheet.getRange(row, 19).setValue('closed_lost');
+      sheet.getRange(row, 22).setValue('');
+      sheet.getRange(row, 24).setValue('');
+      sheet.getRange(row, 27).setValue('');
+      sheet.getRange(row, 28).setValue(false);
+    }
+  }
+}
 
-  Logger.log('Edit trigger set up for sent checkbox and interest level changes.');
+// ============================================================
+// SETUP — run ONCE after pasting the script
+// ============================================================
+
+function setupAllTriggers() {
+  // Remove all existing triggers
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    ScriptApp.deleteTrigger(triggers[i]);
+  }
+
+  // Color coding at midnight
+  ScriptApp.newTrigger('colorFollowUpDates').timeBased().everyDays(1).atHour(0).create();
+  ScriptApp.newTrigger('colorAutomationStatus').timeBased().everyDays(1).atHour(0).create();
+
+  // Follow-up digest at 8am (only sends on Mon/Thu)
+  ScriptApp.newTrigger('sendFollowUpDigest').timeBased().everyDays(1).atHour(8).create();
+
+  // Edit trigger for checkboxes + interest level
+  ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet()).onEdit().create();
+
+  Logger.log('All triggers set up: colors at midnight, digest at 8am, edit trigger.');
+
+  // Run once immediately
+  refreshSheetLinks();
+  colorFollowUpDates();
+  colorAutomationStatus();
+}
+
+/**
+ * Manual run — test everything
+ */
+function manualRun() {
+  colorFollowUpDates();
+  colorAutomationStatus();
+  refreshSheetLinks();
+}
+
+/**
+ * Remove all triggers
+ */
+function removeAllTriggers() {
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    ScriptApp.deleteTrigger(triggers[i]);
+    Logger.log('Removed: ' + triggers[i].getHandlerFunction());
+  }
 }
