@@ -1170,9 +1170,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                                     : '';
                                   const today = new Date().toISOString().split('T')[0];
                                   const count = parseInt(location.followUpCount || '0', 10) + 1;
-                                  const logEntry = `[${today}] ${(followUpMsg.stage || 'unknown').replace(/_/g, ' ')} sent`;
+                                  const nextStageLabel = (followUpMsg.nextStage || '').replace(/_/g, ' ');
+                                  const logEntry = `[${today}] ${(followUpMsg.stage || 'unknown').replace(/_/g, ' ')} sent → next: ${nextStageLabel || 'done'} on ${nextDate || 'n/a'}`;
                                   const existingNotes = location.notesInternal || '';
-                                  const updatedNotes = existingNotes ? `${existingNotes} | ${logEntry}` : logEntry;
+                                  const updatedNotes = existingNotes ? `${existingNotes}\n${logEntry}` : logEntry;
 
                                   await updatePipelineData(location.locationName, location.businessAddress, {
                                     pipelineStage: nextStage,

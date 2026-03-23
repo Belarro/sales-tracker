@@ -185,10 +185,10 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
 
       // Build follow-up history log in notesInternal (column Z)
       const stageName = (finalFollowUp.stage || 'unknown').replace(/_/g, ' ');
-      const logEntry = `[${today}] ${stageName} sent`;
+      const logEntry = `[${today}] ${stageName} sent → next: ${finalFollowUp.nextStage?.replace(/_/g, ' ') || 'done'} on ${nextDate || 'n/a'}`;
       const existingNotes = location.notesInternal || '';
       const updatedNotes = existingNotes
-        ? `${existingNotes} | ${logEntry}`
+        ? `${existingNotes}\n${logEntry}`
         : logEntry;
       await updatePipelineData(location.locationName, location.businessAddress, {
         pipelineStage: finalFollowUp.nextStage || location.pipelineStage,
