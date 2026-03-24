@@ -143,7 +143,8 @@ function getNextStage(stage) {
     'new_visit':         'follow_up_1',
     'follow_up_1':       'follow_up_2',
     'follow_up_2':       'follow_up_3',
-    'follow_up_3':       'closed_lost',
+    'follow_up_3':       'follow_up_4',
+    'follow_up_4':       'closed_lost',
     'order_confirmed':   'delivery_reminder',
     'delivery_reminder': 'post_delivery',
     'post_delivery':     'active_customer',
@@ -159,13 +160,14 @@ function getNextStage(stage) {
  */
 function getNextActionDays(stage) {
   var map = {
-    'new_visit':         2,
-    'follow_up_1':       5,
-    'follow_up_2':       7,
-    'follow_up_3':       null,
+    'new_visit':         0,   // same day — send list right after
+    'follow_up_1':       2,
+    'follow_up_2':       5,
+    'follow_up_3':       7,
+    'follow_up_4':       null,
     'order_confirmed':   null,
     'delivery_reminder': 2,
-    'post_delivery':     30,
+    'post_delivery':     42,
     'active_customer':   42,
     'inactive':          null
   };
@@ -177,17 +179,18 @@ function getNextActionDays(stage) {
  */
 function getStageLabel(stage) {
   var labels = {
-    'new_visit':         'Send prices & intro',
-    'follow_up_1':       'How were the samples?',
-    'follow_up_2':       'Low barrier — just try us',
-    'follow_up_3':       'Re-engage with new varieties',
-    'order_confirmed':   'Confirm order details',
-    'delivery_reminder': 'Delivery reminder',
-    'post_delivery':     'Post-delivery check-in',
-    'active_customer':   'Monthly check-in',
-    'inactive':          'Inactive — last attempt',
+    'new_visit':         'Intro + samples feedback',
+    'follow_up_1':       'Send varieties + prices',
+    'follow_up_2':       'Which samples worked?',
+    'follow_up_3':       'Start with one box',
+    'follow_up_4':       'Closing seeding cycle',
+    'order_confirmed':   'Order confirmed',
+    'delivery_reminder': 'Delivery tomorrow',
+    'post_delivery':     'Post-delivery feedback',
+    'active_customer':   '6-week check-in',
+    'inactive':          'Inactive',
     'closed_won':        'Active customer',
-    'closed_lost':       'Closed — no follow-up'
+    'closed_lost':       'Closed'
   };
   return labels[stage] || stage;
 }
@@ -324,48 +327,44 @@ function getMessageForStage(stage, contactName, locationName, lang) {
 
   var templates = {
     'new_visit': isDE
-      ? 'Hi ' + contactName + ', hier ist ' + SENDER_NAME + ' von Belarro.\n\n'
-        + 'Hat mich gefreut dich bei ' + locationName + ' kennenzulernen. Danke fuer deine Zeit.\n\n'
-        + 'Hier ist unsere komplette Liste mit Preisen — du kannst auch direkt bestellen:\n' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\n'
-        + 'Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.'
-      : 'Hi ' + contactName + ', this is ' + SENDER_NAME + ' from Belarro.\n\n'
-        + 'Great meeting you at ' + locationName + ' today. Thanks for your time.\n\n'
-        + 'Here\'s everything we grow with prices — you can also order directly:\n' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\n'
-        + 'We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you\'d like to test us.',
+      ? 'Hey ' + contactName + ', Ron von Belarro. Hat mich gefreut dich heute kennenzulernen.\n\nWie haben die Proben bei dir auf dem Teller funktioniert?\n\nWir liefern jeden Dienstag frisch.\nBestellungen laufen automatisch weiter, einmal eingerichtet laeuft es.'
+      : 'Hey ' + contactName + ', Ron from Belarro. Good meeting you today.\n\nHow did the samples perform for you on the plate?\n\nWe deliver fresh every Tuesday.\nOrders are recurring, so once set, it runs.',
 
     'follow_up_1': isDE
-      ? 'Hi ' + contactName + ', haben es die Proben auf einen Teller geschafft? Wuerde mich interessieren wie sie dir gefallen haben.'
-      : 'Hi ' + contactName + ', did the samples make it onto a plate? Curious what you thought.',
+      ? 'Hey ' + contactName + ', wie versprochen:\n\nSorten + Preise: ' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\nAlles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.\nKeine Mindestbestellung, keine Lieferkosten.'
+      : 'Hey ' + contactName + ', as promised:\n\nVarieties + prices: ' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\nEverything is grown to order and delivered fresh every Tuesday.\nNo minimum, no delivery fee.',
 
     'follow_up_2': isDE
-      ? 'Hi ' + contactName + ', keine Mindestbestellung, keine Lieferkosten. Auch eine einzelne 12 EUR Packung geht.\n\n'
-        + 'Probier uns einfach einmal aus — und schau wie der Ablauf und die Qualitaet fuer deine Kueche passt. Meld dich einfach wenn du soweit bist.'
-      : 'Hi ' + contactName + ', no minimum order, no delivery cost. Even a single 12 EUR pack works.\n\n'
-        + 'Just want you to test us once — see how the process and quality works for your kitchen. Whenever you\'re ready, just message me.',
+      ? 'Hey ' + contactName + ',\n\nWelche der Proben haben bei dir am besten funktioniert?'
+      : 'Hey ' + contactName + ',\n\nWhich of the samples worked best for you?',
 
     'follow_up_3': isDE
-      ? 'Hi ' + contactName + ', wir haben ein paar neue Sorten im Angebot. Schau mal rein: ' + chefLink(CHEF_LINK_DE, contactName, locationName) + '\n\nSoll ich Dienstag was vorbeibringen?'
-      : 'Hi ' + contactName + ', we just started growing some new varieties. Worth a look: ' + chefLink(CHEF_LINK_EN, contactName, locationName) + '\n\nWant me to bring some by this Tuesday?',
+      ? 'Hey ' + contactName + ',\n\nDu kannst naechsten Dienstag mit einer kleinen Box anfangen.\n\nDanach passen wir alles an deine Gerichte an.'
+      : 'Hey ' + contactName + ',\n\nYou can start with one small box next Tuesday.\n\nFrom there we refine based on your dishes.',
+
+    'follow_up_4': isDE
+      ? 'Hey ' + contactName + ',\n\nIch schliesse den naechsten Aussaat-Zyklus ab.\nSoll ich dich mit einer kleinen ersten Box einplanen?'
+      : 'Hey ' + contactName + ',\n\nI am closing the next seeding cycle.\nShall I include you with a small first box?',
 
     'order_confirmed': isDE
-      ? 'Hi ' + contactName + ', du bist im Plan.\n\nErste Lieferung: Dienstag.\n\nRechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.'
-      : 'Hi ' + contactName + ', you\'re on the schedule.\n\nFirst delivery: Tuesday.\n\nInvoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.',
+      ? 'Bestaetigt.\n\nErste Lieferung: Dienstag.\n\nDu bekommst jeden Dienstag das gleiche.\nAenderungen sind jederzeit moeglich.'
+      : 'Confirmed.\n\nFirst delivery: Tuesday.\n\nYou will receive the same every Tuesday.\nAdjustments can be made anytime.',
 
     'delivery_reminder': isDE
-      ? 'Hi ' + contactName + ', kurze Bestaetigung — deine erste Lieferung kommt morgen (Dienstag). Bis dann.'
-      : 'Hi ' + contactName + ', just confirming — your first delivery is arriving tomorrow (Tuesday). See you then.',
+      ? 'Hey ' + contactName + ',\n\nErste Lieferung morgen.'
+      : 'Hey ' + contactName + ',\n\nFirst delivery tomorrow.',
 
     'post_delivery': isDE
-      ? 'Hi ' + contactName + ', wie war alles? Irgendwas das du beim naechsten Mal aendern wuerdest?'
-      : 'Hi ' + contactName + ', how did everything look? Anything you\'d change for next time?',
+      ? 'Hey ' + contactName + ',\n\nHat alles wie erwartet funktioniert?\n\nSag mir was du anpassen willst.'
+      : 'Hey ' + contactName + ',\n\nDid everything perform as expected?\n\nLet me know what you want to adjust.',
 
     'active_customer': isDE
-      ? 'Hi ' + contactName + ', kurzes Check-in. Laeuft alles gut mit den Lieferungen? Willst du was tauschen oder dazunehmen?'
-      : 'Hi ' + contactName + ', just checking in. Everything working well with the deliveries? Need to swap or add anything?',
+      ? 'Hey ' + contactName + ',\n\nLaeuft alles wie es soll?\n\nWir koennen anpassen oder was Neues einbauen wenn du willst.'
+      : 'Hey ' + contactName + ',\n\nIs everything running as it should?\n\nWe can refine or introduce something new if needed.',
 
     'inactive': isDE
-      ? 'Hi ' + contactName + ', falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.'
-      : 'Hi ' + contactName + ', if your menu has changed and you need different varieties, happy to adjust. We\'re here when you need us.'
+      ? 'Hey ' + contactName + ',\n\nLaeuft alles wie es soll?\n\nWir koennen anpassen oder was Neues einbauen wenn du willst.'
+      : 'Hey ' + contactName + ',\n\nIs everything running as it should?\n\nWe can refine or introduce something new if needed.'
   };
 
   return templates[stage] || null;
@@ -380,12 +379,7 @@ function sendFollowUpDigest() {
   var dataSheet = ss.getSheetByName('Data');
   if (!dataSheet) return;
 
-  // Only send on Monday and Thursday
-  var dayOfWeek = new Date().getDay();
-  if (FOLLOW_UP_DAYS.indexOf(dayOfWeek) === -1) {
-    Logger.log('Not a follow-up day (Mon/Thu). Skipping digest.');
-    return;
-  }
+  // Sends every day — if there's nothing due, no email is sent
 
   var lastRow = dataSheet.getLastRow();
   if (lastRow < 2) return;

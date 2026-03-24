@@ -110,6 +110,7 @@ export const CONFIG = {
     FOLLOW_UP_1:      'follow_up_1',
     FOLLOW_UP_2:      'follow_up_2',
     FOLLOW_UP_3:      'follow_up_3',
+    FOLLOW_UP_4:      'follow_up_4',
     ORDER_CONFIRMED:    'order_confirmed',
     DELIVERY_REMINDER:  'delivery_reminder',
     POST_DELIVERY:      'post_delivery',

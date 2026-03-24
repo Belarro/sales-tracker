@@ -1,22 +1,13 @@
 // ============================================
 // BELARRO FOLLOW-UP MESSAGE TEMPLATES
 // ============================================
-// Maps pipeline stages to WhatsApp messages.
-// Each template is a function that takes location data and returns the message text.
-// Messages follow the Belarro sales system rules:
-// - Max 4 short paragraphs
-// - One question per message
-// - No emojis
-// - Prices in first message
-// - Link to for-chefs page, never PDFs
-// - "du" in German, casual but professional
+// Premium / chef-level messaging.
+// Short, direct, professional. No fluff.
+// WhatsApp + Email templates for each stage.
 
 const BASE_LINK_EN = 'https://belarro.com/for-chefs';
 const BASE_LINK_DE = 'https://belarro.com/de/for-chefs';
 
-/**
- * Build a personalized for-chefs link with pre-filled restaurant/contact info
- */
 function priceLink(base, loc) {
   const params = new URLSearchParams();
   if (loc.locationName) params.set('c', loc.locationName);
@@ -26,102 +17,215 @@ function priceLink(base, loc) {
 }
 
 /**
- * Get the sender name. Defaults to 'Ron' if not provided.
- */
-function senderName(userName) {
-  return userName || 'Ron';
-}
-
-/**
  * All follow-up templates keyed by stage.
- * Each returns { subject, body, nextStage, nextActionDays, nextActionType }
+ * Each returns { body, emailBody, emailSubject, nextStage, nextActionDays, nextActionType }
  */
 export const FOLLOW_UP_TEMPLATES = {
 
   // ──────────────────────────────────────────
-  // STAGE 1: Thank you + prices (within 1h of visit)
+  // STAGE 0.5: Same day — samples feedback + intro
   // ──────────────────────────────────────────
   new_visit: {
-    EN: (loc, user) => ({
-      body: [
-        `Hi ${loc.contactPerson}, this is ${senderName(user)} from Belarro.`,
-        `Great meeting you at ${loc.locationName} today. Thanks for your time.`,
-        `Here's everything we grow with prices — you can also order directly:`,
-        priceLink(BASE_LINK_EN, loc),
-        `We deliver every Tuesday. No minimum order, no delivery cost. Let me know if you'd like to test us.`
-      ].join('\n\n'),
-      nextStage: 'follow_up_1',
-      nextActionDays: 2,  // snaps to next Mon/Thu
-      nextActionType: 'whatsapp'
-    }),
-    DE: (loc, user) => ({
-      body: [
-        `Hi ${loc.contactPerson}, hier ist ${senderName(user)} von Belarro.`,
-        `Hat mich gefreut dich bei ${loc.locationName} kennenzulernen. Danke fuer deine Zeit.`,
-        `Hier ist unsere komplette Liste mit Preisen — du kannst auch direkt bestellen:`,
-        priceLink(BASE_LINK_DE, loc),
-        `Wir liefern jeden Dienstag. Keine Mindestbestellung, keine Lieferkosten. Sag Bescheid wenn du uns testen moechtest.`
-      ].join('\n\n'),
-      nextStage: 'follow_up_1',
-      nextActionDays: 2,  // snaps to next Mon/Thu
-      nextActionType: 'whatsapp'
-    })
-  },
-
-  // ──────────────────────────────────────────
-  // STAGE 2: Nudge — did the samples work? (2 days)
-  // ──────────────────────────────────────────
-  follow_up_1: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, did the samples make it onto a plate? Curious what you thought.`,
-      nextStage: 'follow_up_2',
-      nextActionDays: 5,  // snaps to next Mon/Thu
+      body: [
+        `Hey ${loc.contactPerson}, Ron from Belarro. Good meeting you today.`,
+        `How did the samples perform for you on the plate?`,
+        `We deliver fresh every Tuesday.`,
+        `Orders are recurring, so once set, it runs.`
+      ].join('\n\n'),
+      emailSubject: 'Belarro',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Good meeting you today.`,
+        `Here is the full list:\n${priceLink(BASE_LINK_EN, loc)}`,
+        `Everything is grown to order and delivered fresh every Tuesday.`,
+        `No minimum, no delivery fee.`,
+        `Orders are recurring, so once started, it runs.`,
+        `Ron`
+      ].join('\n\n'),
+      nextStage: 'follow_up_1',
+      nextActionDays: 0,  // same day — send list right after
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, haben es die Proben auf einen Teller geschafft? Wuerde mich interessieren wie sie dir gefallen haben.`,
-      nextStage: 'follow_up_2',
-      nextActionDays: 5,  // snaps to next Mon/Thu
+      body: [
+        `Hey ${loc.contactPerson}, Ron von Belarro. Hat mich gefreut dich heute kennenzulernen.`,
+        `Wie haben die Proben bei dir auf dem Teller funktioniert?`,
+        `Wir liefern jeden Dienstag frisch.`,
+        `Bestellungen laufen automatisch weiter, einmal eingerichtet laeuft es.`
+      ].join('\n\n'),
+      emailSubject: 'Belarro',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Hat mich gefreut dich heute kennenzulernen.`,
+        `Hier ist die komplette Liste:\n${priceLink(BASE_LINK_DE, loc)}`,
+        `Alles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.`,
+        `Keine Mindestbestellung, keine Lieferkosten.`,
+        `Bestellungen laufen automatisch weiter, einmal eingerichtet laeuft es.`,
+        `Ron`
+      ].join('\n\n'),
+      nextStage: 'follow_up_1',
+      nextActionDays: 0,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // STAGE 3: Remove friction — low barrier (5 days total)
+  // STAGE 1: Send the list — same day or next
+  // ──────────────────────────────────────────
+  follow_up_1: {
+    EN: (loc) => ({
+      body: [
+        `Hey ${loc.contactPerson}, as promised:`,
+        `Varieties + prices: ${priceLink(BASE_LINK_EN, loc)}`,
+        `Everything is grown to order and delivered fresh every Tuesday.`,
+        `No minimum, no delivery fee.`
+      ].join('\n\n'),
+      emailSubject: 'Varieties + prices',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `As promised, here is the full list:\n${priceLink(BASE_LINK_EN, loc)}`,
+        `Everything is grown to order and delivered fresh every Tuesday.`,
+        `No minimum, no delivery fee.`,
+        `Ron`
+      ].join('\n\n'),
+      nextStage: 'follow_up_2',
+      nextActionDays: 2,
+      nextActionType: 'whatsapp'
+    }),
+    DE: (loc) => ({
+      body: [
+        `Hey ${loc.contactPerson}, wie versprochen:`,
+        `Sorten + Preise: ${priceLink(BASE_LINK_DE, loc)}`,
+        `Alles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.`,
+        `Keine Mindestbestellung, keine Lieferkosten.`
+      ].join('\n\n'),
+      emailSubject: 'Sorten + Preise',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Wie versprochen, hier ist die komplette Liste:\n${priceLink(BASE_LINK_DE, loc)}`,
+        `Alles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.`,
+        `Keine Mindestbestellung, keine Lieferkosten.`,
+        `Ron`
+      ].join('\n\n'),
+      nextStage: 'follow_up_2',
+      nextActionDays: 2,
+      nextActionType: 'whatsapp'
+    })
+  },
+
+  // ──────────────────────────────────────────
+  // STAGE 2: Which samples worked? (+2 days)
   // ──────────────────────────────────────────
   follow_up_2: {
     EN: (loc) => ({
       body: [
-        `Hi ${loc.contactPerson}, no minimum order, no delivery cost. Even a single 12 EUR pack works.`,
-        `Just want you to test us once — see how the process and quality works for your kitchen. Whenever you're ready, just message me.`
+        `Hey ${loc.contactPerson},`,
+        `Which of the samples worked best for you?`
+      ].join('\n\n'),
+      emailSubject: 'Samples',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `How did the samples perform for you?`,
+        `Which one worked best on your dishes?`,
+        `Ron`
       ].join('\n\n'),
       nextStage: 'follow_up_3',
-      nextActionDays: 7,  // snaps to next Mon/Thu
+      nextActionDays: 5,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
       body: [
-        `Hi ${loc.contactPerson}, keine Mindestbestellung, keine Lieferkosten. Auch eine einzelne 12 EUR Packung geht.`,
-        `Probier uns einfach einmal aus — und schau wie der Ablauf und die Qualitaet fuer deine Kueche passt. Meld dich einfach wenn du soweit bist.`
+        `Hey ${loc.contactPerson},`,
+        `Welche der Proben haben bei dir am besten funktioniert?`
+      ].join('\n\n'),
+      emailSubject: 'Proben',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Wie haben die Proben bei dir funktioniert?`,
+        `Welche hat am besten auf deinen Gerichten funktioniert?`,
+        `Ron`
       ].join('\n\n'),
       nextStage: 'follow_up_3',
-      nextActionDays: 7,  // snaps to next Mon/Thu
+      nextActionDays: 5,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // STAGE 4: Re-engage paused lead (2-3 weeks later)
+  // STAGE 3: Start with one box (+5 days)
   // ──────────────────────────────────────────
   follow_up_3: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, we just started growing some new varieties. Worth a look: ${priceLink(BASE_LINK_EN, loc)}\n\nWant me to bring some by this Tuesday?`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `You can start with one small box next Tuesday.`,
+        `From there we refine based on your dishes.`
+      ].join('\n\n'),
+      emailSubject: 'First box',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `You can start with a small box next Tuesday.`,
+        `From there we refine based on your needs.`,
+        `Ron`
+      ].join('\n\n'),
+      nextStage: 'follow_up_4',
+      nextActionDays: 7,
+      nextActionType: 'whatsapp'
+    }),
+    DE: (loc) => ({
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Du kannst naechsten Dienstag mit einer kleinen Box anfangen.`,
+        `Danach passen wir alles an deine Gerichte an.`
+      ].join('\n\n'),
+      emailSubject: 'Erste Box',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Du kannst naechsten Dienstag mit einer kleinen Box anfangen.`,
+        `Danach passen wir alles an deine Beduerfnisse an.`,
+        `Ron`
+      ].join('\n\n'),
+      nextStage: 'follow_up_4',
+      nextActionDays: 7,
+      nextActionType: 'whatsapp'
+    })
+  },
+
+  // ──────────────────────────────────────────
+  // STAGE 4: Closing seeding cycle (+7 days)
+  // ──────────────────────────────────────────
+  follow_up_4: {
+    EN: (loc) => ({
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `I am closing the next seeding cycle.`,
+        `Shall I include you with a small first box?`
+      ].join('\n\n'),
+      emailSubject: 'Tuesday',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `I am closing the next seeding cycle.`,
+        `Let me know if you want to be included.`,
+        `Ron`
+      ].join('\n\n'),
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, wir haben ein paar neue Sorten im Angebot. Schau mal rein: ${priceLink(BASE_LINK_DE, loc)}\n\nSoll ich Dienstag was vorbeibringen?`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Ich schliesse den naechsten Aussaat-Zyklus ab.`,
+        `Soll ich dich mit einer kleinen ersten Box einplanen?`
+      ].join('\n\n'),
+      emailSubject: 'Dienstag',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Ich schliesse den naechsten Aussaat-Zyklus ab.`,
+        `Sag mir Bescheid wenn du dabei sein willst.`,
+        `Ron`
+      ].join('\n\n'),
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
@@ -129,10 +233,8 @@ export const FOLLOW_UP_TEMPLATES = {
   },
 
   // ──────────────────────────────────────────
-  // ORDER CONFIRMED — confirm items + logistics
+  // ORDER CONFIRMED
   // ──────────────────────────────────────────
-  // order_confirmed uses extra.deliveryDate (YYYY-MM-DD) set by the date picker.
-  // The user picks the delivery Tuesday when pressing Done.
   order_confirmed: {
     EN: (loc, user, extra) => {
       const deliveryISO = extra?.deliveryDate || '';
@@ -140,14 +242,14 @@ export const FOLLOW_UP_TEMPLATES = {
       const dateStr = deliveryD
         ? deliveryD.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
         : '[delivery date]';
-      // Next action = Monday before delivery (1 day before Tuesday)
       const monday = deliveryD ? new Date(deliveryD) : null;
       if (monday) monday.setDate(monday.getDate() - 1);
       return {
         body: [
-          `Hi ${loc.contactPerson}, you're on the schedule.`,
+          `Confirmed.`,
           `First delivery: ${dateStr}.`,
-          `Invoice comes by email after delivery. If you ever want to change quantities or varieties, just message me.`
+          `You will receive the same every Tuesday.`,
+          `Adjustments can be made anytime.`
         ].join('\n\n'),
         nextStage: 'delivery_reminder',
         nextActionDays: null,
@@ -167,9 +269,10 @@ export const FOLLOW_UP_TEMPLATES = {
       if (monday) monday.setDate(monday.getDate() - 1);
       return {
         body: [
-          `Hi ${loc.contactPerson}, du bist im Plan.`,
+          `Bestaetigt.`,
           `Erste Lieferung: ${dateStr}.`,
-          `Rechnung kommt per Email nach Lieferung. Falls du mal Mengen oder Sorten aendern willst, schreib mir einfach.`
+          `Du bekommst jeden Dienstag das gleiche.`,
+          `Aenderungen sind jederzeit moeglich.`
         ].join('\n\n'),
         nextStage: 'delivery_reminder',
         nextActionDays: null,
@@ -182,17 +285,23 @@ export const FOLLOW_UP_TEMPLATES = {
   },
 
   // ──────────────────────────────────────────
-  // DELIVERY REMINDER — Monday before first Tuesday delivery (one-time)
+  // MONDAY REMINDER — day before first delivery
   // ──────────────────────────────────────────
   delivery_reminder: {
-    EN: (loc, user, extra) => ({
-      body: `Hi ${loc.contactPerson}, just confirming — your first delivery is arriving tomorrow (Tuesday). See you then.`,
+    EN: (loc) => ({
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `First delivery tomorrow.`
+      ].join('\n\n'),
       nextStage: 'post_delivery',
-      nextActionDays: 2, // Wednesday after delivery
+      nextActionDays: 2,
       nextActionType: 'whatsapp'
     }),
-    DE: (loc, user, extra) => ({
-      body: `Hi ${loc.contactPerson}, kurze Bestaetigung — deine erste Lieferung kommt morgen (Dienstag). Bis dann.`,
+    DE: (loc) => ({
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Erste Lieferung morgen.`
+      ].join('\n\n'),
       nextStage: 'post_delivery',
       nextActionDays: 2,
       nextActionType: 'whatsapp'
@@ -200,35 +309,65 @@ export const FOLLOW_UP_TEMPLATES = {
   },
 
   // ──────────────────────────────────────────
-  // POST DELIVERY — one-time check after first delivery
+  // POST DELIVERY — Wednesday after delivery
   // ──────────────────────────────────────────
   post_delivery: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, how did everything look? Anything you'd change for next time?`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Did everything perform as expected?`,
+        `Let me know what you want to adjust.`
+      ].join('\n\n'),
+      emailSubject: 'Feedback',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Did everything perform as expected?`,
+        `I can adjust anything for the next delivery.`,
+        `Ron`
+      ].join('\n\n'),
       nextStage: 'active_customer',
-      nextActionDays: 30,
+      nextActionDays: 42,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, wie war alles? Irgendwas das du beim naechsten Mal aendern wuerdest?`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Hat alles wie erwartet funktioniert?`,
+        `Sag mir was du anpassen willst.`
+      ].join('\n\n'),
+      emailSubject: 'Feedback',
+      emailBody: [
+        `Hi ${loc.contactPerson},`,
+        `Hat alles wie erwartet funktioniert?`,
+        `Ich kann alles fuer die naechste Lieferung anpassen.`,
+        `Ron`
+      ].join('\n\n'),
       nextStage: 'active_customer',
-      nextActionDays: 30,
+      nextActionDays: 42,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // ACTIVE CUSTOMER — monthly check-in (not weekly!)
+  // ACTIVE CUSTOMER — 6 week check-in
   // ──────────────────────────────────────────
   active_customer: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, just checking in. Everything working well with the deliveries? Need to swap or add anything?`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Is everything running as it should?`,
+        `We can refine or introduce something new if needed.`
+      ].join('\n\n'),
       nextStage: 'active_customer',
-      nextActionDays: 42, // ~6 weeks until next check-in
+      nextActionDays: 42,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, kurzes Check-in. Laeuft alles gut mit den Lieferungen? Willst du was tauschen oder dazunehmen?`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Laeuft alles wie es soll?`,
+        `Wir koennen anpassen oder was Neues einbauen wenn du willst.`
+      ].join('\n\n'),
       nextStage: 'active_customer',
       nextActionDays: 42,
       nextActionType: 'whatsapp'
@@ -240,13 +379,21 @@ export const FOLLOW_UP_TEMPLATES = {
   // ──────────────────────────────────────────
   inactive: {
     EN: (loc) => ({
-      body: `Hi ${loc.contactPerson}, haven't heard from you in a while. If your menu has changed and you need different varieties, happy to adjust. We're here when you need us.`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Is everything running as it should?`,
+        `We can refine or introduce something new if needed.`
+      ].join('\n\n'),
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
     }),
     DE: (loc) => ({
-      body: `Hi ${loc.contactPerson}, lange nichts gehoert. Falls sich euer Menue geaendert hat und du andere Sorten brauchst, passen wir gerne an. Wir sind da wenn du uns brauchst.`,
+      body: [
+        `Hey ${loc.contactPerson},`,
+        `Laeuft alles wie es soll?`,
+        `Wir koennen anpassen oder was Neues einbauen wenn du willst.`
+      ].join('\n\n'),
       nextStage: 'closed_lost',
       nextActionDays: null,
       nextActionType: null
@@ -256,45 +403,27 @@ export const FOLLOW_UP_TEMPLATES = {
 
 /**
  * Get the follow-up message for a location based on its current pipeline stage.
- * @param {Object} location - Location data from Google Sheet
- * @param {string} userName - Current user's name
- * @param {Object} extra - Optional extra data (items, time, etc.)
- * @returns {{ body: string, nextStage: string, nextActionDays: number|null, nextActionType: string|null, waLink: string }}
  */
 export function getFollowUpMessage(location, userName, extra) {
   const stage = location.pipelineStage || 'new_visit';
   const lang = (location.language || 'DE').toUpperCase();
   const template = FOLLOW_UP_TEMPLATES[stage];
 
-  if (!template) {
-    return null;
-  }
+  if (!template) return null;
 
   const langTemplate = template[lang] || template['DE'];
   const result = langTemplate(location, userName, extra);
 
-  // Build WhatsApp deep links — clean phone for wa.me format (digits only, no +)
+  // Build WhatsApp deep link
   let phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
-  // Fix double country code (e.g. 494915906442264 → 4915906442264)
   for (const code of ['972', '44', '43', '49', '1']) {
     if (phone.startsWith(code + code)) { phone = phone.slice(code.length); break; }
   }
-  // Fix local format (leading 0) — assume German if starts with 0
   if (phone.startsWith('0')) { phone = '49' + phone.slice(1); }
   const encodedText = phone ? encodeURIComponent(result.body) : '';
+  const waLink = phone ? `https://wa.me/${phone}?text=${encodedText}` : null;
 
-  // Universal WhatsApp link — works on Android, iOS, desktop
-  const waLink = phone
-    ? `https://wa.me/${phone}?text=${encodedText}`
-    : null;
-
-  return {
-    ...result,
-    waLink,
-    phone,
-    stage,
-    lang
-  };
+  return { ...result, waLink, phone, stage, lang };
 }
 
 /**
@@ -302,17 +431,18 @@ export function getFollowUpMessage(location, userName, extra) {
  */
 export function getStageLabel(stage) {
   const labels = {
-    new_visit: 'Send prices & intro',
-    follow_up_1: 'Nudge — how were the samples?',
-    follow_up_2: 'Low barrier — test us',
-    follow_up_3: 'Re-engage with something new',
-    order_confirmed: 'Confirm order details',
-    delivery_reminder: 'Remind: delivery tomorrow',
-    post_delivery: 'Post-delivery check-in',
-    active_customer: 'Monthly check-in',
-    inactive: 'Inactive — last attempt',
+    new_visit: 'Intro + samples feedback',
+    follow_up_1: 'Send varieties + prices',
+    follow_up_2: 'Which samples worked?',
+    follow_up_3: 'Start with one box',
+    follow_up_4: 'Closing seeding cycle',
+    order_confirmed: 'Order confirmed',
+    delivery_reminder: 'Delivery tomorrow',
+    post_delivery: 'Post-delivery feedback',
+    active_customer: '6-week check-in',
+    inactive: 'Inactive',
     closed_won: 'Active customer',
-    closed_lost: 'Closed — no follow-up'
+    closed_lost: 'Closed'
   };
   return labels[stage] || stage;
 }
