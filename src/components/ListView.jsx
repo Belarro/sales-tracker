@@ -50,7 +50,14 @@ const ListView = ({
 
     result.sort((a, b) => {
       if (sortBy === 'name') return (a.locationName || '').localeCompare(b.locationName || '');
-      return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+      // timestamp format: "DD-MM-YYYY HH:MM" — parse manually
+      const parseTs = (ts) => {
+        if (!ts) return 0;
+        const m = ts.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})/);
+        if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}:00`).getTime();
+        return new Date(ts).getTime() || 0;
+      };
+      return parseTs(b.timestamp) - parseTs(a.timestamp);
     });
 
     return result;

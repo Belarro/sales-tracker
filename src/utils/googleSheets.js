@@ -186,6 +186,8 @@ export const removeAuthorizedUser = async (email) => {
 // Col 23 (X):  automationStatus
 // Col 24 (Y):  materialsSent
 // Col 25 (Z):  notesInternal
+// Col 26 (AA): language
+// Col 27 (AB): usesMicrogreens
 
 function parseRow(row) {
   return {
@@ -214,7 +216,9 @@ function parseRow(row) {
     nextActionType: row[22] || '',
     automationStatus: row[23] || '',
     materialsSent: row[24] || '',
-    notesInternal: row[25] || ''
+    notesInternal: row[25] || '',
+    language: row[26] || '',
+    usesMicrogreens: row[27] === 'YES'
   };
 }
 
@@ -245,13 +249,96 @@ function buildValues(d) {
     d.nextActionType || '',
     d.automationStatus || '',
     d.materialsSent || '',
-    d.notesInternal || ''
+    d.notesInternal || '',
+    d.language || '',
+    d.usesMicrogreens ? 'YES' : 'NO'
   ];
 }
 
+const DATA_HEADERS = [
+  'Location Name','Business Address','Contact Person','Contact Title',
+  'Direct Phone','Direct Email','Business Types','Interest Level',
+  'Visit Notes','Timestamp','Follow-up Date','Sample Given',
+  'Sales Rep','Direct Link','Business Phone','Business Email',
+  'Business Website','Archived','Pipeline Stage','Follow-up Count',
+  'Last Follow-up Date','Next Action Date','Next Action Type',
+  'Automation Status','Materials Sent','Notes Internal',
+  'Language','Uses Microgreens'
+];
+
+export const ensureDataHeaders = async () => {
+  try {
+    const rows = await getValues(`${CONFIG.SHEETS.DATA}!A1:AB1`);
+    const firstCell = rows?.[0]?.[0] || '';
+    let sheetId = await getSheetId(CONFIG.SHEETS.DATA);
+
+    if (!firstCell) {
+      await updateValues(`${CONFIG.SHEETS.DATA}!A1:AB1`, [DATA_HEADERS]);
+    } else if (firstCell !== 'Location Name') {
+      // Has data in row 1 — insert header row first
+      if (sheetId !== null) {
+        await batchUpdate([{ insertDimension: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, inheritFromBefore: false } }]);
+      }
+      await updateValues(`${CONFIG.SHEETS.DATA}!A1:AB1`, [DATA_HEADERS]);
+    } else {
+      // Headers exist — force-write all titles to fix any wrong names
+      await updateValues(`${CONFIG.SHEETS.DATA}!A1:AB1`, [DATA_HEADERS]);
+    }
+
+    // Apply light-green conditional formatting to column AB (index 27) when YES
+    if (sheetId !== null) {
+      await batchUpdate([{
+        addConditionalFormatRule: {
+          rule: {
+            ranges: [{ sheetId, startRowIndex: 1, startColumnIndex: 27, endColumnIndex: 28 }],
+            booleanRule: {
+              condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: 'YES' }] },
+              format: { backgroundColor: { red: 0.86, green: 0.99, blue: 0.86 } }
+            }
+          },
+          index: 0
+        }
+      }]).catch(() => {});
+    }
+
+    // Ensure To Visit tab has header row
+    await ensureToVisitHeaders();
+  } catch (err) {
+    console.error('ensureDataHeaders error:', err);
+  }
+};
+
+export const ensureToVisitHeaders = async () => {
+  const HEADERS = ['Location Name','Business Address','Notes','Date Added','Lat','Lng','Uses Microgreens'];
+  let rows = [];
+  try {
+    rows = await getValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`);
+  } catch (err) {
+    if (err.status === 400) {
+      // Sheet doesn't exist yet — create it and write headers
+      await createSheet(CONFIG.SHEETS.TO_VISIT);
+      await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [HEADERS]);
+      return;
+    }
+    throw err;
+  }
+  const firstCell = rows?.[0]?.[0] || '';
+  if (firstCell === 'Location Name') return; // already correct
+  if (!firstCell) {
+    await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [HEADERS]);
+  } else {
+    // Data in row 1 — insert blank row then write headers
+    const sheetId = await getSheetId(CONFIG.SHEETS.TO_VISIT);
+    if (sheetId !== null) {
+      await batchUpdate([{ insertDimension: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, inheritFromBefore: false } }]);
+    }
+    await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [HEADERS]);
+  }
+};
+
 export const getAllLocations = async () => {
   try {
-    const rows = await getValues(`${CONFIG.SHEETS.DATA}!A2:Z`);
+    const rows = await getValues(`${CONFIG.SHEETS.DATA}!A2:AB`);
     console.log('Loaded', rows.length, 'location rows from sheet');
     return rows.map(parseRow);
   } catch (error) {
@@ -350,7 +437,9 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
       nextActionType: locationData.nextActionType || '',
       automationStatus: locationData.automationStatus || '',
       materialsSent: locationData.materialsSent || '',
-      notesInternal: locationData.notesInternal || ''
+      notesInternal: locationData.notesInternal || '',
+      language: locationData.language || '',
+      usesMicrogreens: locationData.usesMicrogreens || false
     };
 
     // Sanitize all string values
@@ -371,12 +460,10 @@ export const saveLocationData = async (locationData, userName, userEmail) => {
     const values = [buildValues(fullData)];
 
     if (rowIndex !== -1) {
-      // Update existing row
-      await updateValues(`${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:Z${rowIndex + 2}`, values);
+      await updateValues(`${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:AB${rowIndex + 2}`, values);
       await setRowFontSize(rowIndex + 2);
     } else {
-      // Append new row
-      const result = await appendValues(`${CONFIG.SHEETS.DATA}!A:Z`, values);
+      const result = await appendValues(`${CONFIG.SHEETS.DATA}!A:AB`, values);
       const updatedRange = result.updates?.updatedRange;
       if (updatedRange) {
         const rowNum = parseInt(updatedRange.match(/\d+$/)[0]);
@@ -434,26 +521,43 @@ export const unarchiveLocation = async (locationName, businessAddress) => {
 
 export const deleteLocation = async (locationName, businessAddress) => {
   try {
-    const locations = await getAllLocations();
+    const [locations, historyRows, dataSheetId, historySheetId] = await Promise.all([
+      getAllLocations(),
+      getValues(`${CONFIG.SHEETS.VISIT_HISTORY}!A2:A`).catch(() => []),
+      getSheetId(CONFIG.SHEETS.DATA),
+      getSheetId(CONFIG.SHEETS.VISIT_HISTORY)
+    ]);
+
     const rowIndex = locations.findIndex(
       loc => loc.locationName === locationName && loc.businessAddress === businessAddress
     );
-    if (rowIndex === -1) return false;
+    if (rowIndex === -1 || dataSheetId === null) return false;
 
-    const sheetId = await getSheetId(CONFIG.SHEETS.DATA);
-    if (sheetId === null) return false;
-
-    await batchUpdate([{
+    const requests = [{
       deleteDimension: {
-        range: {
-          sheetId,
-          dimension: 'ROWS',
-          startIndex: rowIndex + 1,
-          endIndex: rowIndex + 2
-        }
+        range: { sheetId: dataSheetId, dimension: 'ROWS', startIndex: rowIndex + 1, endIndex: rowIndex + 2 }
       }
-    }]);
+    }];
 
+    // Delete all matching history rows (read full range, match by col A=locationName)
+    if (historySheetId !== null) {
+      const allHistory = await getValues(`${CONFIG.SHEETS.VISIT_HISTORY}!A2:B`).catch(() => []);
+      const toDelete = allHistory
+        .map((row, i) => ({ match: row[0] === locationName && row[1] === businessAddress, i }))
+        .filter(x => x.match)
+        .map(x => x.i + 1) // +1 for header row offset
+        .reverse(); // delete from bottom to avoid index shift
+
+      for (const idx of toDelete) {
+        requests.push({
+          deleteDimension: {
+            range: { sheetId: historySheetId, dimension: 'ROWS', startIndex: idx, endIndex: idx + 1 }
+          }
+        });
+      }
+    }
+
+    await batchUpdate(requests);
     return true;
   } catch (error) {
     console.error('Error deleting location:', error);
@@ -627,6 +731,88 @@ export const removeAdminEmail = async (email) => {
 };
 
 // ============================================
+// TO VISIT (PROSPECTS)
+// Columns: A=LocationName, B=BusinessAddress, C=Notes, D=DateAdded, E=Lat, F=Lng, G=UsesMicrogreens
+// ============================================
+
+export const getProspects = async () => {
+  try {
+    const rows = await getValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G`);
+    if (!rows.length) return [];
+    const hasHeader = rows[0][0]?.toLowerCase() === 'location name';
+    return rows
+      .map((row, sheetIndex) => ({ row, sheetIndex }))
+      .filter(({ row, sheetIndex }) => row[0] && !(sheetIndex === 0 && hasHeader))
+      .map(({ row, sheetIndex }) => ({
+        locationName: row[0] || '',
+        businessAddress: row[1] || '',
+        prospectNotes: row[2] || '',
+        dateAdded: row[3] || '',
+        lat: row[4] ? parseFloat(row[4]) : null,
+        lng: row[5] ? parseFloat(row[5]) : null,
+        usesMicrogreens: row[6] === 'YES',
+        isProspect: true,
+        _prospectRowIndex: sheetIndex
+      }));
+  } catch (error) {
+    if (error.status === 400) return [];
+    console.error('Error fetching prospects:', error);
+    return [];
+  }
+};
+
+export const addProspect = async (name, address, notes = '', lat = null, lng = null, usesMicrogreens = false) => {
+  const mgVal = usesMicrogreens ? 'YES' : 'NO';
+  try {
+    // Check if already exists — update microgreens + notes instead of appending
+    const existing = await getValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G`);
+    if (existing.length) {
+      const hasHeader = existing[0][0]?.toLowerCase() === 'location name';
+      const matchIdx = existing.findIndex((row, i) => {
+        if (i === 0 && hasHeader) return false;
+        return row[0]?.toLowerCase() === name.toLowerCase() ||
+               row[1]?.toLowerCase() === address.toLowerCase();
+      });
+      if (matchIdx !== -1) {
+        // Update microgreens column only
+        await updateValues(`${CONFIG.SHEETS.TO_VISIT}!G${matchIdx + 1}`, [[mgVal]]);
+        return true;
+      }
+    }
+    // New row
+    const row = [name, address, notes, getCurrentTimestamp(), lat ?? '', lng ?? '', mgVal];
+    await appendValues(`${CONFIG.SHEETS.TO_VISIT}!A:G`, [row]);
+    return true;
+  } catch (error) {
+    if (error.status === 400) {
+      await createSheet(CONFIG.SHEETS.TO_VISIT);
+      await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [['LocationName','BusinessAddress','Notes','DateAdded','Lat','Lng','UsesMicrogreens']]);
+      const row = [name, address, notes, getCurrentTimestamp(), lat ?? '', lng ?? '', mgVal];
+      await appendValues(`${CONFIG.SHEETS.TO_VISIT}!A:G`, [row]);
+      return true;
+    }
+    console.error('Error adding prospect:', error);
+    return false;
+  }
+};
+
+export const deleteProspect = async (rowIndex) => {
+  try {
+    const sheetId = await getSheetId(CONFIG.SHEETS.TO_VISIT);
+    if (sheetId === null) return false;
+    await batchUpdate([{
+      deleteDimension: {
+        range: { sheetId, dimension: 'ROWS', startIndex: rowIndex, endIndex: rowIndex + 1 }
+      }
+    }]);
+    return true;
+  } catch (error) {
+    console.error('Error deleting prospect:', error);
+    return false;
+  }
+};
+
+// ============================================
 // ROW FORMATTING
 // ============================================
 
@@ -642,7 +828,7 @@ const setRowFontSize = async (rowNumber) => {
           startRowIndex: rowNumber - 1,
           endRowIndex: rowNumber,
           startColumnIndex: 0,
-          endColumnIndex: 26
+          endColumnIndex: 28
         },
         cell: {
           userEnteredFormat: {

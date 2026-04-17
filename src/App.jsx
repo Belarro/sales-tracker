@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import './styles/App.css';
 import { CONFIG } from './config.js';
-import { getAdminEmails } from './utils/googleSheets.js';
+import { getAdminEmails, ensureDataHeaders, ensureToVisitHeaders } from './utils/googleSheets.js';
 import { isAdmin, isAdminWithSheet } from './utils/googleAuth.js';
 import Login from './components/Login.jsx';
 import AdminSetup from './components/AdminSetup.jsx';
@@ -29,6 +29,8 @@ function App() {
   const {
     visitedLocations,
     filteredLocations,
+    prospects,
+    refreshProspects,
     selectedLocation,
     searchQuery,
     setSearchQuery,
@@ -105,6 +107,8 @@ function App() {
   // Load locations when authorized
   useEffect(() => {
     if (authorized) {
+      ensureDataHeaders().catch(console.error);
+      ensureToVisitHeaders().catch(console.error);
       refreshLocations();
     }
   }, [authorized, refreshLocations]);
@@ -117,6 +121,8 @@ function App() {
   const handleSaveVisit = () => {
     refreshLocations();
   };
+
+  const handleProspectAdded = () => refreshProspects();
 
   if (loading) {
     return <LoadingScreen message="Initializing app..." />;
@@ -221,6 +227,8 @@ function App() {
             <SimpleMap
               onLocationSelect={handleLocationSelect}
               visitedLocations={filteredLocations}
+              prospects={prospects}
+              onProspectAdded={handleProspectAdded}
               searchQuery={searchQuery}
             />
           </div>

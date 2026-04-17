@@ -3,11 +3,12 @@
 // ============================================
 // Uses native Google Maps API instead of React wrapper
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { CONFIG } from '../config.js';
-import { getLocationHistory } from '../utils/googleSheets.js';
+import { getLocationHistory, addProspect } from '../utils/googleSheets.js';
 
-const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, searchQuery = '' }) => {
+const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], onProspectAdded, onQuickAdd, searchQuery = '' }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
@@ -18,6 +19,15 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
   const [mapReady, setMapReady] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [isLocating, setIsLocating] = useState(false);
+
+  // ── Search overlay state ──
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [mgSet, setMgSet] = useState(new Set()); // indices of results marked "uses microgreens"
+  const searchDebounceRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -152,8 +162,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
             fields: ['displayName', 'formattedAddress', 'nationalPhoneNumber', 'websiteURI', 'googleMapsURI', 'location']
           });
 
-          console.log('✅ Google Maps POI details:', place);
-
+      
           // Check if this place already exists in visited locations (use saved data if so)
           const placeName = place.displayName || '';
           const placeAddr = place.formattedAddress || '';
@@ -203,7 +212,6 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     // Add blue user location marker using OverlayView (to avoid deprecated Marker)
     createUserLocationMarker(center, map);
 
-    console.log('✅ Map ready! Click any business on the map to add visit notes.');
 
     // Set map ready state to trigger marker creation
     setMapReady(true);
@@ -211,9 +219,6 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
   // Add custom markers for visited locations
   useEffect(() => {
-    console.log('🗺️ SimpleMap received visitedLocations:', visitedLocations);
-    console.log('📊 Number of locations to display:', visitedLocations.length);
-    console.log('🗺️ Map ready state:', mapReady);
 
     if (!mapReady || !mapInstanceRef.current || !window.google) {
       // Map not fully initialized yet, retry will happen when dependencies change
@@ -224,7 +229,6 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
       return;
     }
 
-    console.log('✅ Creating markers for', visitedLocations.length, 'locations');
 
     // Clear existing overlay markers
     overlayMarkersRef.current.forEach(marker => {
@@ -268,7 +272,6 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
         if (location.directLink.match(/^-?\d+\.\d+,-?\d+\.\d+/)) {
           const parts = location.directLink.split('|');
           const [lat, lng] = parts[0].split(',').map(parseFloat);
-          console.log(`✅ Using saved coordinates for ${location.locationName}: ${lat}, ${lng}`);
           createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count, location);
           return;
         }
@@ -279,7 +282,6 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
           if (match) {
             const lat = parseFloat(match[1]);
             const lng = parseFloat(match[2]);
-            console.log(`✅ Using URL coordinates for ${location.locationName}: ${lat}, ${lng}`);
             createCustomMarker(new window.google.maps.LatLng(lat, lng), color, count, location);
             return;
           }
@@ -301,8 +303,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
             await place.fetchFields({ fields: ['location'] });
 
             if (place.location) {
-              console.log(`✅ Using Place ID coordinates for ${location.locationName}`);
-              createCustomMarker(place.location, color, count, location);
+                createCustomMarker(place.location, color, count, location);
               return;
             }
           } catch (error) {
@@ -316,22 +317,40 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     });
   }, [visitedLocations, mapReady]);
 
-  const geocodeAndCreateMarker = (address, color, count, locationData) => {
-    if (!window.google) {
-      return;
-    }
+  // Prospect markers (blue) — separate overlay layer
+  const prospectOverlaysRef = useRef([]);
+  useEffect(() => {
+    if (!mapReady || !mapInstanceRef.current || !window.google) return;
 
+    // Clear old prospect markers
+    prospectOverlaysRef.current.forEach(m => { if (m.setMap) m.setMap(null); });
+    prospectOverlaysRef.current = [];
+
+    prospects.forEach(prospect => {
+      if (!prospect.locationName) return;
+      const color = '#2196F3'; // blue for all prospects
+      if (prospect.lat && prospect.lng) {
+        createCustomMarker(
+          new window.google.maps.LatLng(prospect.lat, prospect.lng),
+          color, 0, prospect, prospectOverlaysRef
+        );
+      } else if (prospect.businessAddress) {
+        geocodeAndCreateMarker(prospect.businessAddress, color, 0, prospect, prospectOverlaysRef);
+      }
+    });
+  }, [prospects, mapReady]);
+
+  const geocodeAndCreateMarker = (address, color, count, locationData, overlaysRef = null) => {
+    if (!window.google) return;
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
       if (status === 'OK' && results[0]) {
-        createCustomMarker(results[0].geometry.location, color, count, locationData);
-      } else {
-        console.warn(`   ❌ Geocoding failed for "${address}": ${status}`);
+        createCustomMarker(results[0].geometry.location, color, count, locationData, overlaysRef);
       }
     });
   };
 
-  const createCustomMarker = (position, color, count, locationData) => {
+  const createCustomMarker = (position, color, count, locationData, overlaysRef = null) => {
     if (!mapInstanceRef.current) return;
 
     // Create custom HTML marker
@@ -358,6 +377,21 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     circle.textContent = count > 1 ? count : '';
 
     markerDiv.appendChild(circle);
+
+    // Red badge for prospects that already use microgreens
+    if (locationData?.usesMicrogreens) {
+      const badge = document.createElement('div');
+      badge.style.position = 'absolute';
+      badge.style.top = '-3px';
+      badge.style.right = '-3px';
+      badge.style.width = '13px';
+      badge.style.height = '13px';
+      badge.style.borderRadius = '50%';
+      badge.style.backgroundColor = '#e53935';
+      badge.style.border = '2px solid white';
+      badge.style.zIndex = '2';
+      markerDiv.appendChild(badge);
+    }
 
     // Click handler — open location details
     if (locationData) {
@@ -406,7 +440,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
     const overlay = new CustomOverlay(position, markerDiv);
     overlay.setMap(mapInstanceRef.current);
-    overlayMarkersRef.current.push(overlay);
+    (overlaysRef || overlayMarkersRef).current.push(overlay);
   };
 
   const createUserLocationMarker = (positionInput, map) => {
@@ -618,12 +652,96 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
     }
   };
 
+  // ── Search handlers ──
+  const openSearch = () => {
+    setShowSearch(true);
+    setSearchText('');
+    setSearchResults([]);
+    setTimeout(() => searchInputRef.current?.focus(), 80);
+  };
+
+  const closeSearch = () => {
+    setShowSearch(false);
+    setSearchText('');
+    setSearchResults([]);
+    setMgSet(new Set());
+    clearTimeout(searchDebounceRef.current);
+  };
+
+  const handleSearchInput = (val) => {
+    setSearchText(val);
+    clearTimeout(searchDebounceRef.current);
+    if (!val.trim()) { setSearchResults([]); return; }
+    searchDebounceRef.current = setTimeout(() => runSearch(val), 400);
+  };
+
+  const runSearch = async (query) => {
+    if (!window.google || !query.trim()) return;
+    setIsSearching(true);
+    try {
+      const { Place } = await window.google.maps.importLibrary('places');
+      const center = mapInstanceRef.current?.getCenter();
+      const request = {
+        textQuery: query,
+        fields: ['displayName', 'formattedAddress', 'nationalPhoneNumber', 'websiteURI', 'googleMapsURI', 'location', 'id'],
+        maxResultCount: 8,
+      };
+      if (center) {
+        request.locationBias = { center: { lat: center.lat(), lng: center.lng() }, radius: 5000 };
+      }
+      const { places } = await Place.searchByText(request);
+      setSearchResults(places || []);
+    } catch (err) {
+      console.error('Search error:', err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSelectSearchResult = (place) => {
+    const loc = {
+      locationName: place.displayName || 'Unknown Place',
+      businessAddress: place.formattedAddress || '',
+      businessPhone: place.nationalPhoneNumber || '',
+      businessWebsite: place.websiteURI || '',
+      directLink: place.googleMapsURI || '',
+      placeId: place.id || '',
+      lat: place.location?.lat?.() || null,
+      lng: place.location?.lng?.() || null,
+      businessEmail: '',
+      businessTypes: '',
+      contactPerson: '',
+      contactTitle: '',
+      directPhone: '',
+      directEmail: '',
+      visitNotes: '',
+      interestLevel: '',
+      followUpDate: '',
+      sampleGiven: 'NO',
+      archived: 'NO',
+    };
+    // Pan map to result
+    if (loc.lat && loc.lng && mapInstanceRef.current) {
+      mapInstanceRef.current.setCenter({ lat: loc.lat, lng: loc.lng });
+      mapInstanceRef.current.setZoom(17);
+    }
+    closeSearch();
+    onLocationSelect(loc);
+  };
+
+  // Already-visited lookup for "saved" badge
+  const visitedNames = new Set(visitedLocations.map(l => l.locationName?.toLowerCase().trim()));
+
   return (
     <>
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
           to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
@@ -698,8 +816,222 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], onQuickAdd, search
 
         {/* Location Counter */}
         <div className="map-counter">
-          📍 Visited: <span style={{ color: '#1a73e8' }}>{visitedLocations.length}</span> location{visitedLocations.length !== 1 ? 's' : ''}
+          📍 <span style={{ color: '#1a73e8' }}>{visitedLocations.length}</span> visited
+          {prospects.length > 0 && <> · <span style={{ color: '#2196F3' }}>{prospects.length}</span> to visit</>}
         </div>
+
+        {/* Search Button */}
+        <button
+          onClick={openSearch}
+          className="map-search-trigger-btn"
+          title="Search restaurants"
+          aria-label="Search restaurants"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+
+        {/* Full-Screen Search Overlay — rendered via portal to escape layout constraints */}
+        {showSearch && createPortal(
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'var(--color-bg-main, #fff)',
+            display: 'flex',
+            flexDirection: 'column',
+            animation: 'slideDown 0.18s ease-out',
+          }}>
+            {/* Search topbar */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '12px 16px',
+              background: 'var(--color-bg-main, #fff)',
+              borderBottom: '1px solid var(--color-border, #e5e7eb)',
+              flexShrink: 0,
+            }}>
+              <button
+                onClick={closeSearch}
+                style={{
+                  width: '38px', height: '38px',
+                  border: 'none', background: 'none', cursor: 'pointer',
+                  color: 'var(--color-text-secondary, #6b7280)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: '10px', flexShrink: 0,
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+                </svg>
+              </button>
+              <div style={{
+                flex: 1, display: 'flex', alignItems: 'center', gap: '8px',
+                background: 'var(--color-bg-secondary, #f3f4f6)',
+                border: '1.5px solid var(--color-border, #e5e7eb)',
+                borderRadius: '12px', padding: '0 12px', height: '44px',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ color: 'var(--color-text-muted, #9ca3af)', flexShrink: 0 }}>
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search restaurants, cafes..."
+                  value={searchText}
+                  onChange={(e) => handleSearchInput(e.target.value)}
+                  style={{
+                    flex: 1, border: 'none', background: 'none',
+                    fontSize: '16px', color: 'var(--color-text-main, #111)',
+                    outline: 'none', fontFamily: 'inherit',
+                  }}
+                />
+                {searchText && (
+                  <button onClick={() => handleSearchInput('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted, #9ca3af)', padding: '2px', display: 'flex' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Results */}
+            <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '24px' }}>
+              {!searchText && (
+                <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--color-text-muted, #9ca3af)', fontSize: '14px', lineHeight: '1.6' }}>
+                  Search for a restaurant, cafe, or business to add a visit
+                </div>
+              )}
+              {isSearching && (
+                <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted, #9ca3af)', fontSize: '14px' }}>
+                  Searching...
+                </div>
+              )}
+              {!isSearching && searchText && searchResults.length === 0 && (
+                <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted, #9ca3af)', fontSize: '14px' }}>
+                  No results found
+                </div>
+              )}
+              {searchResults.map((place, i) => {
+                const isSaved = visitedNames.has((place.displayName || '').toLowerCase().trim());
+                const isMg = mgSet.has(i);
+                return (
+                  <div
+                    key={place.id || i}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      width: '100%', padding: '13px 20px',
+                      borderBottom: '1px solid var(--color-border-light, #f3f4f6)',
+                      background: 'none',
+                    }}
+                  >
+                  <button
+                    onClick={() => handleSelectSearchResult(place)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      flex: 1, border: 'none',
+                      background: 'none', textAlign: 'left', cursor: 'pointer',
+                      fontFamily: 'inherit', padding: 0, minWidth: 0,
+                    }}
+                  >
+                    <div style={{
+                      width: '36px', height: '36px', borderRadius: '10px',
+                      background: 'var(--color-bg-secondary, #f3f4f6)',
+                      border: '1px solid var(--color-border, #e5e7eb)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0, color: 'var(--color-text-muted, #9ca3af)',
+                    }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                      </svg>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-main, #111)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {place.displayName}
+                        </span>
+                        {isSaved && (
+                          <span style={{ fontSize: '10px', fontWeight: '700', background: '#dcfce7', color: '#16a34a', padding: '1px 6px', borderRadius: '999px', flexShrink: 0 }}>
+                            SAVED
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--color-text-muted, #9ca3af)', marginTop: '1px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {place.formattedAddress}
+                      </div>
+                    </div>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const btn = e.currentTarget;
+                        btn.disabled = true;
+                        btn.style.background = '#bbdefb';
+                        const lat = place.location?.lat?.() ?? null;
+                        const lng = place.location?.lng?.() ?? null;
+                        const ok = await addProspect(
+                          place.displayName || '',
+                          place.formattedAddress || '',
+                          '',
+                          lat,
+                          lng,
+                          mgSet.has(i)
+                        );
+                        if (ok) {
+                          btn.style.background = '#dcfce7';
+                          btn.style.borderColor = '#16a34a';
+                          btn.style.color = '#16a34a';
+                          await onProspectAdded?.();
+                          setTimeout(() => closeSearch(), 600);
+                        } else {
+                          btn.disabled = false;
+                          btn.style.background = '#fee2e2';
+                          btn.style.borderColor = '#ef4444';
+                        }
+                      }}
+                      title="Save to Visit later"
+                      style={{
+                        flexShrink: 0, width: '36px', height: '36px',
+                        border: '1.5px solid #2196F3', borderRadius: '10px',
+                        background: '#e3f2fd', color: '#2196F3',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', transition: 'all 0.2s',
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                      </svg>
+                    </button>
+                  </button>
+                  {/* Microgreens toggle */}
+                  <button
+                    onClick={() => setMgSet(prev => {
+                      const next = new Set(prev);
+                      next.has(i) ? next.delete(i) : next.add(i);
+                      return next;
+                    })}
+                    title="Already uses microgreens"
+                    style={{
+                      flexShrink: 0, width: '36px', height: '36px',
+                      border: `1.5px solid ${isMg ? '#16a34a' : '#d1d5db'}`,
+                      borderRadius: '10px',
+                      background: isMg ? '#dcfce7' : 'var(--color-bg-secondary, #f3f4f6)',
+                      color: isMg ? '#16a34a' : '#9ca3af',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', transition: 'all 0.15s', fontSize: '16px',
+                    }}
+                  >
+                    🌿
+                  </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>,
+          document.body
+        )}
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { getAllLocations } from '../utils/googleSheets';
+import { getAllLocations, getProspects } from '../utils/googleSheets';
 import { daysFromToday } from '../utils/dateUtils';
 import { CONFIG } from '../config';
 
@@ -8,6 +8,7 @@ import { CONFIG } from '../config';
  */
 export const useLocations = () => {
     const [visitedLocations, setVisitedLocations] = useState([]);
+    const [prospects, setProspects] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     // Check URL params for view (e.g. from notification tap)
@@ -15,20 +16,30 @@ export const useLocations = () => {
     const [currentView, setCurrentView] = useState(urlView || 'tasks'); // 'tasks', 'map', or 'list'
     const [loadError, setLoadError] = useState('');
 
+    const refreshProspects = useCallback(async () => {
+        try {
+            const data = await getProspects();
+            setProspects(data);
+        } catch (err) {
+            console.error('Error loading prospects:', err);
+        }
+    }, []);
+
     // Fetch locations from Google Sheets
     const refreshLocations = useCallback(async () => {
         setLoadError('');
         try {
-            const locations = await getAllLocations();
-            console.log('Loaded locations:', locations);
-            // Filter out archived locations
+            const [locations] = await Promise.all([
+                getAllLocations(),
+                refreshProspects()
+            ]);
             const activeLocations = locations.filter(loc => loc.archived !== 'YES');
             setVisitedLocations(activeLocations);
         } catch (err) {
             console.error('Error loading locations:', err);
             setLoadError('Failed to load locations. Please refresh the page.');
         }
-    }, []);
+    }, [refreshProspects]);
 
     // Filter locations based on search query
     const filteredLocations = useMemo(() => {
@@ -86,6 +97,8 @@ export const useLocations = () => {
     return {
         visitedLocations,
         filteredLocations,
+        prospects,
+        refreshProspects,
         selectedLocation,
         searchQuery,
         setSearchQuery,
