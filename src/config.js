@@ -77,11 +77,9 @@ export const CONFIG = {
 
   // Interest level options
   INTEREST_LEVELS: [
-    'Interested',
-    'Not Interested',
     'Follow Up',
-    'Pending',
-    'Closed Deal'
+    'Closed Deal',
+    'Not Interested'
   ],
 
   // Follow-up settings
@@ -94,7 +92,8 @@ export const CONFIG = {
     CONFIG: 'Config',
     AUTHORIZED_USERS: 'Authorized Users',
     NOTE_TEMPLATES: 'Note Templates',
-    ADMIN_EMAILS: 'Admin Emails'
+    ADMIN_EMAILS: 'Admin Emails',
+    TO_VISIT: 'To Visit'
   },
 
   // Default note templates (used if sheet doesn't exist yet)

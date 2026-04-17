@@ -10,8 +10,9 @@ const BASE_LINK_DE = 'https://belarro.com/de/for-chefs';
 
 function priceLink(base, loc) {
   const params = new URLSearchParams();
-  if (loc.locationName) params.set('c', loc.locationName);
-  if (loc.contactPerson) params.set('n', loc.contactPerson);
+  if (loc.locationName) params.set('r', loc.locationName);
+  if (loc.contactPerson) params.set('p', loc.contactPerson);
+  if (loc.contactTitle) params.set('t', loc.contactTitle);
   const qs = params.toString();
   return qs ? `${base}?${qs}` : base;
 }
@@ -23,210 +24,218 @@ function priceLink(base, loc) {
 export const FOLLOW_UP_TEMPLATES = {
 
   // ──────────────────────────────────────────
-  // STAGE 0.5: Same day — samples feedback + intro
+  // MESSAGE 1 — 2-Hour Follow-Up (The Link)
   // ──────────────────────────────────────────
   new_visit: {
     EN: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson}, Ron from Belarro. Good meeting you today.`,
-        `How did the samples perform for you on the plate?`,
-        `We deliver fresh every Tuesday.`,
-        `Orders are recurring, so once set, it runs.`
+        `Hello ${loc.contactPerson},`,
+        `Thank you for your time today; it was a pleasure meeting you.`,
+        `Here is the link for our varieties and pricing: ${priceLink(BASE_LINK_EN, loc)}`,
+        `I would love to hear what you think. Just a reminder: no delivery fees, no minimum order.`,
+        `Enjoy the rest of your service.\nRon from Belarro`
       ].join('\n\n'),
-      emailSubject: 'Belarro',
+      emailSubject: 'Belarro — Varieties & Pricing',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `Good meeting you today.`,
-        `Here is the full list:\n${priceLink(BASE_LINK_EN, loc)}`,
-        `Everything is grown to order and delivered fresh every Tuesday.`,
-        `No minimum, no delivery fee.`,
-        `Orders are recurring, so once started, it runs.`,
-        `Ron`
+        `Hello ${loc.contactPerson},`,
+        `Thank you for your time today; it was a pleasure meeting you.`,
+        `Here is the link for our varieties and pricing:\n${priceLink(BASE_LINK_EN, loc)}`,
+        `No delivery fees, no minimum order.`,
+        `Enjoy the rest of your service.\nRon from Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_1',
-      nextActionDays: 0,  // same day — send list right after
+      nextActionDays: 2,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson}, Ron von Belarro. Hat mich gefreut dich heute kennenzulernen.`,
-        `Wie haben die Proben bei dir auf dem Teller funktioniert?`,
-        `Wir liefern jeden Dienstag frisch.`,
-        `Bestellungen laufen automatisch weiter, einmal eingerichtet laeuft es.`
+        `Hallo ${loc.contactPerson},`,
+        `vielen Dank für deine Zeit heute, hat mich gefreut dich kennenzulernen.`,
+        `Hier ist der Link zu unseren Sorten und Preisen: ${priceLink(BASE_LINK_DE, loc)}`,
+        `Ich bin gespannt auf dein Feedback. Nur zur Erinnerung: keine Lieferkosten, kein Mindestbestellwert.`,
+        `Viel Erfolg im Service.\nRon von Belarro`
       ].join('\n\n'),
-      emailSubject: 'Belarro',
+      emailSubject: 'Belarro — Sorten & Preise',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `Hat mich gefreut dich heute kennenzulernen.`,
-        `Hier ist die komplette Liste:\n${priceLink(BASE_LINK_DE, loc)}`,
-        `Alles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.`,
-        `Keine Mindestbestellung, keine Lieferkosten.`,
-        `Bestellungen laufen automatisch weiter, einmal eingerichtet laeuft es.`,
-        `Ron`
+        `Hallo ${loc.contactPerson},`,
+        `vielen Dank für deine Zeit heute, hat mich gefreut dich kennenzulernen.`,
+        `Hier ist der Link zu unseren Sorten und Preisen:\n${priceLink(BASE_LINK_DE, loc)}`,
+        `Keine Lieferkosten, kein Mindestbestellwert.`,
+        `Viel Erfolg im Service.\nRon von Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_1',
-      nextActionDays: 0,
+      nextActionDays: 2,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // STAGE 1: Send the list — same day or next
+  // MESSAGE 2 — 2-Day Follow-Up (The Taste)
   // ──────────────────────────────────────────
   follow_up_1: {
     EN: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson}, as promised:`,
-        `Varieties + prices: ${priceLink(BASE_LINK_EN, loc)}`,
-        `Everything is grown to order and delivered fresh every Tuesday.`,
-        `No minimum, no delivery fee.`
+        `Hello ${loc.contactPerson},`,
+        `Ron from Belarro. I hope you had the chance to taste the samples and see how they work with your dishes.`,
+        `We only grow what you order — no old stock, zero waste. We harvest the morning of delivery, and our greens last up to 10 days in the fridge.`,
+        `Let me know what caught your eye and I'll get it into the next grow cycle.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Varieties + prices',
+      emailSubject: 'Belarro — How did the samples work?',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `As promised, here is the full list:\n${priceLink(BASE_LINK_EN, loc)}`,
-        `Everything is grown to order and delivered fresh every Tuesday.`,
-        `No minimum, no delivery fee.`,
-        `Ron`
+        `Hello ${loc.contactPerson},`,
+        `I hope you had the chance to taste the samples and see how they work with your dishes.`,
+        `We only grow what you order — no old stock, zero waste. Harvested the morning of delivery, up to 10 days shelf life.`,
+        `Let me know what caught your eye.\nRon from Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_2',
-      nextActionDays: 2,
+      nextActionDays: 3,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson}, wie versprochen:`,
-        `Sorten + Preise: ${priceLink(BASE_LINK_DE, loc)}`,
-        `Alles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.`,
-        `Keine Mindestbestellung, keine Lieferkosten.`
+        `Hallo ${loc.contactPerson},`,
+        `Ron von Belarro hier. Ich hoffe, du konntest die Samples testen und sehen, wie sie zu deinen Gerichten passen.`,
+        `Wir bauen nur das an, was du bestellst – kein Lager, kein alter Bestand, null Verschwendung. Wir ernten am Morgen der Lieferung, und unsere Greens halten bis zu 10 Tage im Kühlschrank.`,
+        `Sag mir einfach, was dir gefallen hat, dann plane ich es für den nächsten Grow ein.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Sorten + Preise',
+      emailSubject: 'Belarro — Wie haben die Samples funktioniert?',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `Wie versprochen, hier ist die komplette Liste:\n${priceLink(BASE_LINK_DE, loc)}`,
-        `Alles wird auf Bestellung angebaut und jeden Dienstag frisch geliefert.`,
-        `Keine Mindestbestellung, keine Lieferkosten.`,
-        `Ron`
+        `Hallo ${loc.contactPerson},`,
+        `Ich hoffe, du konntest die Samples testen und sehen, wie sie zu deinen Gerichten passen.`,
+        `Wir bauen nur das an, was du bestellst – kein Lager, null Verschwendung. Ernte am Morgen der Lieferung, bis zu 10 Tage haltbar.`,
+        `Sag mir einfach, was dir gefallen hat.\nRon von Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_2',
-      nextActionDays: 2,
+      nextActionDays: 3,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // STAGE 2: Which samples worked? (+2 days)
+  // MESSAGE 3 — 5-Day Follow-Up (The Facts)
   // ──────────────────────────────────────────
   follow_up_2: {
     EN: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson},`,
-        `Which of the samples worked best for you?`
+        `Hello ${loc.contactPerson},`,
+        `Ron from Belarro. Wanted to follow up and see how you found our greens.`,
+        `We grow over 25 varieties — more variety than most suppliers, more options for your plates. Orders are recurring: order once, receive fresh every Tuesday. You can always change, add or cancel.`,
+        `Here's the full list: ${priceLink(BASE_LINK_EN, loc)}\nRon`
       ].join('\n\n'),
-      emailSubject: 'Samples',
+      emailSubject: 'Belarro — 25+ varieties',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `How did the samples perform for you?`,
-        `Which one worked best on your dishes?`,
-        `Ron`
+        `Hello ${loc.contactPerson},`,
+        `Wanted to follow up and see how you found our greens.`,
+        `We grow over 25 varieties — more options for your plates. Order once, receive fresh every Tuesday. Change, add or cancel anytime.`,
+        `Full list: ${priceLink(BASE_LINK_EN, loc)}\nRon from Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_3',
-      nextActionDays: 5,
+      nextActionDays: 9,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson},`,
-        `Welche der Proben haben bei dir am besten funktioniert?`
+        `Hallo ${loc.contactPerson},`,
+        `Ron von Belarro hier. Wollte kurz nachfragen, wie dir unsere Greens gefallen haben.`,
+        `Wir bauen über 25 Sorten an – mehr Auswahl als bei den meisten Anbietern, mehr Möglichkeiten für deine Teller. Bestellungen laufen automatisch: einmal bestellen, jede Woche frisch am Dienstag geliefert. Du kannst jederzeit ändern, hinzufügen oder pausieren.`,
+        `Hier ist die komplette Liste: ${priceLink(BASE_LINK_DE, loc)}\nRon`
       ].join('\n\n'),
-      emailSubject: 'Proben',
+      emailSubject: 'Belarro — Über 25 Sorten',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `Wie haben die Proben bei dir funktioniert?`,
-        `Welche hat am besten auf deinen Gerichten funktioniert?`,
-        `Ron`
+        `Hallo ${loc.contactPerson},`,
+        `Wollte kurz nachfragen, wie dir unsere Greens gefallen haben.`,
+        `Über 25 Sorten – mehr Auswahl, mehr Möglichkeiten. Einmal bestellen, jeden Dienstag frisch. Jederzeit änderbar.`,
+        `Komplette Liste: ${priceLink(BASE_LINK_DE, loc)}\nRon von Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_3',
-      nextActionDays: 5,
+      nextActionDays: 9,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // STAGE 3: Start with one box (+5 days)
+  // MESSAGE 4 — 2-Week Follow-Up (The Easy Yes)
   // ──────────────────────────────────────────
   follow_up_3: {
     EN: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson},`,
-        `You can start with one small box next Tuesday.`,
-        `From there we refine based on your dishes.`
+        `Hello ${loc.contactPerson},`,
+        `Ron from Belarro. Haven't heard back, just wanted to check in.`,
+        `We're local, no imports — faster, more consistent product, just fresh greens with less emissions.`,
+        `No minimums, no pressure. Just let me know when you're ready.\nRon`
       ].join('\n\n'),
-      emailSubject: 'First box',
+      emailSubject: 'Belarro — Checking in',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `You can start with a small box next Tuesday.`,
-        `From there we refine based on your needs.`,
-        `Ron`
+        `Hello ${loc.contactPerson},`,
+        `Haven't heard back, just wanted to check in.`,
+        `Local, no imports — consistent quality, less emissions. No minimums, no pressure.`,
+        `Let me know when you're ready.\nRon from Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_4',
-      nextActionDays: 7,
+      nextActionDays: 16,
       nextActionType: 'whatsapp'
     }),
     DE: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson},`,
-        `Du kannst naechsten Dienstag mit einer kleinen Box anfangen.`,
-        `Danach passen wir alles an deine Gerichte an.`
+        `Hallo ${loc.contactPerson},`,
+        `Ron von Belarro hier. Wollte kurz nachhaken, habe nichts mehr von dir gehört.`,
+        `Wir sind lokal, keine Importe – dadurch schneller und konstanter in der Qualität. Einfach frische Greens mit weniger Emissionen.`,
+        `Kein Mindestbestellwert, kein Druck. Meld dich, wenn es für dich passt.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Erste Box',
+      emailSubject: 'Belarro — Kurze Nachfrage',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `Du kannst naechsten Dienstag mit einer kleinen Box anfangen.`,
-        `Danach passen wir alles an deine Beduerfnisse an.`,
-        `Ron`
+        `Hallo ${loc.contactPerson},`,
+        `Wollte kurz nachhaken, habe nichts mehr von dir gehört.`,
+        `Lokal, keine Importe – konstante Qualität, weniger Emissionen. Kein Mindestbestellwert, kein Druck.`,
+        `Meld dich, wenn es für dich passt.\nRon von Belarro`
       ].join('\n\n'),
       nextStage: 'follow_up_4',
-      nextActionDays: 7,
+      nextActionDays: 16,
       nextActionType: 'whatsapp'
     })
   },
 
   // ──────────────────────────────────────────
-  // STAGE 4: Closing seeding cycle (+7 days)
+  // MESSAGE 5 — 1-Month Follow-Up (The Open Door)
   // ──────────────────────────────────────────
   follow_up_4: {
     EN: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson},`,
-        `I am closing the next seeding cycle.`,
-        `Shall I include you with a small first box?`
+        `Hello ${loc.contactPerson},`,
+        `Ron from Belarro. No worries if the timing wasn't right.`,
+        `Whenever you need fresh microgreens, we're one message away. No minimums, free delivery, harvested the morning we bring them to you.`,
+        `Our varieties and pricing are always here: ${priceLink(BASE_LINK_EN, loc)}`,
+        `Wishing you a great season.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Tuesday',
+      emailSubject: 'Belarro — Here when you need us',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `I am closing the next seeding cycle.`,
-        `Let me know if you want to be included.`,
-        `Ron`
+        `Hello ${loc.contactPerson},`,
+        `No worries if the timing wasn't right.`,
+        `Whenever you need fresh microgreens, we're one message away. No minimums, free delivery, harvested fresh.`,
+        `Varieties & pricing: ${priceLink(BASE_LINK_EN, loc)}`,
+        `Wishing you a great season.\nRon from Belarro`
       ].join('\n\n'),
-      nextStage: 'closed_lost',
+      nextStage: 'inactive',
       nextActionDays: null,
       nextActionType: null
     }),
     DE: (loc) => ({
       body: [
-        `Hey ${loc.contactPerson},`,
-        `Ich schliesse den naechsten Aussaat-Zyklus ab.`,
-        `Soll ich dich mit einer kleinen ersten Box einplanen?`
+        `Hallo ${loc.contactPerson},`,
+        `Ron von Belarro hier. Kein Problem, wenn es zeitlich nicht gepasst hat.`,
+        `Wenn du frische Microgreens brauchst, sind wir nur eine Nachricht entfernt. Kein Mindestbestellwert, kostenlose Lieferung, am Morgen der Lieferung geerntet.`,
+        `Unsere Sorten und Preise findest du hier: ${priceLink(BASE_LINK_DE, loc)}`,
+        `Ich wünsche dir eine starke Saison.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Dienstag',
+      emailSubject: 'Belarro — Da wenn du uns brauchst',
       emailBody: [
-        `Hi ${loc.contactPerson},`,
-        `Ich schliesse den naechsten Aussaat-Zyklus ab.`,
-        `Sag mir Bescheid wenn du dabei sein willst.`,
-        `Ron`
+        `Hallo ${loc.contactPerson},`,
+        `Kein Problem, wenn es zeitlich nicht gepasst hat.`,
+        `Wenn du frische Microgreens brauchst, sind wir nur eine Nachricht entfernt. Kein Mindestbestellwert, kostenlose Lieferung, frisch geerntet.`,
+        `Sorten & Preise: ${priceLink(BASE_LINK_DE, loc)}`,
+        `Starke Saison!\nRon von Belarro`
       ].join('\n\n'),
-      nextStage: 'closed_lost',
+      nextStage: 'inactive',
       nextActionDays: null,
       nextActionType: null
     })
@@ -415,13 +424,27 @@ export function getFollowUpMessage(location, userName, extra) {
   const result = langTemplate(location, userName, extra);
 
   // Build WhatsApp deep link
-  let phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
+  let phone = (location.directPhone || location.businessPhone || '')
+    .replace(/[\s\-().]/g, '')
+    .replace(/[^0-9+]/g, '')
+    .replace(/^\+/, '');
+  // Handle 00-prefix international format (e.g. 0049...)
+  if (phone.startsWith('00')) phone = phone.slice(2);
+  // Handle local 0-prefix (e.g. German 0159... → 49159...)
+  if (phone.startsWith('0')) phone = '49' + phone.slice(1);
+  // De-duplicate country code (e.g. 4949... → 49...)
   for (const code of ['972', '44', '43', '49', '1']) {
     if (phone.startsWith(code + code)) { phone = phone.slice(code.length); break; }
   }
-  if (phone.startsWith('0')) { phone = '49' + phone.slice(1); }
+  // Strip extra 0 after country code (e.g. +49(0)159... → 49159...)
+  for (const code of ['972', '44', '43', '49', '1']) {
+    if (phone.startsWith(code) && phone[code.length] === '0') {
+      phone = code + phone.slice(code.length + 1);
+      break;
+    }
+  }
   const encodedText = phone ? encodeURIComponent(result.body) : '';
-  const waLink = phone ? `https://wa.me/${phone}?text=${encodedText}` : null;
+  const waLink = phone ? `https://api.whatsapp.com/send?phone=${phone}&text=${encodedText}` : null;
 
   return { ...result, waLink, phone, stage, lang };
 }
@@ -431,11 +454,11 @@ export function getFollowUpMessage(location, userName, extra) {
  */
 export function getStageLabel(stage) {
   const labels = {
-    new_visit: 'Intro + samples feedback',
-    follow_up_1: 'Send varieties + prices',
-    follow_up_2: 'Which samples worked?',
-    follow_up_3: 'Start with one box',
-    follow_up_4: 'Closing seeding cycle',
+    new_visit: 'Message 1 — The Link (2h)',
+    follow_up_1: 'Message 2 — The Taste (2 days)',
+    follow_up_2: 'Message 3 — The Facts (5 days)',
+    follow_up_3: 'Message 4 — The Easy Yes (2 weeks)',
+    follow_up_4: 'Message 5 — The Open Door (1 month)',
     order_confirmed: 'Order confirmed',
     delivery_reminder: 'Delivery tomorrow',
     post_delivery: 'Post-delivery feedback',

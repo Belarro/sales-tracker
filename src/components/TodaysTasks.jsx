@@ -49,32 +49,142 @@ const Icons = {
   ),
 };
 
-// ── Task Card with quick actions ──
+// ── Stage dots ──
+const STAGE_SEQUENCE = ['new_visit','follow_up_1','follow_up_2','follow_up_3','follow_up_4','order_confirmed'];
+const STAGE_DOT_LABELS = ['Intro','FU 1','FU 2','FU 3','Close','Order'];
+
+const StageDots = ({ stage, accentColor }) => {
+  const currentIdx = STAGE_SEQUENCE.indexOf(stage);
+  const showStages = 4; // show first 4 dots
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+      {STAGE_DOT_LABELS.slice(0, showStages).map((label, i) => {
+        const done = currentIdx > i;
+        const current = currentIdx === i;
+        return (
+          <div key={i} title={label} style={{
+            width: '8px', height: '8px', borderRadius: '50%',
+            background: done ? 'var(--color-success)' : current ? accentColor : 'var(--color-border)',
+            border: current ? `2px solid ${accentColor}` : done ? '2px solid var(--color-success)' : '2px solid var(--color-border)',
+            transition: 'all 150ms',
+            flexShrink: 0,
+          }} />
+        );
+      })}
+      {stage && (
+        <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: '600', marginLeft: '4px' }}>
+          {STAGE_DOT_LABELS[Math.max(0, currentIdx)] || stage.replace(/_/g, ' ')}
+        </span>
+      )}
+    </div>
+  );
+};
+
+// ── Task Card ──
 const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
-  const [copied, setCopied] = useState(false);
   const [marking, setMarking] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [pickedDate, setPickedDate] = useState('');
+
   const days = location._daysUntilAction;
+  const urgencyLabel = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? 'Today' : `in ${days}d`;
+  const isOverdueCard = days < 0;
+  const isTodayCard = days === 0;
 
-  let urgencyLabel = '';
-  if (days < 0) urgencyLabel = `${Math.abs(days)}d overdue`;
-  else if (days === 0) urgencyLabel = 'Due today';
-  else urgencyLabel = `In ${days}d`;
-
-  const actionLabel = location.nextActionType
-    ? location.nextActionType.replace(/_/g, ' ')
-    : 'follow up';
-
-  const stageLabel = location.pipelineStage
-    ? location.pipelineStage.replace(/_/g, ' ')
-    : '';
-
-  // Get follow-up message for this location
   const followUp = useMemo(
     () => getFollowUpMessage(location, user?.displayName || user?.name, null),
     [location, user]
   );
+
+  const isOrderConfirm = location.pipelineStage === 'order_confirmed';
+  const hasPhone = !!followUp?.phone;
+  const hasEmail = !!(location.businessEmail || location.directEmail);
+  const followUpCount = parseInt(location.followUpCount || '0', 10);
+
+  // History entries from notesInternal
+  const historyLines = useMemo(() => {
+    if (!location.notesInternal) return [];
+    return location.notesInternal.split('\n').filter(Boolean).reverse();
+  }, [location.notesInternal]);
+
+  // Auto-calculate next date (no date picker for normal stages)
+  const getAutoNextDate = () => {
+    if (isOrderConfirm) return null; // needs manual date
+    if (followUp?._nextActionDate) return toISODateString(followUp._nextActionDate);
+    if (followUp?.nextActionDays) return calculateSnappedFollowUpDate(followUp.nextActionDays);
+    return toISODateString(new Date(Date.now() + 86400000));
+  };
+
+  const executeDone = async (nextDateISO, finalFollowUp) => {
+    setMarking(true);
+    try {
+      const count = followUpCount + 1;
+      const todayEU = toEUDateString(new Date());
+      const nextDateEU = nextDateISO ? toEUDateString(new Date(nextDateISO + 'T00:00:00')) : '';
+      const stageName = (finalFollowUp.stage || 'unknown').replace(/_/g, ' ');
+      const logEntry = `[${todayEU}] ${stageName} → next: ${finalFollowUp.nextStage?.replace(/_/g, ' ') || 'done'} on ${nextDateEU || 'n/a'}`;
+      const updatedNotes = location.notesInternal
+        ? `${location.notesInternal}\n${logEntry}`
+        : logEntry;
+
+      await updatePipelineData(location.locationName, location.businessAddress, {
+        pipelineStage: finalFollowUp.nextStage || location.pipelineStage,
+        followUpCount: String(count),
+        lastFollowUpDate: todayEU,
+        nextActionDate: nextDateEU,
+        nextActionType: finalFollowUp.nextActionType || '',
+        automationStatus: 'pending',
+        notesInternal: updatedNotes,
+      });
+
+      // Schedule calendar event silently
+      if (nextDateISO && finalFollowUp.nextStage && !['closed_lost','closed_won'].includes(finalFollowUp.nextStage)) {
+        const nextLoc = { ...location, nextActionDate: nextDateISO, pipelineStage: finalFollowUp.nextStage };
+        const nextFU = getFollowUpMessage(nextLoc, user?.displayName || user?.name, null);
+        createFollowUpEvent(nextLoc, nextDateISO, finalFollowUp.nextStage, nextFU?.body || '').catch(() => {});
+      }
+
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      console.error('Failed to advance pipeline:', err);
+      setMarking(false);
+    }
+  };
+
+  // Primary action: Send via WA + mark done (auto-date)
+  const handleSendAndDone = (e) => {
+    e.stopPropagation();
+    if (marking || !followUp) return;
+    if (isOrderConfirm) {
+      const now = new Date();
+      const daysUntilTue = (2 - now.getDay() + 7) % 7 || 7;
+      const nextTue = new Date(now);
+      nextTue.setDate(nextTue.getDate() + daysUntilTue);
+      setPickedDate(toISODateString(nextTue));
+      setShowDatePicker(true);
+      return;
+    }
+    // Open WA
+    if (followUp.waLink) window.open(followUp.waLink, '_blank');
+    // Mark done with auto-date
+    executeDone(getAutoNextDate(), followUp);
+  };
+
+  const handleConfirmOrderDone = async (e) => {
+    e.stopPropagation();
+    if (marking) return;
+    setShowDatePicker(false);
+    const finalFollowUp = getFollowUpMessage(
+      location, user?.displayName || user?.name, { deliveryDate: pickedDate }
+    );
+    const deliveryD = new Date(pickedDate + 'T00:00:00');
+    const monday = new Date(deliveryD);
+    monday.setDate(monday.getDate() - 1);
+    if (finalFollowUp?.waLink) window.open(finalFollowUp.waLink, '_blank');
+    await executeDone(toISODateString(monday), finalFollowUp);
+  };
 
   const handleCopy = (e) => {
     e.stopPropagation();
@@ -85,345 +195,200 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     });
   };
 
-  const handleSendWA = (e) => {
-    e.stopPropagation();
-    if (!followUp?.waLink) return;
-    window.open(followUp.waLink, '_blank');
-  };
-
-  const handleSendEmail = (e) => {
+  const handleEmail = (e) => {
     e.stopPropagation();
     const email = location.businessEmail || location.directEmail || '';
     if (!email || !followUp?.body) return;
-    const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
-    const body = encodeURIComponent(followUp.body);
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent('Belarro')}&body=${encodeURIComponent(followUp.body)}`;
   };
 
   const handleCalendar = (e) => {
     e.stopPropagation();
-    const url = generateGoogleCalendarUrl(
-      location,
-      followUp?.body || '',
-      window.location.origin + '/?view=tasks'
-    );
-    window.open(url, '_blank');
+    window.open(generateGoogleCalendarUrl(location, followUp?.body || '', window.location.origin + '/?view=tasks'), '_blank');
   };
 
-  const handleSendMenu = (e) => {
+  const handleMenu = (e) => {
     e.stopPropagation();
     const lang = (location.language || 'DE').toUpperCase();
     const base = lang === 'EN' ? 'https://belarro.com/for-chefs' : 'https://belarro.com/de/for-chefs';
     const params = new URLSearchParams();
-    if (location.locationName) params.set('c', location.locationName);
-    if (location.contactPerson) params.set('n', location.contactPerson);
-    const qs = params.toString();
-    const link = qs ? `${base}?${qs}` : base;
+    if (location.locationName) params.set('r', location.locationName);
+    if (location.contactPerson) params.set('p', location.contactPerson);
+    if (location.contactTitle) params.set('t', location.contactTitle);
+    const link = `${base}?${params.toString()}`;
     let phone = (location.directPhone || location.businessPhone || '').replace(/[^0-9+]/g, '').replace(/^\+/, '');
-    // Fix double country code
-    for (const code of ['972', '44', '43', '49', '1']) {
+    for (const code of ['49','44','43','972','1']) {
       if (phone.startsWith(code + code)) { phone = phone.slice(code.length); break; }
     }
-    if (phone) {
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(link)}`, '_blank');
-    } else {
-      navigator.clipboard.writeText(link);
-    }
+    if (phone) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(link)}`, '_blank');
+    else navigator.clipboard.writeText(link);
   };
 
-  // For order_confirmed: user picks delivery Tuesday, not follow-up date
-  const isOrderConfirm = (location.pipelineStage || 'new_visit') === 'order_confirmed';
-
-  const handleDone = (e) => {
-    e.stopPropagation();
-    if (marking || !followUp) return;
-    if (isOrderConfirm) {
-      // Default to next Tuesday
-      const now = new Date();
-      const daysUntilTue = (2 - now.getDay() + 7) % 7 || 7;
-      const nextTue = new Date(now);
-      nextTue.setDate(nextTue.getDate() + daysUntilTue);
-      setPickedDate(toISODateString(nextTue));
-    } else {
-      const defaultDate = followUp._nextActionDate
-        ? toISODateString(followUp._nextActionDate)
-        : followUp.nextActionDays
-          ? calculateSnappedFollowUpDate(followUp.nextActionDays)
-          : toISODateString(new Date(Date.now() + 86400000));
-      setPickedDate(defaultDate);
-    }
-    setShowDatePicker(true);
+  // Format a due date string nicely
+  const formatDue = (dateStr) => {
+    if (!dateStr) return '';
+    const m = dateStr.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    const iso = m ? `${m[3]}-${m[2]}-${m[1]}` : dateStr;
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return dateStr;
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
   };
-
-  const handleConfirmDone = async (e) => {
-    e.stopPropagation();
-    if (marking) return;
-    setMarking(true);
-    setShowDatePicker(false);
-    try {
-      const count = parseInt(location.followUpCount || '0', 10) + 1;
-      const todayEU = toEUDateString(new Date());
-
-      let nextDate = pickedDate || '';  // pickedDate is ISO from date picker
-      let nextDateEU = nextDate ? toEUDateString(new Date(nextDate + 'T00:00:00')) : '';
-      let finalFollowUp = followUp;
-
-      // For order_confirmed: pickedDate = delivery Tuesday
-      // Regenerate the message with the delivery date included,
-      // and set next action to Monday before delivery
-      if (isOrderConfirm && pickedDate) {
-        finalFollowUp = getFollowUpMessage(
-          location,
-          user?.displayName || user?.name,
-          { deliveryDate: pickedDate }
-        );
-        // Next action = Monday before delivery Tuesday
-        const deliveryD = new Date(pickedDate + 'T00:00:00');
-        const monday = new Date(deliveryD);
-        monday.setDate(monday.getDate() - 1);
-        nextDate = toISODateString(monday);
-        nextDateEU = toEUDateString(monday);
-      }
-
-      // Build follow-up history log in notesInternal (column Z)
-      const stageName = (finalFollowUp.stage || 'unknown').replace(/_/g, ' ');
-      const logEntry = `[${todayEU}] ${stageName} sent → next: ${finalFollowUp.nextStage?.replace(/_/g, ' ') || 'done'} on ${nextDateEU || 'n/a'}`;
-      const existingNotes = location.notesInternal || '';
-      const updatedNotes = existingNotes
-        ? `${existingNotes}\n${logEntry}`
-        : logEntry;
-      await updatePipelineData(location.locationName, location.businessAddress, {
-        pipelineStage: finalFollowUp.nextStage || location.pipelineStage,
-        followUpCount: String(count),
-        lastFollowUpDate: todayEU,
-        nextActionDate: nextDateEU,
-        nextActionType: finalFollowUp.nextActionType || '',
-        automationStatus: 'sent',
-        notesInternal: updatedNotes,
-      });
-
-      // For order_confirmed: open WhatsApp or Gmail with the thank-you + delivery date message
-      if (isOrderConfirm) {
-        if (finalFollowUp.waLink) {
-          window.open(finalFollowUp.waLink, '_blank');
-        } else if (location.businessEmail) {
-          const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
-          const body = encodeURIComponent(finalFollowUp.body);
-          window.location.href = `mailto:${location.businessEmail}?subject=${subject}&body=${body}`;
-        }
-      }
-
-      // Auto-create Google Calendar event for the next follow-up (silent — no tab opens)
-      console.log('Calendar check:', { nextDate, nextStage: finalFollowUp.nextStage, location: location.locationName });
-      if (nextDate && finalFollowUp.nextStage && finalFollowUp.nextStage !== 'closed_lost' && finalFollowUp.nextStage !== 'closed_won') {
-        const nextLocation = { ...location, nextActionDate: nextDate, pipelineStage: finalFollowUp.nextStage };
-        const nextFollowUp = getFollowUpMessage(nextLocation, user?.displayName || user?.name, null);
-        console.log('Creating calendar event for:', nextDate, finalFollowUp.nextStage);
-        createFollowUpEvent(
-          nextLocation,
-          nextDate,
-          finalFollowUp.nextStage,
-          nextFollowUp?.body || `Follow up with ${location.contactPerson} at ${location.locationName}`
-        ).then(event => {
-          console.log('Calendar event created:', event.htmlLink);
-        }).catch(err => console.error('Failed to create calendar event:', err));
-      } else {
-        console.log('Skipped calendar event — no nextDate or stage is terminal');
-      }
-
-      if (onRefresh) onRefresh();
-    } catch (err) {
-      console.error('Failed to advance pipeline:', err);
-      setMarking(false);
-    }
-  };
-
-  const hasPhone = followUp?.phone;
-  const hasEmail = !!(location.businessEmail || location.directEmail);
 
   return (
-    <div className="task-card" onClick={() => onSelect(location)}>
+    <div className="task-card" onClick={() => onSelect(location)} style={{ cursor: 'pointer' }}>
       <div className="task-card-accent" style={{ backgroundColor: accentColor }} />
       <div className="task-card-body">
-        {/* Header row */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          marginBottom: '4px',
-          gap: 'var(--spacing-sm)'
-        }}>
-          <h3 style={{
-            fontSize: 'var(--font-size-md)',
-            fontWeight: '600',
-            color: 'var(--color-text-main)',
-            margin: 0
-          }}>
+
+        {/* ── Header ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '3px', gap: '8px' }}>
+          <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: '700', color: 'var(--color-text-main)', margin: 0 }}>
             {location.locationName}
           </h3>
           <span style={{
-            fontSize: '10px',
-            padding: '2px 8px',
-            borderRadius: 'var(--border-radius-full)',
-            background: `${accentColor}15`,
-            color: accentColor,
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
-            flexShrink: 0
+            fontSize: '10px', padding: '2px 8px', borderRadius: '999px',
+            background: isOverdueCard ? 'var(--color-danger-light)' : isTodayCard ? '#dcfce7' : `${accentColor}18`,
+            color: isOverdueCard ? 'var(--color-danger)' : isTodayCard ? '#16a34a' : accentColor,
+            fontWeight: '700', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0
           }}>
             {urgencyLabel}
           </span>
         </div>
 
-        {/* Contact + address */}
+        {/* ── Contact ── */}
         {location.contactPerson && (
-          <div style={{
-            color: 'var(--color-text-main)',
-            fontSize: 'var(--font-size-sm)',
-            fontWeight: '500',
-            marginBottom: '2px'
-          }}>
-            {location.contactPerson}
+          <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '1px' }}>
+            {location.contactPerson}{location.contactTitle ? ` · ${location.contactTitle}` : ''}
           </div>
         )}
-        <div style={{
-          color: 'var(--color-text-secondary)',
-          fontSize: 'var(--font-size-sm)',
-          marginBottom: '6px'
-        }}>
+        <div style={{ fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '10px' }}>
           {location.businessAddress}
         </div>
 
-        {/* Badges */}
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
-          <span style={{
-            fontSize: '11px',
-            padding: '2px 8px',
-            borderRadius: 'var(--border-radius-full)',
-            background: 'var(--color-primary-light)',
-            color: 'var(--color-primary)',
-            fontWeight: '600',
-            textTransform: 'capitalize'
-          }}>
-            {actionLabel}
-          </span>
-          {stageLabel && (
-            <span style={{
-              fontSize: '11px',
-              padding: '2px 8px',
-              borderRadius: 'var(--border-radius-full)',
-              background: 'var(--color-bg-secondary)',
-              color: 'var(--color-text-muted)',
-              textTransform: 'capitalize'
-            }}>
-              {stageLabel}
+        {/* ── Stage dots + due date ── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <StageDots stage={location.pipelineStage} accentColor={accentColor} />
+          {location.nextActionDate && (
+            <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: '500' }}>
+              {formatDue(location.nextActionDate)}
             </span>
           )}
         </div>
 
-        {/* Quick action buttons */}
-        <div className="task-quick-actions">
+        {/* ── Follow-up history summary ── */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setShowHistory(h => !h); }}
+          style={{
+            width: '100%', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)',
+            borderRadius: 'var(--border-radius-sm)', padding: '7px 10px', marginBottom: '10px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontWeight: '700', color: followUpCount > 0 ? 'var(--color-text-main)' : 'var(--color-text-muted)' }}>
+              {followUpCount} follow-up{followUpCount !== 1 ? 's' : ''} sent
+            </span>
+            {location.lastFollowUpDate && (
+              <span>· Last: {formatDue(location.lastFollowUpDate)}</span>
+            )}
+          </span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+            style={{ color: 'var(--color-text-muted)', transform: showHistory ? 'rotate(180deg)' : 'none', transition: 'transform 150ms', flexShrink: 0 }}>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+
+        {/* ── History log ── */}
+        {showHistory && (
+          <div onClick={(e) => e.stopPropagation()} style={{
+            background: 'var(--color-bg-secondary)', borderRadius: 'var(--border-radius-sm)',
+            padding: '8px 10px', marginBottom: '10px', marginTop: '-6px',
+            border: '1px solid var(--color-border)', borderTop: 'none', borderRadius: '0 0 6px 6px'
+          }}>
+            {historyLines.length === 0 ? (
+              <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>No history yet</div>
+            ) : historyLines.map((line, i) => (
+              <div key={i} style={{ fontSize: '11px', color: 'var(--color-text-muted)', padding: '3px 0',
+                borderBottom: i < historyLines.length - 1 ? '1px solid var(--color-border)' : 'none' }}>
+                {line}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Message preview ── */}
+        {followUp?.body && (
+          <div style={{
+            fontSize: '12px', color: 'var(--color-text-secondary)', background: 'var(--color-bg-secondary)',
+            borderRadius: 'var(--border-radius-sm)', padding: '8px 10px', marginBottom: '10px',
+            borderLeft: `3px solid ${accentColor}`, lineHeight: '1.5',
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
+          }}>
+            {followUp.body}
+          </div>
+        )}
+
+        {/* ── Primary action: Send & Done ── */}
+        {!showDatePicker ? (
           <button
-            className="task-action-btn"
-            onClick={handleCopy}
-            title="Copy message"
-          >
-            {copied ? Icons.check : Icons.copy}
-            <span>{copied ? 'Copied' : 'Copy'}</span>
-          </button>
-
-          {hasPhone && (
-            <button
-              className="task-action-btn task-action-wa"
-              onClick={handleSendWA}
-              title="Send via WhatsApp"
-            >
-              {Icons.whatsapp}
-              <span>Send WA</span>
-            </button>
-          )}
-
-          {hasEmail && (
-            <button
-              className="task-action-btn task-action-email"
-              onClick={handleSendEmail}
-              title="Send via Gmail"
-            >
-              {Icons.email}
-              <span>Email</span>
-            </button>
-          )}
-
-          <button
-            className="task-action-btn task-action-cal"
-            onClick={handleCalendar}
-            title="Add to Google Calendar"
-          >
-            {Icons.calendar}
-            <span>Calendar</span>
-          </button>
-
-          <button
-            className="task-action-btn task-action-menu"
-            onClick={handleSendMenu}
-            title="Send menu & prices link"
-          >
-            {Icons.menu}
-            <span>Menu</span>
-          </button>
-
-          <button
-            className="task-action-btn task-action-done"
-            onClick={handleDone}
+            className="task-send-btn"
+            onClick={handleSendAndDone}
             disabled={marking}
-            title="Follow up done — advance pipeline"
+            style={{
+              width: '100%', padding: '11px', marginBottom: '8px',
+              background: marking ? 'var(--color-border)' : '#25D366',
+              color: '#fff', border: 'none', borderRadius: 'var(--border-radius-md)',
+              fontSize: '14px', fontWeight: '700', cursor: marking ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              fontFamily: 'inherit', transition: 'opacity 150ms',
+            }}
           >
-            {Icons.check}
-            <span>{marking ? 'Saving...' : 'Done'}</span>
+            {marking ? (
+              <span>Saving...</span>
+            ) : (
+              <>
+                {Icons.whatsapp}
+                <span>{isOrderConfirm ? 'Confirm Order & Send' : 'Send Follow-up & Done'}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </>
+            )}
           </button>
-        </div>
-
-        {/* Date picker for next follow-up */}
-        {showDatePicker && (
-          <div className="task-date-picker" onClick={(e) => e.stopPropagation()}>
-            <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: '6px', color: 'var(--color-text-main)' }}>
-              {isOrderConfirm ? 'Pick delivery Tuesday:' : 'Next follow-up date:'}
+        ) : (
+          <div onClick={(e) => e.stopPropagation()} style={{
+            background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)',
+            borderRadius: 'var(--border-radius-md)', padding: '10px', marginBottom: '8px'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '8px' }}>
+              Pick delivery Tuesday:
             </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input
-                type="date"
-                value={pickedDate}
-                onChange={(e) => setPickedDate(e.target.value)}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input type="date" value={pickedDate} onChange={(e) => setPickedDate(e.target.value)}
                 min={toISODateString(new Date())}
-                style={{
-                  flex: 1,
-                  padding: '8px 10px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--border-radius-md)',
-                  fontSize: 'var(--font-size-sm)',
-                  background: 'var(--color-bg-input, #fff)',
-                }}
+                style={{ flex: 1, padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius-sm)', fontSize: '14px', background: 'var(--color-bg-input,#fff)' }}
               />
-              <button
-                className="task-action-btn task-action-done"
-                onClick={handleConfirmDone}
-                disabled={marking}
-                style={{ padding: '8px 14px' }}
-              >
-                {Icons.check}
-                <span>Confirm</span>
+              <button className="task-action-btn task-action-done" onClick={handleConfirmOrderDone} disabled={!pickedDate} style={{ padding: '8px 12px' }}>
+                {Icons.check}<span>Confirm</span>
               </button>
-              <button
-                className="task-action-btn"
-                onClick={(e) => { e.stopPropagation(); setShowDatePicker(false); }}
-                style={{ padding: '8px 10px' }}
-              >
-                <span>Cancel</span>
+              <button className="task-action-btn" onClick={(e) => { e.stopPropagation(); setShowDatePicker(false); }} style={{ padding: '8px 10px' }}>
+                <span>✕</span>
               </button>
             </div>
           </div>
         )}
+
+        {/* ── Secondary: Copy + Email only ── */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button className="task-action-btn" onClick={handleCopy} title="Copy message" style={{ flex: 1 }}>
+            {copied ? Icons.check : Icons.copy}
+            <span>{copied ? 'Copied' : 'Copy text'}</span>
+          </button>
+          {hasEmail && (
+            <button className="task-action-btn task-action-email" onClick={handleEmail} title="Send email" style={{ flex: 1 }}>
+              {Icons.email}<span>Email</span>
+            </button>
+          )}
+        </div>
+
       </div>
     </div>
   );

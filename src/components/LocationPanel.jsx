@@ -6,9 +6,9 @@
 
 import { useState, useEffect } from 'react';
 import { CONFIG } from '../config.js';
-import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData } from '../utils/googleSheets.js';
+import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData, deleteProspect } from '../utils/googleSheets.js';
 import { calculateNextActionDate, calculateSnappedFollowUpDate, toEUDateString } from '../utils/dateUtils.js';
-import { MANUAL_COLOR_OPTIONS, getPinColor, getColorLabel } from '../utils/colorUtils.js';
+import { getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
 import { createFollowUpEvent } from '../utils/googleCalendar.js';
 
@@ -81,8 +81,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     interestLevel: '',
     sampleGiven: 'NO',
     visitNotes: '',
-    pinColor: '',
-    language: ''
+    language: '',
+    usesMicrogreens: false
   });
   const [phoneCode, setPhoneCode] = useState('+49');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -109,6 +109,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [followUpMsg, setFollowUpMsg] = useState(null);
   const [awaitingSentConfirm, setAwaitingSentConfirm] = useState(false);
   const [markingSent, setMarkingSent] = useState(false);
+  const [quickSendPreview, setQuickSendPreview] = useState(null); // { msg, contactEmail }
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -117,6 +118,24 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     };
     loadTemplates();
   }, []);
+
+  // Auto-generate the follow-up message as soon as the visit is saved
+  useEffect(() => {
+    if (!savedSuccessfully) return;
+    if (pipelineStage === 'closed_won' || pipelineStage === 'closed_lost') return;
+    const locWithForm = {
+      ...location,
+      contactPerson: formData.contactPerson || location.contactPerson || 'there',
+      contactTitle: formData.contactTitle || location.contactTitle || '',
+      directPhone: fullPhone || location.directPhone || '',
+      businessPhone: location.businessPhone || '',
+      directEmail: formData.email || location.directEmail || '',
+      pipelineStage: pipelineStage || 'new_visit',
+      language: formData.language || location.language || 'DE'
+    };
+    const msg = getFollowUpMessage(locWithForm, user?.name);
+    setFollowUpMsg(msg);
+  }, [savedSuccessfully]);
 
   useEffect(() => {
     if (location) {
@@ -129,8 +148,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         interestLevel: location.interestLevel || 'Follow Up',
         sampleGiven: location.sampleGiven || 'NO',
         visitNotes: '',
-        pinColor: location.pinColor || '',
-        language: location.language || ''
+        language: location.language || '',
+        usesMicrogreens: location.usesMicrogreens || false
       });
       const { code, number } = splitPhone(location.directPhone || '');
       setPhoneCode(code);
@@ -138,7 +157,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       setPipelineStage(location.pipelineStage || 'new_visit');
       // Default follow-up to 1 week if outcome is Follow Up or Interested
       const interest = location.interestLevel || 'Follow Up';
-      if (interest === 'Follow Up' || interest === 'Interested') {
+      if (interest === 'Follow Up') {
         setFollowUpDate(calculateSnappedFollowUpDate(7));
       } else {
         setFollowUpDate('');
@@ -157,8 +176,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
 
   const setInterest = (level) => {
     setFormData(prev => ({ ...prev, interestLevel: level }));
-    // Auto-set a default follow-up date when Follow Up or Interested is selected
-    if ((level === 'Follow Up' || level === 'Interested') && !followUpDate) {
+    // Auto-set a default follow-up date when Follow Up is selected
+    if (level === 'Follow Up' && !followUpDate) {
       setFollowUpDate(calculateSnappedFollowUpDate(7)); // Default: 1 week
     }
   };
@@ -218,6 +237,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         materialsSent: location.materialsSent || '',
         notesInternal: location.notesInternal || '',
         language: formData.language,
+        usesMicrogreens: formData.usesMicrogreens,
         locationName: location.locationName,
         businessAddress: location.businessAddress,
         timestamp: undefined
@@ -226,10 +246,13 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       const success = await saveLocationData(checkInData, user.name, user.email);
 
       if (success) {
-        setSaveMessage({ type: 'success', text: 'Visit logged' });
+        setSaveMessage({ type: 'success', text: 'Visit logged — follow-up message ready below' });
         setSavedSuccessfully(true);
-        onSave(); // Refresh the locations list
-        setTimeout(() => { onClose(); }, 1200);
+        if (location.isProspect && location._prospectRowIndex !== undefined) {
+          await deleteProspect(location._prospectRowIndex).catch(() => {});
+        }
+        onSave();
+        // Stay open so the follow-up message + Save to Contacts are visible
       } else {
         setSaveMessage({ type: 'error', text: 'Failed to save. Try again.' });
       }
@@ -289,14 +312,12 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   if (!location) return null;
 
   const outcomeColors = {
-    'Interested': '#2196F3',
     'Not Interested': '#f44336',
     'Closed Deal': '#4caf50',
-    'Follow Up': '#ffc107',
-    'Pending': '#9e9e9e'
+    'Follow Up': '#ffc107'
   };
 
-  const showFollowUp = formData.interestLevel === 'Follow Up' || formData.interestLevel === 'Interested';
+  const showFollowUp = formData.interestLevel === 'Follow Up';
 
   return (
     <div className="location-panel open">
@@ -349,70 +370,31 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           <button className="close-panel" onClick={onClose}>×</button>
         </div>
 
-        {/* PIPELINE STAGE — manual control */}
+        {/* PIPELINE STAGE — read-only status badge (updated automatically) */}
         {(() => {
-          const stages = [
-            { key: 'new_visit',           label: 'New',       color: '#9e9e9e' },
-            { key: 'follow_up_1',         label: 'FU 1',      color: '#ffc107' },
-            { key: 'follow_up_2',         label: 'FU 2',      color: '#ffa000' },
-            { key: 'follow_up_3',         label: 'FU 3',      color: '#ff8f00' },
-            { key: 'order_confirmed',     label: 'Ordered',   color: '#2196F3' },
-            { key: 'delivery_reminder',   label: 'Delivery',  color: '#1976D2' },
-            { key: 'post_delivery',       label: 'Post-Del',  color: '#1565C0' },
-            { key: 'active_customer',     label: 'Active',    color: '#4caf50' },
-            { key: 'inactive',            label: 'Inactive',  color: '#757575' },
-            { key: 'closed_won',          label: 'Won',       color: '#2e7d32' },
-            { key: 'closed_lost',         label: 'Lost',      color: '#c62828' }
-          ];
+          const stageMap = {
+            'new_visit':          { label: 'New Visit',        color: '#9e9e9e' },
+            'follow_up_1':        { label: 'Follow-up 1',      color: '#ffc107' },
+            'follow_up_2':        { label: 'Follow-up 2',      color: '#ffa000' },
+            'follow_up_3':        { label: 'Follow-up 3',      color: '#ff8f00' },
+            'follow_up_4':        { label: 'Follow-up 4',      color: '#ff6f00' },
+            'order_confirmed':    { label: 'Order Confirmed',  color: '#2196F3' },
+            'delivery_reminder':  { label: 'Delivery',         color: '#1976D2' },
+            'post_delivery':      { label: 'Post-Delivery',    color: '#1565C0' },
+            'active_customer':    { label: 'Active Customer',  color: '#4caf50' },
+            'inactive':           { label: 'Inactive',         color: '#757575' },
+            'closed_won':         { label: 'Won',              color: '#2e7d32' },
+            'closed_lost':        { label: 'Lost',             color: '#c62828' }
+          };
+          const s = stageMap[pipelineStage] || stageMap['new_visit'];
           return (
-            <div style={{
-              display: 'flex',
-              gap: '6px',
-              overflowX: 'auto',
-              padding: '8px 0',
-              marginBottom: '4px',
-              WebkitOverflowScrolling: 'touch',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}>
-              {stages.map(s => {
-                const isActive = pipelineStage === s.key;
-                return (
-                  <button
-                    key={s.key}
-                    type="button"
-                    onClick={async () => {
-                      setPipelineStage(s.key);
-                      // Save immediately to Google Sheets
-                      try {
-                        await updatePipelineData(
-                          location.locationName,
-                          location.businessAddress,
-                          { pipelineStage: s.key }
-                        );
-                      } catch (err) {
-                        console.error('Failed to update stage:', err);
-                      }
-                    }}
-                    style={{
-                      flexShrink: 0,
-                      padding: '5px 10px',
-                      borderRadius: 'var(--border-radius-full)',
-                      border: isActive ? `2px solid ${s.color}` : '1.5px solid var(--color-border)',
-                      background: isActive ? s.color : 'var(--color-bg-main)',
-                      color: isActive ? '#fff' : 'var(--color-text-muted)',
-                      fontSize: '11px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      fontFamily: 'inherit',
-                      transition: 'all 150ms ease'
-                    }}
-                  >
-                    {s.label}
-                  </button>
-                );
-              })}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 0', marginBottom: '4px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Stage</span>
+              <span style={{
+                padding: '4px 12px', borderRadius: 'var(--border-radius-full)',
+                background: s.color, color: '#fff',
+                fontSize: '12px', fontWeight: '700'
+              }}>{s.label}</span>
             </div>
           );
         })()}
@@ -539,40 +521,6 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             />
           </div>
 
-          {/* Save to Contacts — shown when there's a name + phone */}
-          {formData.contactPerson && fullPhone && (
-            <button
-              type="button"
-              onClick={() => saveToContacts({
-                contactPerson: formData.contactPerson,
-                contactTitle: formData.contactTitle,
-                phone: fullPhone,
-                email: formData.email,
-                locationName: location.locationName
-              })}
-              style={{
-                width: '100%',
-                padding: '10px',
-                marginBottom: 'var(--spacing-md)',
-                borderRadius: 'var(--border-radius-md)',
-                border: '1.5px solid var(--color-primary)',
-                background: 'var(--color-bg-main)',
-                color: 'var(--color-primary)',
-                fontWeight: '600',
-                fontSize: 'var(--font-size-sm)',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <span style={{ fontSize: '16px' }}>+</span>
-              Save {formData.contactPerson.split(' ')[0]} to Contacts (Belarro)
-            </button>
-          )}
-
           <div className="form-row">
             <div className="form-group">
               <label>Business Type</label>
@@ -620,7 +568,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           {/* Outcome */}
           <div className="form-group">
             <label>Outcome</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-sm)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--spacing-sm)' }}>
               {CONFIG.INTEREST_LEVELS.map(level => {
                 const isActive = formData.interestLevel === level;
                 const activeColor = outcomeColors[level] || 'var(--color-primary)';
@@ -745,50 +693,32 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             </div>
           </div>
 
-          {/* Pin Color Override */}
+          {/* Uses Microgreens */}
           <div className="form-group">
-            <label>Pin Color</label>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-              {MANUAL_COLOR_OPTIONS.map(opt => {
-                const isSelected = formData.pinColor === opt.value;
-                const isAuto = opt.value === '';
-                return (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, pinColor: opt.value }))}
-                    title={opt.label}
-                    style={{
-                      width: isAuto ? 'auto' : '32px',
-                      height: '32px',
-                      borderRadius: 'var(--border-radius-full)',
-                      border: isSelected
-                        ? '2.5px solid var(--color-text-main)'
-                        : '2px solid var(--color-border)',
-                      background: isAuto ? 'var(--color-bg-secondary)' : opt.value,
-                      cursor: 'pointer',
-                      padding: isAuto ? '0 12px' : '0',
-                      fontSize: 'var(--font-size-xs)',
-                      fontWeight: '600',
-                      color: isAuto ? 'var(--color-text-secondary)' : 'transparent',
-                      transition: 'all 150ms ease',
-                      boxShadow: isSelected && !isAuto ? '0 0 0 2px var(--color-bg-main), 0 0 0 4px var(--color-text-muted)' : 'none',
-                    }}
-                  >
-                    {isAuto ? 'Auto' : ''}
-                  </button>
-                );
-              })}
-            </div>
-            {formData.pinColor && (
-              <div style={{
-                fontSize: 'var(--font-size-xs)',
-                color: 'var(--color-text-muted)',
-                marginTop: '4px'
+            <label>Uses Microgreens Already?</label>
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, usesMicrogreens: !prev.usesMicrogreens }))}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '10px 14px', borderRadius: 'var(--border-radius-md)',
+                border: `1.5px solid ${formData.usesMicrogreens ? '#16a34a' : 'var(--color-border)'}`,
+                background: formData.usesMicrogreens ? '#dcfce7' : 'var(--color-bg-main)',
+                color: formData.usesMicrogreens ? '#15803d' : 'var(--color-text-muted)',
+                fontWeight: '600', fontSize: 'var(--font-size-sm)',
+                cursor: 'pointer', fontFamily: 'inherit', width: '100%', transition: 'all 150ms'
+              }}
+            >
+              <span style={{
+                width: '20px', height: '20px', borderRadius: '4px', flexShrink: 0,
+                border: `2px solid ${formData.usesMicrogreens ? '#16a34a' : '#d1d5db'}`,
+                background: formData.usesMicrogreens ? '#16a34a' : 'transparent',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
-                Manual override active
-              </div>
-            )}
+                {formData.usesMicrogreens && <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>}
+              </span>
+              🌿 Yes, already using microgreens
+            </button>
           </div>
 
           {/* Language */}
@@ -818,48 +748,6 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             </div>
           </div>
 
-          {/* Follow-up scheduling (shown for Follow Up / Interested) */}
-          {showFollowUp && (
-            <div className="form-group">
-              <label>Schedule Follow-Up</label>
-              <div className="action-preset-row">
-                {CONFIG.FOLLOW_UP_PRESETS.map(preset => (
-                  <button
-                    key={preset.days}
-                    type="button"
-                    className={`action-preset-btn ${followUpDate === calculateSnappedFollowUpDate(preset.days) ? 'selected' : ''}`}
-                    onClick={() => handleFollowUpPreset(preset.days)}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-                <input
-                  type="date"
-                  value={followUpDate}
-                  onChange={(e) => setFollowUpDate(e.target.value)}
-                  style={{
-                    background: 'var(--color-bg-input)',
-                    color: 'var(--color-text-main)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--border-radius-md)',
-                    padding: '8px 10px',
-                    fontSize: 'var(--font-size-sm)'
-                  }}
-                />
-              </div>
-              {followUpDate && (
-                <div style={{
-                  fontSize: 'var(--font-size-xs)',
-                  color: 'var(--color-success)',
-                  marginTop: '4px',
-                  fontWeight: '500'
-                }}>
-                  Follow-up: {followUpDate}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* SUBMIT */}
           <button
             type="submit"
@@ -876,80 +764,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             {isSaving ? 'Saving...' : savedSuccessfully ? 'Edit Location' : (location.visitHistory?.length ? 'Update Visit' : 'Save Visit')}
           </button>
 
-          {/* QUICK SEND — one-tap send first follow-up via WhatsApp or Email */}
-          {formData.contactPerson && (fullPhone || location.businessPhone || formData.email || location.directEmail) && (
-            (() => {
-              const locForMsg = {
-                ...location,
-                contactPerson: formData.contactPerson,
-                directPhone: fullPhone || location.directPhone || '',
-                businessPhone: location.businessPhone || '',
-                directEmail: formData.email || location.directEmail || '',
-                pipelineStage: pipelineStage || 'new_visit',
-                language: formData.language || location.language || 'DE',
-                locationName: location.locationName
-              };
-              const msg = getFollowUpMessage(locForMsg, user?.name);
-              if (!msg) return null;
-              const hasPhone = !!msg.waLink;
-              const contactEmail = formData.email || location.directEmail || location.businessEmail || '';
-              const hasEmail = !!contactEmail;
-              if (!hasPhone && !hasEmail) return null;
-
-              const btnStyle = (bg) => ({
-                display: 'block',
-                width: '100%',
-                textAlign: 'center',
-                padding: '14px',
-                borderRadius: 'var(--border-radius-md)',
-                background: bg,
-                color: '#fff',
-                fontWeight: '700',
-                fontSize: 'var(--font-size-md)',
-                textDecoration: 'none',
-                fontFamily: 'inherit',
-                marginTop: 'var(--spacing-sm)',
-                boxSizing: 'border-box',
-                border: 'none',
-                cursor: 'pointer'
-              });
-
-              return (
-                <>
-                  {hasPhone && (
-                    <a
-                      href={msg.waLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => {
-                        navigator.clipboard.writeText(msg.body).catch(() => {});
-                      }}
-                      style={btnStyle('#25D366')}
-                    >
-                      Send WhatsApp Follow-up
-                    </a>
-                  )}
-                  {hasEmail && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
-                        const body = encodeURIComponent(msg.body);
-                        window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
-                      }}
-                      style={btnStyle('#4285F4')}
-                    >
-                      Send Email Follow-up
-                    </button>
-                  )}
-                </>
-              );
-            })()
-          )}
         </form>
 
-        {/* ===== SEND FOLLOW-UP ===== */}
-        {(pipelineStage || 'new_visit') !== 'closed_won' && (pipelineStage || 'new_visit') !== 'closed_lost' && (
+        {/* ===== SEND FOLLOW-UP (only visible after save) ===== */}
+        {savedSuccessfully && (pipelineStage || 'new_visit') !== 'closed_won' && (pipelineStage || 'new_visit') !== 'closed_lost' && (
           <div style={{
             marginTop: 'var(--spacing-lg)',
             borderTop: '1px solid var(--color-border)',
@@ -973,39 +791,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               {getStageLabel(pipelineStage || 'new_visit')}
             </div>
 
-            {!showFollowUpPreview ? (
-              <button
-                type="button"
-                onClick={() => {
-                  const locWithForm = {
-                    ...location,
-                    contactPerson: formData.contactPerson || location.contactPerson || 'there',
-                    directPhone: fullPhone || location.directPhone || '',
-                    businessPhone: location.businessPhone || '',
-                    directEmail: formData.email || location.directEmail || '',
-                    pipelineStage: pipelineStage || 'new_visit',
-                    language: formData.language || location.language || 'DE'
-                  };
-                  const msg = getFollowUpMessage(locWithForm, user?.name);
-                  setFollowUpMsg(msg);
-                  setShowFollowUpPreview(true);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: 'var(--border-radius-md)',
-                  border: '1.5px solid var(--color-primary, #2d5a3d)',
-                  background: '#fff',
-                  color: 'var(--color-primary, #2d5a3d)',
-                  fontWeight: '700',
-                  fontSize: 'var(--font-size-sm)',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit'
-                }}
-              >
-                Preview Message
-              </button>
-            ) : followUpMsg ? (
+            {followUpMsg ? (
               <div>
                 {/* Message preview */}
                 <div style={{
@@ -1250,6 +1036,40 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           </div>
         )}
 
+        {/* ===== SAVE TO CONTACTS (only after saving the visit) ===== */}
+        {savedSuccessfully && formData.contactPerson && fullPhone && (
+          <button
+            type="button"
+            onClick={() => saveToContacts({
+              contactPerson: formData.contactPerson,
+              contactTitle: formData.contactTitle,
+              phone: fullPhone,
+              email: formData.email,
+              locationName: location.locationName
+            })}
+            style={{
+              width: '100%',
+              padding: '12px',
+              marginTop: 'var(--spacing-md)',
+              borderRadius: 'var(--border-radius-md)',
+              border: '1.5px solid var(--color-primary)',
+              background: 'var(--color-bg-main)',
+              color: 'var(--color-primary)',
+              fontWeight: '600',
+              fontSize: 'var(--font-size-sm)',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+          >
+            <span style={{ fontSize: '16px' }}>+</span>
+            Save {formData.contactPerson.split(' ')[0]} to Phone Contacts
+          </button>
+        )}
+
         {/* ===== VISIT HISTORY ===== */}
         {location.visitHistory && location.visitHistory.length > 0 && (
           <div className="visit-history">
@@ -1282,27 +1102,131 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             Manage
           </div>
           <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-            <button
-              type="button"
-              onClick={handleArchive}
-              disabled={isSaving}
-              className="btn btn-secondary"
-              style={{ flex: 1, color: 'var(--color-warning)', borderColor: 'var(--color-warning)' }}
-            >
-              Archive
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={isSaving}
-              className="btn btn-danger"
-              style={{ flex: 1 }}
-            >
-              Delete
-            </button>
+            {location.isProspect ? (
+              <button
+                type="button"
+                disabled={isSaving}
+                onClick={async () => {
+                  if (!window.confirm('Remove from To Visit list?')) return;
+                  setIsSaving(true);
+                  await deleteProspect(location._prospectRowIndex).catch(() => {});
+                  onSave();
+                  onClose();
+                  setIsSaving(false);
+                }}
+                className="btn btn-danger"
+                style={{ flex: 1 }}
+              >
+                Remove from To Visit
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleArchive}
+                  disabled={isSaving}
+                  className="btn btn-secondary"
+                  style={{ flex: 1, color: 'var(--color-warning)', borderColor: 'var(--color-warning)' }}
+                >
+                  Archive
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isSaving}
+                  className="btn btn-danger"
+                  style={{ flex: 1 }}
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* QUICK SEND PREVIEW POPUP */}
+      {quickSendPreview && (
+        <div
+          onClick={() => setQuickSendPreview(null)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)',
+            zIndex: 9999, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            padding: '0 0 env(safe-area-inset-bottom,0) 0'
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'var(--color-bg-main)', borderRadius: '16px 16px 0 0',
+              padding: '20px', width: '100%', maxWidth: '520px',
+              maxHeight: '80vh', display: 'flex', flexDirection: 'column', gap: '12px'
+            }}
+          >
+            <div style={{ fontWeight: '700', fontSize: 'var(--font-size-md)' }}>Message Preview</div>
+            <div style={{
+              background: 'var(--color-bg-secondary)', borderRadius: '12px',
+              padding: '14px 16px', fontSize: '14px', lineHeight: '1.6',
+              whiteSpace: 'pre-wrap', overflowY: 'auto', flex: 1,
+              color: 'var(--color-text-main)'
+            }}>
+              {quickSendPreview.msg.body}
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              {quickSendPreview.msg.waLink && (
+                <a
+                  href={quickSendPreview.msg.waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    navigator.clipboard.writeText(quickSendPreview.msg.body).catch(() => {});
+                    setQuickSendPreview(null);
+                  }}
+                  style={{
+                    flex: 1, textAlign: 'center', padding: '14px',
+                    borderRadius: 'var(--border-radius-md)', background: '#25D366',
+                    color: '#fff', fontWeight: '700', fontSize: 'var(--font-size-sm)',
+                    textDecoration: 'none', fontFamily: 'inherit'
+                  }}
+                >
+                  Send WhatsApp
+                </a>
+              )}
+              {quickSendPreview.contactEmail && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
+                    const body = encodeURIComponent(quickSendPreview.msg.body);
+                    window.location.href = `mailto:${quickSendPreview.contactEmail}?subject=${subject}&body=${body}`;
+                    setQuickSendPreview(null);
+                  }}
+                  style={{
+                    flex: 1, padding: '14px', borderRadius: 'var(--border-radius-md)',
+                    background: '#4285F4', color: '#fff', fontWeight: '700',
+                    fontSize: 'var(--font-size-sm)', cursor: 'pointer',
+                    fontFamily: 'inherit', border: 'none'
+                  }}
+                >
+                  Send Email
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setQuickSendPreview(null)}
+                style={{
+                  padding: '14px 16px', borderRadius: 'var(--border-radius-md)',
+                  border: '1.5px solid var(--color-border)', background: 'var(--color-bg-main)',
+                  color: 'var(--color-text-secondary)', fontWeight: '600',
+                  fontSize: 'var(--font-size-sm)', cursor: 'pointer', fontFamily: 'inherit'
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
