@@ -333,6 +333,43 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             }}>
               {location.businessAddress}
             </div>
+            {/* Open in Google Maps — uses placeId when available for exact match */}
+            {(() => {
+              const placeId = location.placeId || '';
+              const query = encodeURIComponent(
+                location.locationName
+                  ? `${location.locationName} ${location.businessAddress || ''}`.trim()
+                  : (location.businessAddress || '')
+              );
+              const mapsUrl = placeId
+                ? `https://www.google.com/maps/search/?api=1&query=${query}&query_place_id=${placeId}`
+                : `https://www.google.com/maps/search/?api=1&query=${query}`;
+              return (
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    marginTop: '6px',
+                    marginRight: '6px',
+                    padding: '5px 12px',
+                    borderRadius: 'var(--border-radius-full)',
+                    background: 'rgba(66, 133, 244, 0.12)',
+                    border: '1.5px solid rgba(66, 133, 244, 0.5)',
+                    color: '#4285F4',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: '600',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <span style={{ fontSize: '14px' }}>📍</span>
+                  Open in Maps
+                </a>
+              );
+            })()}
             {/* Status indicator — color dot + label */}
             {(() => {
               const pinColor = getPinColor(location);
