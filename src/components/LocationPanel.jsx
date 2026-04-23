@@ -487,9 +487,11 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           <div className="form-group">
             <label>Handy Nummer</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 0, position: 'relative' }}>
-              <select
+              <input
+                type="text"
                 value={phoneCode}
                 onChange={(e) => setPhoneCode(e.target.value)}
+                placeholder="+49"
                 style={{
                   width: '58px',
                   minWidth: '58px',
@@ -502,18 +504,9 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   color: 'var(--color-text-main)',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
                   flexShrink: 0
                 }}
-              >
-                <option value="+49">+49</option>
-                <option value="+43">+43</option>
-                <option value="+44">+44</option>
-                <option value="+1">+1</option>
-                <option value="+972">+972</option>
-              </select>
+              />
               <input
                 type="tel"
                 value={phoneNumber}
