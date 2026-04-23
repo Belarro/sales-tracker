@@ -153,7 +153,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         businessWebsite: location.businessWebsite || '',
         interestLevel: location.interestLevel || 'Follow Up',
         sampleGiven: location.sampleGiven || 'NO',
-        visitNotes: '',
+        visitNotes: location.visitNotes || '',
         language: location.language || '',
         usesMicrogreens: location.usesMicrogreens || false
       });
