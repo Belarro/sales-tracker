@@ -19,11 +19,17 @@ import { createFollowUpEvent } from '../utils/googleCalendar.js';
 function saveToContacts({ contactPerson, contactTitle, phone, email, locationName }) {
   const [firstName, ...lastParts] = (contactPerson || '').trim().split(/\s+/);
   const lastName = lastParts.join(' ');
+  const parts = [contactPerson];
+  if (contactTitle) parts.push(contactTitle);
+  if (locationName) parts.push(locationName);
+  parts.push('(Belarro)');
+  const displayName = parts.join(' • ');
+
   const vcf = [
     'BEGIN:VCARD',
     'VERSION:3.0',
     `N:${lastName || ''};${firstName || ''};;;`,
-    `FN:${contactPerson || ''}`,
+    `FN:${displayName}`,
     contactTitle ? `TITLE:${contactTitle}` : '',
     locationName ? `ORG:${locationName}` : '',
     phone ? `TEL;TYPE=CELL:${phone}` : '',
