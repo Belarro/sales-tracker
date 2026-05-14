@@ -11,6 +11,7 @@ import { calculateNextActionDate, calculateSnappedFollowUpDate, toEUDateString }
 import { getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
 import { createFollowUpEvent } from '../utils/googleCalendar.js';
+import { syncProspectToSupabase } from '../utils/syncBelarro.js';
 
 /**
  * Generate a vCard (.vcf) and trigger Android "Add Contact" dialog.
@@ -254,6 +255,29 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
       if (success) {
         setSaveMessage({ type: 'success', text: 'Visit logged — follow-up message ready below' });
         setSavedSuccessfully(true);
+
+        // Sync to Belarro automation system (non-blocking)
+        if (location.locationName && fullPhone) {
+          syncProspectToSupabase({
+            locationName: location.locationName,
+            contactPerson: formData.contactPerson,
+            directPhone: fullPhone,
+            directEmail: formData.email,
+            language: formData.language || 'DE',
+            visitNotes: formData.visitNotes,
+            sampleGiven: formData.sampleGiven === 'YES',
+            visitDate: new Date().toISOString()
+          }).then(result => {
+            if (result.success) {
+              console.log(`✅ Synced to Belarro: ${result.locationName}`);
+            } else {
+              console.warn(`⚠️ Belarro sync failed: ${result.error}`);
+            }
+          }).catch(err => {
+            console.error('Unexpected sync error:', err);
+          });
+        }
+
         if (location.isProspect && location._prospectRowIndex !== undefined) {
           await deleteProspect(location._prospectRowIndex).catch(() => {});
         }
