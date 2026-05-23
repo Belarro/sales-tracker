@@ -31,9 +31,10 @@ export async function syncProspectToSupabase(prospectData) {
       };
     }
 
-    // Call edge function to handle sync (uses service role key internally)
+    // Call edge function to sync prospect to restaurant in Belarro
+    // This creates a restaurant record automatically when a prospect is marked as client
     const response = await fetch(
-      'https://gcgscmtjesyiziebutzw.supabase.co/functions/v1/sync-prospect',
+      'https://qciccimnfvloklqlhvvm.supabase.co/functions/v1/sync-prospect-to-restaurant',
       {
         method: 'POST',
         headers: {
