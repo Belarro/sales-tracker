@@ -899,8 +899,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   const hasEmail = !!contactEmail;
 
                   const openEmail = () => {
-                    const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
-                    const body = encodeURIComponent(followUpMsg.body);
+                    const subject = encodeURIComponent(followUpMsg.emailSubject || `Belarro — ${location.locationName || ''}`);
+                    const body = encodeURIComponent(followUpMsg.emailBody || followUpMsg.body);
                     window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
                   };
 
