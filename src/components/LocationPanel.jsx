@@ -12,6 +12,7 @@ import { getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
 import { createFollowUpEvent } from '../utils/googleCalendar.js';
 import { syncProspectToSupabase } from '../utils/syncBelarro.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 /**
  * Generate a vCard (.vcf) and trigger Android "Add Contact" dialog.
@@ -898,10 +899,16 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                   const contactEmail = formData.email || location.directEmail || location.businessEmail || '';
                   const hasEmail = !!contactEmail;
 
-                  const openEmail = () => {
-                    const subject = encodeURIComponent(followUpMsg.emailSubject || `Belarro — ${location.locationName || ''}`);
-                    const body = encodeURIComponent(followUpMsg.emailBody || followUpMsg.body);
-                    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+                  const openEmail = async () => {
+                    const subject = followUpMsg.emailSubject || `Belarro — ${location.locationName || ''}`;
+                    const body = followUpMsg.emailBody || followUpMsg.body;
+                    try {
+                      await sendEmail({ to: contactEmail, subject, body, repName: user?.name });
+                      setSaveMessage({ type: 'success', text: 'Email sent!' });
+                    } catch {
+                      // Fallback to mailto if edge function fails
+                      window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                    }
                   };
 
                   const openWhatsApp = (e) => {
@@ -1339,10 +1346,15 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
               {quickSendPreview.contactEmail && (
                 <button
                   type="button"
-                  onClick={() => {
-                    const subject = encodeURIComponent(`Belarro — ${location.locationName || ''}`);
-                    const body = encodeURIComponent(quickSendPreview.msg.body);
-                    window.location.href = `mailto:${quickSendPreview.contactEmail}?subject=${subject}&body=${body}`;
+                  onClick={async () => {
+                    const subject = quickSendPreview.msg.emailSubject || `Belarro — ${location.locationName || ''}`;
+                    const body = quickSendPreview.msg.emailBody || quickSendPreview.msg.body;
+                    try {
+                      await sendEmail({ to: quickSendPreview.contactEmail, subject, body, repName: user?.name });
+                      setSaveMessage({ type: 'success', text: 'Email sent!' });
+                    } catch {
+                      window.location.href = `mailto:${quickSendPreview.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                    }
                     setQuickSendPreview(null);
                   }}
                   style={{

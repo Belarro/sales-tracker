@@ -8,6 +8,7 @@ import { generateDailySummary } from '../utils/summaryUtils.js';
 import { generateGoogleCalendarUrl } from '../utils/calendarUtils.js';
 import { createFollowUpEvent } from '../utils/googleCalendar.js';
 import { updatePipelineData } from '../utils/googleSheets.js';
+import { sendEmail } from '../utils/sendEmail.js';
 import { calculateNextActionDate, calculateSnappedFollowUpDate, toISODateString, toEUDateString } from '../utils/dateUtils.js';
 
 // ── Inline SVG icons ──
@@ -195,11 +196,17 @@ const TaskCard = ({ location, accentColor, onSelect, user, onRefresh }) => {
     });
   };
 
-  const handleEmail = (e) => {
+  const handleEmail = async (e) => {
     e.stopPropagation();
     const email = location.businessEmail || location.directEmail || '';
     if (!email || !followUp?.body) return;
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent('Belarro')}&body=${encodeURIComponent(followUp.body)}`;
+    const subject = followUp.emailSubject || 'Belarro';
+    const body = followUp.emailBody || followUp.body;
+    try {
+      await sendEmail({ to: email, subject, body, repName: user?.name });
+    } catch {
+      window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
   };
 
   const handleCalendar = (e) => {
