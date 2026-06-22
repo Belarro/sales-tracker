@@ -22,6 +22,7 @@ import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { useLocations } from './hooks/useLocations';
 import { useBackButton } from './hooks/useBackButton';
 import { useSettings } from './hooks/useSettings';
+import { useNearbyDetection } from './hooks/useNearbyDetection';
 
 function App() {
   // Use Custom Hooks
@@ -48,6 +49,18 @@ function App() {
   const [settings, updateSetting] = useSettings();
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [nearbyBanner, setNearbyBanner] = useState(null); // { locationName, businessAddress, ... }
+
+  const handleNearbyPlace = (placeData) => {
+    setNearbyBanner(placeData);
+    // Auto-dismiss after 12 seconds
+    setTimeout(() => setNearbyBanner(null), 12000);
+  };
+
+  const { detectNow } = useNearbyDetection({
+    onNearbyPlace: handleNearbyPlace,
+    enabled: authorized && currentView === 'map'
+  });
 
   // Register service worker for PWA + notifications
   useEffect(() => {
@@ -251,6 +264,49 @@ function App() {
           />
         ) : null}
       </div>
+
+      {/* GPS nearby banner */}
+      {nearbyBanner && !selectedLocation && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '72px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1200,
+            background: '#10B981',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            maxWidth: '340px',
+            width: 'calc(100% - 32px)',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            handleLocationSelect(nearbyBanner);
+            setNearbyBanner(null);
+          }}
+        >
+          <span style={{ fontSize: '20px' }}>📍</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {nearbyBanner.locationName || 'Nearby restaurant'}
+            </div>
+            <div style={{ fontSize: '12px', opacity: 0.85 }}>Tap to log a visit</div>
+          </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); setNearbyBanner(null); }}
+            style={{ background: 'none', border: 'none', color: '#fff', fontSize: '18px', cursor: 'pointer', padding: 0, lineHeight: 1 }}
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {selectedLocation && (
         <LocationPanel

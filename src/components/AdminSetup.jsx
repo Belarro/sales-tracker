@@ -69,7 +69,7 @@ const AdminSetup = ({ onComplete, user }) => {
 
   const handleAddUser = async (e) => {
     e.preventDefault();
-    if (!newUserEmail.includes('@')) return setMessage({ type: 'error', text: 'Invalid email' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUserEmail)) return setMessage({ type: 'error', text: 'Invalid email address' });
     if (authorizedUsers.includes(newUserEmail)) return setMessage({ type: 'error', text: 'User exists' });
 
     const success = await addAuthorizedUser(newUserEmail);
@@ -115,7 +115,7 @@ const AdminSetup = ({ onComplete, user }) => {
 
   const handleAddAdmin = async (e) => {
     e.preventDefault();
-    if (!newAdminEmail.includes('@')) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAdminEmail)) return setMessage({ type: 'error', text: 'Invalid email address' });
     const success = await addAdminEmail(newAdminEmail);
     if (success) {
       setNewAdminEmail('');

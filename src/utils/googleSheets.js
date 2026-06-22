@@ -1,106 +1,113 @@
 // ============================================
-// GOOGLE SHEETS API UTILITIES
+// DATA LAYER — Supabase
 // ============================================
-// Uses direct fetch() with Bearer token instead of gapi.client
+// Replaces Google Sheets API. All reads/writes go through Supabase.
 
 import { CONFIG } from '../config.js';
 import { getCurrentTimestamp } from './dateUtils.js';
+import { supabase } from './supabaseClient.js';
+import { mirrorToSheets } from './syncSheets.js';
 
-const BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
-const SHEET_ID = CONFIG.GOOGLE_SHEET_ID;
+// ============================================
+// HELPERS
+// ============================================
 
-// Column order matching the Data sheet headers exactly:
-// Timestamp, Sales Rep, Location Name, Business Address, DirectLink,
-// Business Phone, Business Email, Business Website, Contact Person,
-// Contact Title, Direct Phone, Direct Email, Business Types,
-// Interest Level, Visit Notes, Follow-up Date, Sample Given, "",
-// pipelineStage, followUpCount, lastFollowUpDate, nextActionDate,
-// nextActionType, automationStatus, materialsSent, notesInternal
+const isPhoneNumber = (val) => typeof val === 'string' && /^\+\d{1,3}[\d\s\-()+]+$/.test(val);
 
-const authHeaders = () => {
-  const token = window.googleAccessToken;
-  if (!token) throw new Error('Not signed in. Please sign out and sign back in.');
-  return {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  };
+const sanitize = (val) => {
+  if (typeof val !== 'string') return val;
+  const trimmed = val.substring(0, 2000);
+  if (isPhoneNumber(trimmed)) return trimmed;
+  if (/^[=+\-@\t]/.test(trimmed)) return "'" + trimmed;
+  return trimmed;
 };
 
-const apiFetch = async (url, options = {}) => {
-  const headers = authHeaders();
-  const res = await fetch(url, { ...options, headers });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const msg = body?.error?.message || `HTTP ${res.status}`;
-    console.error('Sheets API error:', res.status, msg);
-    const err = new Error(msg);
-    err.status = res.status;
-    err.result = body;
-    throw err;
+const sanitizeObject = (obj) => {
+  const out = {};
+  for (const key of Object.keys(obj)) {
+    out[key] = sanitize(obj[key]);
   }
-  return res.json();
+  return out;
 };
 
-const getValues = async (range) => {
-  const url = `${BASE}/${SHEET_ID}/values/${encodeURIComponent(range)}`;
-  const data = await apiFetch(url);
-  return data.values || [];
-};
+// Map JS camelCase keys → Supabase snake_case columns
+const toRow = (d) => ({
+  location_name:      d.locationName      || '',
+  business_address:   d.businessAddress   || '',
+  contact_person:     d.contactPerson     || '',
+  contact_title:      d.contactTitle      || '',
+  direct_phone:       d.directPhone       || '',
+  direct_email:       d.directEmail       || '',
+  business_types:     d.businessTypes     || '',
+  interest_level:     d.interestLevel     || '',
+  visit_notes:        d.visitNotes        || '',
+  timestamp:          d.timestamp         || '',
+  follow_up_date:     d.followUpDate      || '',
+  sample_given:       d.sampleGiven       || '',
+  sales_rep:          d.salesRep          || '',
+  direct_link:        d.directLink        || '',
+  business_phone:     d.businessPhone     || '',
+  business_email:     d.businessEmail     || '',
+  business_website:   d.businessWebsite   || '',
+  archived:           d.archived          || '',
+  pipeline_stage:     d.pipelineStage     || CONFIG.PIPELINE_STAGES.NEW_VISIT,
+  follow_up_count:    String(d.followUpCount || '0'),
+  last_follow_up_date: d.lastFollowUpDate || '',
+  next_action_date:   d.nextActionDate    || '',
+  next_action_type:   d.nextActionType    || '',
+  automation_status:  d.automationStatus  || '',
+  materials_sent:     d.materialsSent     || '',
+  notes_internal:     d.notesInternal     || '',
+  language:           d.language          || '',
+  uses_microgreens:   d.usesMicrogreens   === true || d.usesMicrogreens === 'YES'
+});
 
-const updateValues = async (range, values, inputOption = 'USER_ENTERED') => {
-  const url = `${BASE}/${SHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=${inputOption}`;
-  return apiFetch(url, {
-    method: 'PUT',
-    body: JSON.stringify({ values })
-  });
-};
-
-const appendValues = async (range, values, inputOption = 'USER_ENTERED') => {
-  const url = `${BASE}/${SHEET_ID}/values/${encodeURIComponent(range)}:append?valueInputOption=${inputOption}`;
-  return apiFetch(url, {
-    method: 'POST',
-    body: JSON.stringify({ values })
-  });
-};
-
-const clearValues = async (range) => {
-  const url = `${BASE}/${SHEET_ID}/values/${encodeURIComponent(range)}:clear`;
-  return apiFetch(url, { method: 'POST', body: '{}' });
-};
-
-const getSpreadsheet = async (fields = '') => {
-  let url = `${BASE}/${SHEET_ID}`;
-  if (fields) url += `?fields=${encodeURIComponent(fields)}`;
-  return apiFetch(url);
-};
-
-const batchUpdate = async (requests) => {
-  const url = `${BASE}/${SHEET_ID}:batchUpdate`;
-  return apiFetch(url, {
-    method: 'POST',
-    body: JSON.stringify({ requests })
-  });
-};
-
-const getSheetId = async (sheetTitle) => {
-  const data = await getSpreadsheet('sheets.properties');
-  const sheet = data.sheets?.find(s => s.properties.title === sheetTitle);
-  return sheet ? sheet.properties.sheetId : null;
-};
+// Map Supabase snake_case row → app camelCase object
+const fromRow = (r) => ({
+  locationName:      r.location_name      || '',
+  businessAddress:   r.business_address   || '',
+  contactPerson:     r.contact_person     || '',
+  contactTitle:      r.contact_title      || '',
+  directPhone:       r.direct_phone       || '',
+  directEmail:       r.direct_email       || '',
+  businessTypes:     r.business_types     || '',
+  interestLevel:     r.interest_level     || '',
+  visitNotes:        r.visit_notes        || '',
+  timestamp:         r.timestamp          || '',
+  followUpDate:      r.follow_up_date     || '',
+  sampleGiven:       r.sample_given       || '',
+  salesRep:          r.sales_rep          || '',
+  directLink:        r.direct_link        || '',
+  businessPhone:     r.business_phone     || '',
+  businessEmail:     r.business_email     || '',
+  businessWebsite:   r.business_website   || '',
+  archived:          r.archived           || '',
+  pipelineStage:     r.pipeline_stage     || '',
+  followUpCount:     r.follow_up_count    || '0',
+  lastFollowUpDate:  r.last_follow_up_date || '',
+  nextActionDate:    r.next_action_date   || '',
+  nextActionType:    r.next_action_type   || '',
+  automationStatus:  r.automation_status  || '',
+  materialsSent:     r.materials_sent     || '',
+  notesInternal:     r.notes_internal     || '',
+  language:          r.language           || '',
+  usesMicrogreens:   r.uses_microgreens   === true
+});
 
 // ============================================
-// Initialize
+// INIT (no-op — kept for compatibility)
 // ============================================
 
-export const initSheetsAPI = () => {
-  return new Promise((resolve) => {
-    if (window.googleAccessToken) {
-      console.log('Sheets API ready (using direct fetch with Bearer token)');
-    } else {
-      console.log('Sheets API ready (no token yet)');
-    }
-    resolve();
-  });
+export const initSheetsAPI = async () => {
+  console.log('Data layer ready (Supabase)');
+};
+
+export const ensureDataHeaders = async () => {
+  // No-op — Supabase has fixed schema
+};
+
+export const ensureToVisitHeaders = async () => {
+  // No-op — Supabase has fixed schema
 };
 
 // ============================================
@@ -108,542 +115,28 @@ export const initSheetsAPI = () => {
 // ============================================
 
 export const getAuthorizedUsers = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.AUTHORIZED_USERS}!B2:B`);
-    const emails = rows.map(row => row[0]).filter(Boolean);
-    console.log('📋 Authorized users from sheet:', emails);
-    return emails;
-  } catch (error) {
-    console.error('Error fetching authorized users:', error);
-    return [];
-  }
+  const { data, error } = await supabase
+    .from('authorized_users')
+    .select('email');
+  if (error) { console.error('getAuthorizedUsers:', error.message); return []; }
+  return data.map(r => r.email);
 };
 
 export const addAuthorizedUser = async (email) => {
-  try {
-    await appendValues(`${CONFIG.SHEETS.AUTHORIZED_USERS}!B:B`, [[email]]);
-    return true;
-  } catch (error) {
-    console.error('Error adding authorized user:', error);
-    return false;
-  }
+  const { error } = await supabase
+    .from('authorized_users')
+    .insert({ email });
+  if (error) { console.error('addAuthorizedUser:', error.message); return false; }
+  return true;
 };
 
 export const removeAuthorizedUser = async (email) => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.AUTHORIZED_USERS}!B2:B`);
-    const rowIndex = rows.findIndex(row => row[0] === email);
-
-    if (rowIndex === -1) return false;
-
-    const sheetId = await getSheetId(CONFIG.SHEETS.AUTHORIZED_USERS);
-    if (sheetId === null) throw new Error('Authorized Users sheet not found');
-
-    await batchUpdate([{
-      deleteDimension: {
-        range: {
-          sheetId,
-          dimension: 'ROWS',
-          startIndex: rowIndex + 1,
-          endIndex: rowIndex + 2
-        }
-      }
-    }]);
-
-    return true;
-  } catch (error) {
-    console.error('Error removing authorized user:', error);
-    return false;
-  }
-};
-
-// ============================================
-// LOCATIONS — column indices match actual sheet headers
-// ============================================
-// Col 0  (A):  Location Name
-// Col 1  (B):  Business Address
-// Col 2  (C):  Contact Person
-// Col 3  (D):  Contact Title
-// Col 4  (E):  Direct Phone
-// Col 5  (F):  Direct Email
-// Col 6  (G):  Business Types
-// Col 7  (H):  Interest Level
-// Col 8  (I):  Visit Notes
-// Col 9  (J):  Timestamp (visit date)
-// Col 10 (K):  Follow-up Date
-// Col 11 (L):  Sample Given
-// Col 12 (M):  Sales Rep
-// Col 13 (N):  DirectLink
-// Col 14 (O):  Business Phone
-// Col 15 (P):  Business Email
-// Col 16 (Q):  Business Website
-// Col 17 (R):  Archived
-// Col 18 (S):  pipelineStage
-// Col 19 (T):  followUpCount
-// Col 20 (U):  lastFollowUpDate
-// Col 21 (V):  nextActionDate
-// Col 22 (W):  nextActionType
-// Col 23 (X):  automationStatus
-// Col 24 (Y):  materialsSent
-// Col 25 (Z):  notesInternal
-// Col 26 (AA): language
-// Col 27 (AB): usesMicrogreens
-
-function parseRow(row) {
-  return {
-    locationName: row[0] || '',
-    businessAddress: row[1] || '',
-    contactPerson: row[2] || '',
-    contactTitle: row[3] || '',
-    directPhone: row[4] || '',
-    directEmail: row[5] || '',
-    businessTypes: row[6] || '',
-    interestLevel: row[7] || '',
-    visitNotes: row[8] || '',
-    timestamp: row[9] || '',
-    followUpDate: row[10] || '',
-    sampleGiven: row[11] || '',
-    salesRep: row[12] || '',
-    directLink: row[13] || '',
-    businessPhone: row[14] || '',
-    businessEmail: row[15] || '',
-    businessWebsite: row[16] || '',
-    archived: row[17] || '',
-    pipelineStage: row[18] || '',
-    followUpCount: row[19] || '0',
-    lastFollowUpDate: row[20] || '',
-    nextActionDate: row[21] || '',
-    nextActionType: row[22] || '',
-    automationStatus: row[23] || '',
-    materialsSent: row[24] || '',
-    notesInternal: row[25] || '',
-    language: row[26] || '',
-    usesMicrogreens: row[27] === 'YES'
-  };
-}
-
-function buildValues(d) {
-  return [
-    d.locationName || '',
-    d.businessAddress || '',
-    d.contactPerson || '',
-    d.contactTitle || '',
-    d.directPhone || '',
-    d.directEmail || '',
-    d.businessTypes || '',
-    d.interestLevel || '',
-    d.visitNotes || '',
-    d.timestamp || '',
-    d.followUpDate || '',
-    d.sampleGiven || '',
-    d.salesRep || '',
-    d.directLink || '',
-    d.businessPhone || '',
-    d.businessEmail || '',
-    d.businessWebsite || '',
-    d.archived || '',
-    d.pipelineStage || CONFIG.PIPELINE_STAGES.NEW_VISIT,
-    String(d.followUpCount || '0'),
-    d.lastFollowUpDate || '',
-    d.nextActionDate || '',
-    d.nextActionType || '',
-    d.automationStatus || '',
-    d.materialsSent || '',
-    d.notesInternal || '',
-    d.language || '',
-    d.usesMicrogreens ? 'YES' : 'NO'
-  ];
-}
-
-const DATA_HEADERS = [
-  'Location Name','Business Address','Contact Person','Contact Title',
-  'Direct Phone','Direct Email','Business Types','Interest Level',
-  'Visit Notes','Timestamp','Follow-up Date','Sample Given',
-  'Sales Rep','Direct Link','Business Phone','Business Email',
-  'Business Website','Archived','Pipeline Stage','Follow-up Count',
-  'Last Follow-up Date','Next Action Date','Next Action Type',
-  'Automation Status','Materials Sent','Notes Internal',
-  'Language','Uses Microgreens'
-];
-
-export const ensureDataHeaders = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.DATA}!A1:AB1`);
-    const firstCell = rows?.[0]?.[0] || '';
-    let sheetId = await getSheetId(CONFIG.SHEETS.DATA);
-
-    if (!firstCell) {
-      await updateValues(`${CONFIG.SHEETS.DATA}!A1:AB1`, [DATA_HEADERS]);
-    } else if (firstCell !== 'Location Name') {
-      // Has data in row 1 — insert header row first
-      if (sheetId !== null) {
-        await batchUpdate([{ insertDimension: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, inheritFromBefore: false } }]);
-      }
-      await updateValues(`${CONFIG.SHEETS.DATA}!A1:AB1`, [DATA_HEADERS]);
-    } else {
-      // Headers exist — force-write all titles to fix any wrong names
-      await updateValues(`${CONFIG.SHEETS.DATA}!A1:AB1`, [DATA_HEADERS]);
-    }
-
-    // Apply light-green conditional formatting to column AB (index 27) when YES
-    if (sheetId !== null) {
-      await batchUpdate([{
-        addConditionalFormatRule: {
-          rule: {
-            ranges: [{ sheetId, startRowIndex: 1, startColumnIndex: 27, endColumnIndex: 28 }],
-            booleanRule: {
-              condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: 'YES' }] },
-              format: { backgroundColor: { red: 0.86, green: 0.99, blue: 0.86 } }
-            }
-          },
-          index: 0
-        }
-      }]).catch(() => {});
-    }
-
-    // Ensure To Visit tab has header row
-    await ensureToVisitHeaders();
-  } catch (err) {
-    console.error('ensureDataHeaders error:', err);
-  }
-};
-
-export const ensureToVisitHeaders = async () => {
-  const HEADERS = ['Location Name','Business Address','Notes','Date Added','Lat','Lng','Uses Microgreens'];
-  let rows = [];
-  try {
-    rows = await getValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`);
-  } catch (err) {
-    if (err.status === 400) {
-      // Sheet doesn't exist yet — create it and write headers
-      await createSheet(CONFIG.SHEETS.TO_VISIT);
-      await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [HEADERS]);
-      return;
-    }
-    throw err;
-  }
-  const firstCell = rows?.[0]?.[0] || '';
-  if (firstCell === 'Location Name') return; // already correct
-  if (!firstCell) {
-    await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [HEADERS]);
-  } else {
-    // Data in row 1 — insert blank row then write headers
-    const sheetId = await getSheetId(CONFIG.SHEETS.TO_VISIT);
-    if (sheetId !== null) {
-      await batchUpdate([{ insertDimension: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, inheritFromBefore: false } }]);
-    }
-    await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [HEADERS]);
-  }
-};
-
-export const getAllLocations = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.DATA}!A2:AB`);
-    console.log('Loaded', rows.length, 'location rows from sheet');
-    return rows.map(parseRow);
-  } catch (error) {
-    console.error('Error fetching locations:', error);
-    return [];
-  }
-};
-
-export const checkLocationExists = async (locationName, businessAddress) => {
-  const locations = await getAllLocations();
-  return locations.find(
-    loc => loc.locationName === locationName && loc.businessAddress === businessAddress
-  ) || null;
-};
-
-// ============================================
-// VISIT HISTORY
-// ============================================
-
-export const addVisitToHistory = async (visitData) => {
-  try {
-    const values = [buildValues(visitData)];
-    const result = await appendValues(`${CONFIG.SHEETS.VISIT_HISTORY}!A:Z`, values);
-
-    const updatedRange = result.updates?.updatedRange;
-    if (updatedRange) {
-      const rowNum = parseInt(updatedRange.match(/\d+$/)[0]);
-      await setRowFontSizeVisitHistory(rowNum);
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Error adding visit to history:', error);
-    throw error;
-  }
-};
-
-export const getLocationHistory = async (locationName, businessAddress) => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.VISIT_HISTORY}!A2:Z`);
-    return rows
-      .filter(row => row[2] === locationName && row[3] === businessAddress)
-      .map(parseRow);
-  } catch (error) {
-    console.error('Error fetching location history:', error);
-    return [];
-  }
-};
-
-// ============================================
-// SAVE / UPDATE LOCATION
-// ============================================
-
-export const saveLocationData = async (locationData, userName, userEmail) => {
-  try {
-    if (!window.googleAccessToken) {
-      throw new Error('Not signed in. Please sign out and sign back in.');
-    }
-
-    const timestamp = getCurrentTimestamp();
-
-    // Sanitize to prevent Formula Injection
-    const isPhoneNumber = (val) => typeof val === 'string' && /^\+\d/.test(val);
-    const sanitize = (val) => {
-      if (typeof val !== 'string') return val;
-      if (isPhoneNumber(val)) return val;
-      if (val.startsWith('=') || val.startsWith('+') || val.startsWith('-') || val.startsWith('@')) {
-        return "'" + val;
-      }
-      return val;
-    };
-
-    const fullData = {
-      timestamp: timestamp,
-      salesRep: userName,
-      locationName: locationData.locationName || '',
-      businessAddress: locationData.businessAddress || '',
-      directLink: locationData.directLink || '',
-      businessPhone: locationData.businessPhone || '',
-      businessEmail: locationData.businessEmail || '',
-      businessWebsite: locationData.businessWebsite || '',
-      contactPerson: locationData.contactPerson || '',
-      contactTitle: locationData.contactTitle || '',
-      directPhone: locationData.directPhone || '',
-      directEmail: locationData.directEmail || '',
-      businessTypes: locationData.businessTypes || '',
-      interestLevel: locationData.interestLevel || '',
-      visitNotes: locationData.visitNotes || '',
-      followUpDate: locationData.followUpDate || locationData.nextActionDate || '',
-      sampleGiven: locationData.sampleGiven || '',
-      archived: locationData.archived || '',
-      pipelineStage: locationData.pipelineStage || CONFIG.PIPELINE_STAGES.NEW_VISIT,
-      followUpCount: String(locationData.followUpCount || '0'),
-      lastFollowUpDate: locationData.lastFollowUpDate || '',
-      nextActionDate: locationData.nextActionDate || '',
-      nextActionType: locationData.nextActionType || '',
-      automationStatus: locationData.automationStatus || '',
-      materialsSent: locationData.materialsSent || '',
-      notesInternal: locationData.notesInternal || '',
-      language: locationData.language || '',
-      usesMicrogreens: locationData.usesMicrogreens || false
-    };
-
-    // Sanitize all string values
-    Object.keys(fullData).forEach(key => {
-      fullData[key] = sanitize(fullData[key]);
-    });
-
-    // Always add to visit history
-    await addVisitToHistory(fullData);
-
-    // Single read: check if location exists and find row index
-    const locations = await getAllLocations();
-    const rowIndex = locations.findIndex(
-      loc => loc.locationName === locationData.locationName &&
-        loc.businessAddress === locationData.businessAddress
-    );
-
-    const values = [buildValues(fullData)];
-
-    if (rowIndex !== -1) {
-      await updateValues(`${CONFIG.SHEETS.DATA}!A${rowIndex + 2}:AB${rowIndex + 2}`, values);
-      await setRowFontSize(rowIndex + 2);
-    } else {
-      const result = await appendValues(`${CONFIG.SHEETS.DATA}!A:AB`, values);
-      const updatedRange = result.updates?.updatedRange;
-      if (updatedRange) {
-        const rowNum = parseInt(updatedRange.match(/\d+$/)[0]);
-        await setRowFontSize(rowNum);
-      }
-    }
-
-    return true;
-  } catch (error) {
-    const apiError = error?.result?.error;
-    if (apiError) {
-      console.error('Google Sheets API error:', apiError.code, apiError.message);
-    } else {
-      console.error('Error saving location data:', error?.message || error);
-    }
-    throw error;
-  }
-};
-
-// ============================================
-// ARCHIVE / UNARCHIVE / DELETE
-// ============================================
-
-export const archiveLocation = async (locationName, businessAddress) => {
-  try {
-    const locations = await getAllLocations();
-    const rowIndex = locations.findIndex(
-      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
-    );
-    if (rowIndex === -1) return false;
-
-    await updateValues(`${CONFIG.SHEETS.DATA}!R${rowIndex + 2}`, [['YES']]);
-    return true;
-  } catch (error) {
-    console.error('Error archiving location:', error);
-    return false;
-  }
-};
-
-export const unarchiveLocation = async (locationName, businessAddress) => {
-  try {
-    const locations = await getAllLocations();
-    const rowIndex = locations.findIndex(
-      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
-    );
-    if (rowIndex === -1) return false;
-
-    await updateValues(`${CONFIG.SHEETS.DATA}!R${rowIndex + 2}`, [['']]);
-    return true;
-  } catch (error) {
-    console.error('Error unarchiving location:', error);
-    return false;
-  }
-};
-
-export const deleteLocation = async (locationName, businessAddress) => {
-  try {
-    const [locations, historyRows, dataSheetId, historySheetId] = await Promise.all([
-      getAllLocations(),
-      getValues(`${CONFIG.SHEETS.VISIT_HISTORY}!A2:A`).catch(() => []),
-      getSheetId(CONFIG.SHEETS.DATA),
-      getSheetId(CONFIG.SHEETS.VISIT_HISTORY)
-    ]);
-
-    const rowIndex = locations.findIndex(
-      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
-    );
-    if (rowIndex === -1 || dataSheetId === null) return false;
-
-    const requests = [{
-      deleteDimension: {
-        range: { sheetId: dataSheetId, dimension: 'ROWS', startIndex: rowIndex + 1, endIndex: rowIndex + 2 }
-      }
-    }];
-
-    // Delete all matching history rows (read full range, match by col A=locationName)
-    if (historySheetId !== null) {
-      const allHistory = await getValues(`${CONFIG.SHEETS.VISIT_HISTORY}!A2:B`).catch(() => []);
-      const toDelete = allHistory
-        .map((row, i) => ({ match: row[0] === locationName && row[1] === businessAddress, i }))
-        .filter(x => x.match)
-        .map(x => x.i + 1) // +1 for header row offset
-        .reverse(); // delete from bottom to avoid index shift
-
-      for (const idx of toDelete) {
-        requests.push({
-          deleteDimension: {
-            range: { sheetId: historySheetId, dimension: 'ROWS', startIndex: idx, endIndex: idx + 1 }
-          }
-        });
-      }
-    }
-
-    await batchUpdate(requests);
-    return true;
-  } catch (error) {
-    console.error('Error deleting location:', error);
-    return false;
-  }
-};
-
-// ============================================
-// PIPELINE
-// ============================================
-
-export const updatePipelineData = async (locationName, businessAddress, pipelineData) => {
-  try {
-    const locations = await getAllLocations();
-    const rowIndex = locations.findIndex(
-      loc => loc.locationName === locationName && loc.businessAddress === businessAddress
-    );
-    if (rowIndex === -1) return false;
-
-    const existing = locations[rowIndex];
-    const rowNum = rowIndex + 2;
-
-    const values = [[
-      pipelineData.pipelineStage    ?? existing.pipelineStage    ?? '',
-      pipelineData.followUpCount    ?? existing.followUpCount     ?? '0',
-      pipelineData.lastFollowUpDate ?? existing.lastFollowUpDate  ?? '',
-      pipelineData.nextActionDate   ?? existing.nextActionDate    ?? '',
-      pipelineData.nextActionType   ?? existing.nextActionType    ?? '',
-      pipelineData.automationStatus ?? existing.automationStatus  ?? '',
-      pipelineData.materialsSent    ?? existing.materialsSent     ?? '',
-      pipelineData.notesInternal    ?? existing.notesInternal     ?? ''
-    ]];
-
-    await updateValues(`${CONFIG.SHEETS.DATA}!S${rowNum}:Z${rowNum}`, values);
-    console.log(`✅ Pipeline data updated for row ${rowNum}`);
-    return true;
-  } catch (error) {
-    console.error('Error updating pipeline data:', error);
-    return false;
-  }
-};
-
-// ============================================
-// NOTE TEMPLATES
-// ============================================
-
-export const getNoteTemplates = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.NOTE_TEMPLATES}!A2:A`);
-    const templates = rows.map(row => row[0]).filter(Boolean);
-    return templates.length > 0 ? templates : CONFIG.DEFAULT_NOTE_TEMPLATES;
-  } catch (error) {
-    return CONFIG.DEFAULT_NOTE_TEMPLATES;
-  }
-};
-
-export const addNoteTemplate = async (template) => {
-  try {
-    await appendValues(`${CONFIG.SHEETS.NOTE_TEMPLATES}!A:A`, [[template]]);
-    return true;
-  } catch (error) {
-    console.error('Error adding note template:', error);
-    return false;
-  }
-};
-
-export const removeNoteTemplate = async (template) => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.NOTE_TEMPLATES}!A2:A`);
-    const templates = rows.map(row => row[0]).filter(Boolean);
-    const updatedTemplates = templates.filter(t => t !== template);
-
-    if (templates.length === updatedTemplates.length) return false;
-
-    await clearValues(`${CONFIG.SHEETS.NOTE_TEMPLATES}!A2:A`);
-
-    if (updatedTemplates.length > 0) {
-      const values = updatedTemplates.map(t => [t]);
-      await updateValues(`${CONFIG.SHEETS.NOTE_TEMPLATES}!A2`, values, 'RAW');
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Error removing note template:', error);
-    return false;
-  }
+  const { error } = await supabase
+    .from('authorized_users')
+    .delete()
+    .eq('email', email);
+  if (error) { console.error('removeAuthorizedUser:', error.message); return false; }
+  return true;
 };
 
 // ============================================
@@ -651,227 +144,292 @@ export const removeNoteTemplate = async (template) => {
 // ============================================
 
 export const getAdminEmails = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.ADMIN_EMAILS}!A2:A`);
-    const emails = rows.map(row => row[0]).filter(Boolean);
-    const envAdmins = CONFIG.ADMIN_EMAILS || [];
-    return [...new Set([...envAdmins, ...emails])];
-  } catch (error) {
-    if (error.status === 400) {
-      console.log(`Sheet '${CONFIG.SHEETS.ADMIN_EMAILS}' missing. Creating it...`);
-      await createSheet(CONFIG.SHEETS.ADMIN_EMAILS);
-    } else {
-      console.warn('Could not fetch admin emails from sheet (using .env fallback):', error.message);
-    }
+  const { data, error } = await supabase
+    .from('admin_emails')
+    .select('email');
+  if (error) {
+    console.warn('getAdminEmails:', error.message);
     return CONFIG.ADMIN_EMAILS || [];
   }
+  const sheetAdmins = data.map(r => r.email);
+  return [...new Set([...(CONFIG.ADMIN_EMAILS || []), ...sheetAdmins])];
 };
 
 export const getSheetAdmins = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.ADMIN_EMAILS}!A2:A`);
-    return rows.map(row => row[0]).filter(Boolean);
-  } catch (error) {
-    return [];
-  }
+  const { data, error } = await supabase
+    .from('admin_emails')
+    .select('email');
+  if (error) { return []; }
+  return data.map(r => r.email);
 };
 
-export const getEnvAdmins = () => {
-  return CONFIG.ADMIN_EMAILS || [];
-};
-
-export const createSheet = async (title) => {
-  try {
-    await batchUpdate([{
-      addSheet: { properties: { title } }
-    }]);
-    return true;
-  } catch (error) {
-    console.error(`Error creating sheet '${title}':`, error);
-    return false;
-  }
-};
+export const getEnvAdmins = () => CONFIG.ADMIN_EMAILS || [];
 
 export const addAdminEmail = async (email) => {
-  try {
-    await appendValues(`${CONFIG.SHEETS.ADMIN_EMAILS}!A:A`, [[email]]);
-    console.log('✅ Admin email added to sheet:', email);
-    return true;
-  } catch (error) {
-    console.error('Error adding admin email:', error);
-    return false;
-  }
+  const { error } = await supabase
+    .from('admin_emails')
+    .insert({ email });
+  if (error) { console.error('addAdminEmail:', error.message); return false; }
+  return true;
 };
 
 export const removeAdminEmail = async (email) => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.ADMIN_EMAILS}!A2:A`);
-    const rowIndex = rows.findIndex(row => row[0] === email);
-    if (rowIndex === -1) return false;
-
-    const sheetId = await getSheetId(CONFIG.SHEETS.ADMIN_EMAILS);
-    if (sheetId === null) throw new Error('Admin Emails sheet not found');
-
-    await batchUpdate([{
-      deleteDimension: {
-        range: {
-          sheetId,
-          dimension: 'ROWS',
-          startIndex: rowIndex + 1,
-          endIndex: rowIndex + 2
-        }
-      }
-    }]);
-
-    return true;
-  } catch (error) {
-    console.error('Error removing admin email:', error);
-    return false;
-  }
+  const { error } = await supabase
+    .from('admin_emails')
+    .delete()
+    .eq('email', email);
+  if (error) { console.error('removeAdminEmail:', error.message); return false; }
+  return true;
 };
 
 // ============================================
-// TO VISIT (PROSPECTS)
-// Columns: A=LocationName, B=BusinessAddress, C=Notes, D=DateAdded, E=Lat, F=Lng, G=UsesMicrogreens
+// LOCATIONS
+// ============================================
+
+export const getAllLocations = async () => {
+  const { data, error } = await supabase
+    .from('locations')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) { console.error('getAllLocations:', error.message); return []; }
+  return data.map(fromRow);
+};
+
+export const checkLocationExists = async (locationName, businessAddress) => {
+  const { data, error } = await supabase
+    .from('locations')
+    .select('*')
+    .eq('location_name', locationName)
+    .eq('business_address', businessAddress)
+    .maybeSingle();
+  if (error) { console.error('checkLocationExists:', error.message); return null; }
+  return data ? fromRow(data) : null;
+};
+
+export const saveLocationData = async (locationData, userName, userEmail) => {
+  const timestamp = getCurrentTimestamp();
+
+  const fullData = sanitizeObject({
+    locationName:     locationData.locationName     || '',
+    businessAddress:  locationData.businessAddress  || '',
+    contactPerson:    locationData.contactPerson    || '',
+    contactTitle:     locationData.contactTitle     || '',
+    directPhone:      locationData.directPhone      || '',
+    directEmail:      locationData.directEmail      || '',
+    businessTypes:    locationData.businessTypes    || '',
+    interestLevel:    locationData.interestLevel    || '',
+    visitNotes:       locationData.visitNotes       || '',
+    timestamp:        timestamp,
+    followUpDate:     locationData.followUpDate     || locationData.nextActionDate || '',
+    sampleGiven:      locationData.sampleGiven      || '',
+    salesRep:         userName,
+    directLink:       locationData.directLink       || '',
+    businessPhone:    locationData.businessPhone    || '',
+    businessEmail:    locationData.businessEmail    || '',
+    businessWebsite:  locationData.businessWebsite  || '',
+    archived:         locationData.archived         || '',
+    pipelineStage:    locationData.pipelineStage    || CONFIG.PIPELINE_STAGES.NEW_VISIT,
+    followUpCount:    String(locationData.followUpCount || '0'),
+    lastFollowUpDate: locationData.lastFollowUpDate || '',
+    nextActionDate:   locationData.nextActionDate   || '',
+    nextActionType:   locationData.nextActionType   || '',
+    automationStatus: locationData.automationStatus || '',
+    materialsSent:    locationData.materialsSent    || '',
+    notesInternal:    locationData.notesInternal    || '',
+    language:         locationData.language         || '',
+  });
+  fullData.usesMicrogreens = locationData.usesMicrogreens || false;
+
+  // Always append to visit history
+  await addVisitToHistory(fullData);
+
+  // Upsert into locations (update if exists, insert if new)
+  const row = toRow(fullData);
+  const { error } = await supabase
+    .from('locations')
+    .upsert(row, { onConflict: 'location_name,business_address' });
+
+  if (error) {
+    console.error('saveLocationData:', error.message);
+    throw new Error(error.message);
+  }
+
+  // Mirror to Google Sheets in background (best-effort, non-blocking)
+  mirrorToSheets(fullData);
+
+  return true;
+};
+
+// ============================================
+// VISIT HISTORY
+// ============================================
+
+export const addVisitToHistory = async (visitData) => {
+  const row = toRow(visitData);
+  // history has no unique constraint — always insert
+  const { error } = await supabase
+    .from('visit_history')
+    .insert(row);
+  if (error) {
+    console.error('addVisitToHistory:', error.message);
+    throw error;
+  }
+  return true;
+};
+
+export const getLocationHistory = async (locationName, businessAddress) => {
+  const { data, error } = await supabase
+    .from('visit_history')
+    .select('*')
+    .eq('location_name', locationName)
+    .eq('business_address', businessAddress)
+    .order('created_at', { ascending: false });
+  if (error) { console.error('getLocationHistory:', error.message); return []; }
+  return data.map(fromRow);
+};
+
+// ============================================
+// ARCHIVE / UNARCHIVE / DELETE
+// ============================================
+
+export const archiveLocation = async (locationName, businessAddress) => {
+  const { error } = await supabase
+    .from('locations')
+    .update({ archived: 'YES' })
+    .eq('location_name', locationName)
+    .eq('business_address', businessAddress);
+  if (error) { console.error('archiveLocation:', error.message); return false; }
+  return true;
+};
+
+export const unarchiveLocation = async (locationName, businessAddress) => {
+  const { error } = await supabase
+    .from('locations')
+    .update({ archived: '' })
+    .eq('location_name', locationName)
+    .eq('business_address', businessAddress);
+  if (error) { console.error('unarchiveLocation:', error.message); return false; }
+  return true;
+};
+
+export const deleteLocation = async (locationName, businessAddress) => {
+  const [loc, hist] = await Promise.all([
+    supabase.from('locations').delete()
+      .eq('location_name', locationName)
+      .eq('business_address', businessAddress),
+    supabase.from('visit_history').delete()
+      .eq('location_name', locationName)
+      .eq('business_address', businessAddress)
+  ]);
+  if (loc.error) { console.error('deleteLocation:', loc.error.message); return false; }
+  return true;
+};
+
+// ============================================
+// PIPELINE
+// ============================================
+
+export const updatePipelineData = async (locationName, businessAddress, pipelineData) => {
+  const update = {};
+  if (pipelineData.pipelineStage    !== undefined) update.pipeline_stage      = pipelineData.pipelineStage;
+  if (pipelineData.followUpCount    !== undefined) update.follow_up_count     = String(pipelineData.followUpCount);
+  if (pipelineData.lastFollowUpDate !== undefined) update.last_follow_up_date = pipelineData.lastFollowUpDate;
+  if (pipelineData.nextActionDate   !== undefined) update.next_action_date    = pipelineData.nextActionDate;
+  if (pipelineData.nextActionType   !== undefined) update.next_action_type    = pipelineData.nextActionType;
+  if (pipelineData.automationStatus !== undefined) update.automation_status   = pipelineData.automationStatus;
+  if (pipelineData.materialsSent    !== undefined) update.materials_sent      = pipelineData.materialsSent;
+  if (pipelineData.notesInternal    !== undefined) update.notes_internal      = pipelineData.notesInternal;
+
+  const { error } = await supabase
+    .from('locations')
+    .update(update)
+    .eq('location_name', locationName)
+    .eq('business_address', businessAddress);
+
+  if (error) { console.error('updatePipelineData:', error.message); return false; }
+  return true;
+};
+
+// ============================================
+// NOTE TEMPLATES
+// ============================================
+
+export const getNoteTemplates = async () => {
+  const { data, error } = await supabase
+    .from('note_templates')
+    .select('template')
+    .order('created_at', { ascending: true });
+  if (error || !data?.length) return CONFIG.DEFAULT_NOTE_TEMPLATES;
+  return data.map(r => r.template);
+};
+
+export const addNoteTemplate = async (template) => {
+  const { error } = await supabase
+    .from('note_templates')
+    .insert({ template });
+  if (error) { console.error('addNoteTemplate:', error.message); return false; }
+  return true;
+};
+
+export const removeNoteTemplate = async (template) => {
+  const { error } = await supabase
+    .from('note_templates')
+    .delete()
+    .eq('template', template);
+  if (error) { console.error('removeNoteTemplate:', error.message); return false; }
+  return true;
+};
+
+// ============================================
+// PROSPECTS (To Visit)
 // ============================================
 
 export const getProspects = async () => {
-  try {
-    const rows = await getValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G`);
-    if (!rows.length) return [];
-    const hasHeader = rows[0][0]?.toLowerCase() === 'location name';
-    return rows
-      .map((row, sheetIndex) => ({ row, sheetIndex }))
-      .filter(({ row, sheetIndex }) => row[0] && !(sheetIndex === 0 && hasHeader))
-      .map(({ row, sheetIndex }) => ({
-        locationName: row[0] || '',
-        businessAddress: row[1] || '',
-        prospectNotes: row[2] || '',
-        dateAdded: row[3] || '',
-        lat: row[4] ? parseFloat(row[4]) : null,
-        lng: row[5] ? parseFloat(row[5]) : null,
-        usesMicrogreens: row[6] === 'YES',
-        isProspect: true,
-        _prospectRowIndex: sheetIndex
-      }));
-  } catch (error) {
-    if (error.status === 400) return [];
-    console.error('Error fetching prospects:', error);
-    return [];
-  }
+  const { data, error } = await supabase
+    .from('prospects')
+    .select('*')
+    .order('created_at', { ascending: true });
+  if (error) { console.error('getProspects:', error.message); return []; }
+  return data.map((r, i) => ({
+    locationName:     r.location_name    || '',
+    businessAddress:  r.business_address || '',
+    prospectNotes:    r.prospect_notes   || '',
+    dateAdded:        r.date_added       || '',
+    lat:              r.lat              ?? null,
+    lng:              r.lng              ?? null,
+    usesMicrogreens:  r.uses_microgreens === true,
+    isProspect:       true,
+    _prospectId:      r.id
+  }));
 };
 
 export const addProspect = async (name, address, notes = '', lat = null, lng = null, usesMicrogreens = false) => {
-  const mgVal = usesMicrogreens ? 'YES' : 'NO';
-  try {
-    // Check if already exists — update microgreens + notes instead of appending
-    const existing = await getValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G`);
-    if (existing.length) {
-      const hasHeader = existing[0][0]?.toLowerCase() === 'location name';
-      const matchIdx = existing.findIndex((row, i) => {
-        if (i === 0 && hasHeader) return false;
-        return row[0]?.toLowerCase() === name.toLowerCase() ||
-               row[1]?.toLowerCase() === address.toLowerCase();
-      });
-      if (matchIdx !== -1) {
-        // Update microgreens column only
-        await updateValues(`${CONFIG.SHEETS.TO_VISIT}!G${matchIdx + 1}`, [[mgVal]]);
-        return true;
-      }
-    }
-    // New row
-    const row = [name, address, notes, getCurrentTimestamp(), lat ?? '', lng ?? '', mgVal];
-    await appendValues(`${CONFIG.SHEETS.TO_VISIT}!A:G`, [row]);
-    return true;
-  } catch (error) {
-    if (error.status === 400) {
-      await createSheet(CONFIG.SHEETS.TO_VISIT);
-      await updateValues(`${CONFIG.SHEETS.TO_VISIT}!A1:G1`, [['LocationName','BusinessAddress','Notes','DateAdded','Lat','Lng','UsesMicrogreens']]);
-      const row = [name, address, notes, getCurrentTimestamp(), lat ?? '', lng ?? '', mgVal];
-      await appendValues(`${CONFIG.SHEETS.TO_VISIT}!A:G`, [row]);
-      return true;
-    }
-    console.error('Error adding prospect:', error);
-    return false;
-  }
+  const { error } = await supabase
+    .from('prospects')
+    .upsert({
+      location_name:    name,
+      business_address: address,
+      prospect_notes:   notes,
+      date_added:       getCurrentTimestamp(),
+      lat:              lat,
+      lng:              lng,
+      uses_microgreens: usesMicrogreens
+    }, { onConflict: 'location_name,business_address' });
+  if (error) { console.error('addProspect:', error.message); return false; }
+  return true;
 };
 
-export const deleteProspect = async (rowIndex) => {
-  try {
-    const sheetId = await getSheetId(CONFIG.SHEETS.TO_VISIT);
-    if (sheetId === null) return false;
-    await batchUpdate([{
-      deleteDimension: {
-        range: { sheetId, dimension: 'ROWS', startIndex: rowIndex, endIndex: rowIndex + 1 }
-      }
-    }]);
-    return true;
-  } catch (error) {
-    console.error('Error deleting prospect:', error);
-    return false;
-  }
+export const deleteProspect = async (prospectId) => {
+  // prospectId is now the UUID from Supabase (stored as _prospectId)
+  const { error } = await supabase
+    .from('prospects')
+    .delete()
+    .eq('id', prospectId);
+  if (error) { console.error('deleteProspect:', error.message); return false; }
+  return true;
 };
 
 // ============================================
-// ROW FORMATTING
+// LEGACY STUBS (keep callers from breaking)
 // ============================================
-
-const setRowFontSize = async (rowNumber) => {
-  try {
-    const sheetId = await getSheetId(CONFIG.SHEETS.DATA);
-    if (sheetId === null) return false;
-
-    await batchUpdate([{
-      repeatCell: {
-        range: {
-          sheetId,
-          startRowIndex: rowNumber - 1,
-          endRowIndex: rowNumber,
-          startColumnIndex: 0,
-          endColumnIndex: 28
-        },
-        cell: {
-          userEnteredFormat: {
-            textFormat: { fontSize: 13 }
-          }
-        },
-        fields: 'userEnteredFormat.textFormat.fontSize'
-      }
-    }]);
-
-    return true;
-  } catch (error) {
-    console.error('Error setting font size:', error);
-    return false;
-  }
-};
-
-const setRowFontSizeVisitHistory = async (rowNumber) => {
-  try {
-    const sheetId = await getSheetId(CONFIG.SHEETS.VISIT_HISTORY);
-    if (sheetId === null) return false;
-
-    await batchUpdate([{
-      repeatCell: {
-        range: {
-          sheetId,
-          startRowIndex: rowNumber - 1,
-          endRowIndex: rowNumber,
-          startColumnIndex: 0,
-          endColumnIndex: 26
-        },
-        cell: {
-          userEnteredFormat: {
-            textFormat: { fontSize: 13 }
-          }
-        },
-        fields: 'userEnteredFormat.textFormat.fontSize'
-      }
-    }]);
-
-    return true;
-  } catch (error) {
-    console.error('Error setting font size for Visit History:', error);
-    return false;
-  }
-};
+export const createSheet = async () => true;

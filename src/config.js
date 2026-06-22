@@ -14,12 +14,6 @@ export const CONFIG = {
   // Google OAuth Client ID
   GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
 
-  // Google Sheets API Key
-  GOOGLE_SHEETS_API_KEY: import.meta.env.VITE_GOOGLE_SHEETS_API_KEY || '',
-
-  // Your Google Sheet ID
-  GOOGLE_SHEET_ID: import.meta.env.VITE_GOOGLE_SHEET_ID || '',
-
   // Contact role options for the dropdown
   CONTACT_ROLES: [
     'Owner',
@@ -85,18 +79,7 @@ export const CONFIG = {
   // Follow-up settings
   FOLLOW_UP_DAYS: 4, // Days until follow-up
 
-  // Google Sheets tab names
-  SHEETS: {
-    DATA: 'Data',
-    VISIT_HISTORY: 'Visit History',
-    CONFIG: 'Config',
-    AUTHORIZED_USERS: 'Authorized Users',
-    NOTE_TEMPLATES: 'Note Templates',
-    ADMIN_EMAILS: 'Admin Emails',
-    TO_VISIT: 'To Visit'
-  },
-
-  // Default note templates (used if sheet doesn't exist yet)
+  // Default note templates (used if Supabase table is empty)
   DEFAULT_NOTE_TEMPLATES: [
     'Owner was not at the place, spoke with worker, got the owners email',
     'Not interested at all'

@@ -1,15 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { initSheetsAPI, getAuthorizedUsers, getAdminEmails } from '../utils/googleSheets';
 import { isAdminWithSheet } from '../utils/googleAuth';
 
-/**
- * Custom hook for Google Authentication logic
- */
+const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
 export const useGoogleAuth = () => {
     const [user, setUser] = useState(null);
     const [authorized, setAuthorized] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const inactivityTimer = useRef(null);
+
+    const resetInactivityTimer = () => {
+        if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+        inactivityTimer.current = setTimeout(() => {
+            handleSignOut();
+        }, INACTIVITY_TIMEOUT_MS);
+    };
+
+    useEffect(() => {
+        if (!authorized) return;
+        const events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
+        events.forEach(e => window.addEventListener(e, resetInactivityTimer, { passive: true }));
+        resetInactivityTimer();
+        return () => {
+            events.forEach(e => window.removeEventListener(e, resetInactivityTimer));
+            if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+        };
+    }, [authorized]);
 
     const handleLogin = async (userInfo) => {
         setLoading(true);

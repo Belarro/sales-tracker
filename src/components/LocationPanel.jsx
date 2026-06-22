@@ -4,9 +4,9 @@
 // Pipeline columns are auto-set behind the scenes, not shown to user
 // ============================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CONFIG } from '../config.js';
-import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData, deleteProspect } from '../utils/googleSheets.js';
+import { saveLocationData, archiveLocation, deleteLocation, getNoteTemplates, addNoteTemplate, updatePipelineData, deleteProspect, getLocationHistory } from '../utils/googleSheets.js';
 import { calculateNextActionDate, calculateSnappedFollowUpDate, toEUDateString } from '../utils/dateUtils.js';
 import { getPinColor, getColorLabel } from '../utils/colorUtils.js';
 import { getFollowUpMessage, getStageLabel } from '../utils/followUpTemplates.js';
@@ -117,6 +117,9 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
   const [awaitingSentConfirm, setAwaitingSentConfirm] = useState(false);
   const [markingSent, setMarkingSent] = useState(false);
   const [quickSendPreview, setQuickSendPreview] = useState(null); // { msg, contactEmail }
+  const [visitHistory, setVisitHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const historyFetchedRef = useRef(false);
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -125,6 +128,17 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     };
     loadTemplates();
   }, []);
+
+  // Lazy-load visit history when panel opens for a non-prospect location
+  useEffect(() => {
+    if (!location || location.isProspect || historyFetchedRef.current) return;
+    historyFetchedRef.current = true;
+    setHistoryLoading(true);
+    getLocationHistory(location.locationName, location.businessAddress)
+      .then(history => setVisitHistory(history))
+      .catch(() => setVisitHistory([]))
+      .finally(() => setHistoryLoading(false));
+  }, [location?.locationName, location?.businessAddress]);
 
   // Auto-generate the follow-up message as soon as the visit is saved
   useEffect(() => {
@@ -278,8 +292,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
           });
         }
 
-        if (location.isProspect && location._prospectRowIndex !== undefined) {
-          await deleteProspect(location._prospectRowIndex).catch(() => {});
+        if (location.isProspect && location._prospectId) {
+          await deleteProspect(location._prospectId).catch(() => {});
         }
         onSave();
         // Stay open so the follow-up message + Save to Contacts are visible
@@ -1131,17 +1145,87 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         )}
 
         {/* ===== VISIT HISTORY ===== */}
-        {location.visitHistory && location.visitHistory.length > 0 && (
-          <div className="visit-history">
-            <h3>Visit History ({location.visitHistory.length})</h3>
-            {location.visitHistory.slice(0, 5).map((visit, idx) => (
-              <div key={idx} className="history-item">
-                <div className="history-date">
-                  {new Date(visit.timestamp).toLocaleDateString()} — {visit.visitorEmail}
-                </div>
-                {visit.notes && <div className="history-details">{visit.notes}</div>}
+        {!location.isProspect && (
+          <div style={{
+            marginTop: 'var(--spacing-lg)',
+            borderTop: '1px solid var(--color-border)',
+            paddingTop: 'var(--spacing-md)'
+          }}>
+            <div style={{
+              fontSize: 'var(--font-size-xs)',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              color: 'var(--color-text-muted)',
+              marginBottom: 'var(--spacing-sm)'
+            }}>
+              Visit History
+            </div>
+
+            {historyLoading && (
+              <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', padding: '8px 0' }}>
+                Loading...
               </div>
-            ))}
+            )}
+
+            {!historyLoading && visitHistory.length === 0 && (
+              <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', padding: '8px 0' }}>
+                No visits recorded yet.
+              </div>
+            )}
+
+            {!historyLoading && visitHistory.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {visitHistory.slice(0, 8).map((visit, idx) => (
+                  <div key={idx} style={{
+                    background: 'var(--color-bg-secondary)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--border-radius-md)',
+                    padding: '10px 12px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: visit.visitNotes ? '6px' : '0'
+                    }}>
+                      <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600', color: 'var(--color-text-main)' }}>
+                        {visit.timestamp || '—'}
+                      </span>
+                      <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                        {visit.salesRep || ''}
+                        {visit.sampleGiven === 'YES' && (
+                          <span style={{
+                            marginLeft: '6px',
+                            background: 'rgba(16,185,129,0.15)',
+                            color: '#10b981',
+                            borderRadius: '4px',
+                            padding: '1px 5px',
+                            fontSize: '10px',
+                            fontWeight: '600'
+                          }}>Sample</span>
+                        )}
+                      </span>
+                    </div>
+                    {visit.visitNotes && (
+                      <div style={{
+                        fontSize: 'var(--font-size-xs)',
+                        color: 'var(--color-text-secondary)',
+                        lineHeight: '1.4',
+                        whiteSpace: 'pre-wrap'
+                      }}>
+                        {visit.visitNotes}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {visitHistory.length > 8 && (
+                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textAlign: 'center' }}>
+                    +{visitHistory.length - 8} earlier visits
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -1169,7 +1253,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
                 onClick={async () => {
                   if (!window.confirm('Remove from To Visit list?')) return;
                   setIsSaving(true);
-                  await deleteProspect(location._prospectRowIndex).catch(() => {});
+                  await deleteProspect(location._prospectId).catch(() => {});
                   onSave();
                   onClose();
                   setIsSaving(false);

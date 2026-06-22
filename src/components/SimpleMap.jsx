@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { CONFIG } from '../config.js';
-import { getLocationHistory, addProspect } from '../utils/googleSheets.js';
+import { addProspect } from '../utils/googleSheets.js';
 
 const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], onProspectAdded, onQuickAdd, searchQuery = '' }) => {
   const mapRef = useRef(null);
