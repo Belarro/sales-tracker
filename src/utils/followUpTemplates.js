@@ -431,10 +431,10 @@ export function getFollowUpMessage(location, userName, extra) {
     const de = template['DE'] ? template['DE'](location, userName, extra) : null;
     if (en && de) {
       result = {
-        ...en,
-        body: en.body + '\n\n---\n\n' + de.body,
-        emailBody: (en.emailBody || en.body) + '\n\n---\n\n' + (de.emailBody || de.body),
-        emailSubject: en.emailSubject,
+        ...de,
+        body: de.body + '\n\n---\n\n' + en.body,
+        emailBody: (de.emailBody || de.body) + '\n\n---\n\n' + (en.emailBody || en.body),
+        emailSubject: de.emailSubject,
       };
     } else {
       result = (en || de);
