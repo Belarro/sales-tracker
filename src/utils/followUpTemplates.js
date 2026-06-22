@@ -35,7 +35,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `I would love to hear what you think. Just a reminder: no delivery fees, no minimum order.`,
         `Enjoy the rest of your service.\nRon from Belarro`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Varieties & Pricing',
+      emailSubject: 'Belarro Berlin | Fresh Microgreens for Your Kitchen',
       emailBody: [
         `Hello ${loc.contactPerson},`,
         `Thank you for your time today; it was a pleasure meeting you.`,
@@ -55,7 +55,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Ich bin gespannt auf dein Feedback. Nur zur Erinnerung: keine Lieferkosten, kein Mindestbestellwert.`,
         `Viel Erfolg im Service.\nRon von Belarro`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Sorten & Preise',
+      emailSubject: 'Belarro Berlin | Frische Microgreens für Ihre Küche',
       emailBody: [
         `Hallo ${loc.contactPerson},`,
         `vielen Dank für deine Zeit heute, hat mich gefreut dich kennenzulernen.`,
@@ -80,7 +80,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `We only grow what you order — no old stock, zero waste. We harvest the morning of delivery, and our greens last up to 10 days in the fridge.`,
         `Let me know what caught your eye and I'll get it into the next grow cycle.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — How did the samples work?',
+      emailSubject: 'Belarro Berlin | Quick question about our samples',
       emailBody: [
         `Hello ${loc.contactPerson},`,
         `I hope you had the chance to taste the samples and see how they work with your dishes.`,
@@ -98,7 +98,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Wir bauen nur das an, was du bestellst – kein Lager, kein alter Bestand, null Verschwendung. Wir ernten am Morgen der Lieferung, und unsere Greens halten bis zu 10 Tage im Kühlschrank.`,
         `Sag mir einfach, was dir gefallen hat, dann plane ich es für den nächsten Grow ein.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Wie haben die Samples funktioniert?',
+      emailSubject: 'Belarro Berlin | Kurze Frage zu unseren Samples',
       emailBody: [
         `Hallo ${loc.contactPerson},`,
         `Ich hoffe, du konntest die Samples testen und sehen, wie sie zu deinen Gerichten passen.`,
@@ -122,7 +122,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `We grow over 25 varieties — more variety than most suppliers, more options for your plates. Orders are recurring: order once, receive fresh every Tuesday. You can always change, add or cancel.`,
         `Here's the full list: ${priceLink(BASE_LINK_EN, loc)}\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — 25+ varieties',
+      emailSubject: 'Belarro Berlin | 25 varieties grown for chefs',
       emailBody: [
         `Hello ${loc.contactPerson},`,
         `Wanted to follow up and see how you found our greens.`,
@@ -140,7 +140,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Wir bauen über 25 Sorten an – mehr Auswahl als bei den meisten Anbietern, mehr Möglichkeiten für deine Teller. Bestellungen laufen automatisch: einmal bestellen, jede Woche frisch am Dienstag geliefert. Du kannst jederzeit ändern, hinzufügen oder pausieren.`,
         `Hier ist die komplette Liste: ${priceLink(BASE_LINK_DE, loc)}\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Über 25 Sorten',
+      emailSubject: 'Belarro Berlin | 25 Sorten für Ihre Küche',
       emailBody: [
         `Hallo ${loc.contactPerson},`,
         `Wollte kurz nachfragen, wie dir unsere Greens gefallen haben.`,
@@ -164,7 +164,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `We're local, no imports — faster, more consistent product, just fresh greens with less emissions.`,
         `No minimums, no pressure. Just let me know when you're ready.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Checking in',
+      emailSubject: 'Belarro Berlin | Still thinking it over?',
       emailBody: [
         `Hello ${loc.contactPerson},`,
         `Haven't heard back, just wanted to check in.`,
@@ -182,7 +182,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Wir sind lokal, keine Importe – dadurch schneller und konstanter in der Qualität. Einfach frische Greens mit weniger Emissionen.`,
         `Kein Mindestbestellwert, kein Druck. Meld dich, wenn es für dich passt.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Kurze Nachfrage',
+      emailSubject: 'Belarro Berlin | Noch am Überlegen?',
       emailBody: [
         `Hallo ${loc.contactPerson},`,
         `Wollte kurz nachhaken, habe nichts mehr von dir gehört.`,
@@ -207,7 +207,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Our varieties and pricing are always here: ${priceLink(BASE_LINK_EN, loc)}`,
         `Wishing you a great season.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Here when you need us',
+      emailSubject: 'Belarro Berlin | Whenever you are ready',
       emailBody: [
         `Hello ${loc.contactPerson},`,
         `No worries if the timing wasn't right.`,
@@ -227,7 +227,7 @@ export const FOLLOW_UP_TEMPLATES = {
         `Unsere Sorten und Preise findest du hier: ${priceLink(BASE_LINK_DE, loc)}`,
         `Ich wünsche dir eine starke Saison.\nRon`
       ].join('\n\n'),
-      emailSubject: 'Belarro — Da wenn du uns brauchst',
+      emailSubject: 'Belarro Berlin | Wir sind da wenn Sie bereit sind',
       emailBody: [
         `Hallo ${loc.contactPerson},`,
         `Kein Problem, wenn es zeitlich nicht gepasst hat.`,
