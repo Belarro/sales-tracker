@@ -57,7 +57,7 @@ export const useNearbyDetection = ({ onNearbyPlace, enabled = true }) => {
         textQuery: 'restaurant OR cafe OR bar OR bistro',
         fields: ['id', 'displayName', 'formattedAddress', 'nationalPhoneNumber',
                  'websiteURI', 'googleMapsURI', 'location'],
-        locationBias: { center: current, radius: DETECTION_RADIUS },
+        locationRestriction: { center: current, radius: DETECTION_RADIUS },
         maxResultCount: 1
       });
 
