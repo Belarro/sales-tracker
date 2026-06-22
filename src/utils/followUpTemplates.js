@@ -415,13 +415,31 @@ export const FOLLOW_UP_TEMPLATES = {
  */
 export function getFollowUpMessage(location, userName, extra) {
   const stage = location.pipelineStage || 'new_visit';
-  const lang = (location.language || 'DE').toUpperCase();
+  const lang = (location.language || '').toUpperCase();
   const template = FOLLOW_UP_TEMPLATES[stage];
 
   if (!template) return null;
 
-  const langTemplate = template[lang] || template['DE'];
-  const result = langTemplate(location, userName, extra);
+  let result;
+  if (lang === 'EN' || lang === 'DE') {
+    // Specific language selected — use that one
+    const langTemplate = template[lang] || template['DE'];
+    result = langTemplate(location, userName, extra);
+  } else {
+    // No language set — combine EN + DE into one email
+    const en = template['EN'] ? template['EN'](location, userName, extra) : null;
+    const de = template['DE'] ? template['DE'](location, userName, extra) : null;
+    if (en && de) {
+      result = {
+        ...en,
+        body: en.body + '\n\n---\n\n' + de.body,
+        emailBody: (en.emailBody || en.body) + '\n\n---\n\n' + (de.emailBody || de.body),
+        emailSubject: en.emailSubject,
+      };
+    } else {
+      result = (en || de);
+    }
+  }
 
   // Build WhatsApp deep link
   let phone = (location.directPhone || location.businessPhone || '')
