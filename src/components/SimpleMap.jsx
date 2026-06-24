@@ -19,6 +19,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
   const [mapReady, setMapReady] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [isLocating, setIsLocating] = useState(false);
+  const [showYouAreHere, setShowYouAreHere] = useState(false);
 
   // ── Search overlay state ──
   const [showSearch, setShowSearch] = useState(false);
@@ -561,17 +562,8 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
             userMarkerRef.current.draw();
           }
           // Show "You are here" label briefly
-          const label = document.createElement('div');
-          label.textContent = 'You are here';
-          label.style.cssText = `
-            position:fixed; bottom:120px; left:50%; transform:translateX(-50%);
-            background:#1a73e8; color:#fff; padding:8px 18px;
-            border-radius:20px; font-size:14px; font-weight:600;
-            box-shadow:0 2px 8px rgba(0,0,0,0.25); z-index:9999;
-            pointer-events:none; animation:fadeIn 0.2s ease;
-          `;
-          document.body.appendChild(label);
-          setTimeout(() => label.remove(), 2500);
+          setShowYouAreHere(true);
+          setTimeout(() => setShowYouAreHere(false), 2500);
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -849,6 +841,28 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
           📍 <span style={{ color: '#1a73e8' }}>{visitedLocations.length}</span> visited
           {prospects.length > 0 && <> · <span style={{ color: '#2196F3' }}>{prospects.length}</span> to visit</>}
         </div>
+
+        {/* You are here label */}
+        {showYouAreHere && (
+          <div style={{
+            position: 'absolute',
+            bottom: '100px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: '#1a73e8',
+            color: '#fff',
+            padding: '8px 20px',
+            borderRadius: '20px',
+            fontSize: '14px',
+            fontWeight: '600',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            zIndex: 1000,
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}>
+            You are here
+          </div>
+        )}
 
         {/* Search Button */}
         <button
