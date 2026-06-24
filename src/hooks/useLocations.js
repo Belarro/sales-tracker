@@ -68,14 +68,24 @@ export const useLocations = () => {
             }));
     }, [visitedLocations]);
 
+    // New places (no nextActionDate, never followed up) always float to top
+    const isNewPlace = (loc) => !loc.nextActionDate && loc.pipelineStage === 'new_visit';
+
     const overdueTasks = useMemo(() =>
         taskLocations
             .filter(loc => loc._daysUntilAction !== null && loc._daysUntilAction < 0)
-            .sort((a, b) => a._daysUntilAction - b._daysUntilAction),
+            .sort((a, b) => {
+                const aNew = isNewPlace(a) ? 0 : 1;
+                const bNew = isNewPlace(b) ? 0 : 1;
+                if (aNew !== bNew) return aNew - bNew;
+                return a._daysUntilAction - b._daysUntilAction;
+            }),
         [taskLocations]);
 
     const todayTasks = useMemo(() =>
-        taskLocations.filter(loc => loc._daysUntilAction === 0),
+        taskLocations
+            .filter(loc => loc._daysUntilAction === 0)
+            .sort((a, b) => (isNewPlace(a) ? 0 : 1) - (isNewPlace(b) ? 0 : 1)),
         [taskLocations]);
 
     const upcomingTasks = useMemo(() =>
@@ -83,7 +93,12 @@ export const useLocations = () => {
             .filter(loc => loc._daysUntilAction !== null &&
                            loc._daysUntilAction > 0 &&
                            loc._daysUntilAction <= CONFIG.UPCOMING_DAYS_WINDOW)
-            .sort((a, b) => a._daysUntilAction - b._daysUntilAction),
+            .sort((a, b) => {
+                const aNew = isNewPlace(a) ? 0 : 1;
+                const bNew = isNewPlace(b) ? 0 : 1;
+                if (aNew !== bNew) return aNew - bNew;
+                return a._daysUntilAction - b._daysUntilAction;
+            }),
         [taskLocations]);
 
     const handleLocationSelect = (location) => {

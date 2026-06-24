@@ -50,7 +50,11 @@ const ListView = ({
 
     result.sort((a, b) => {
       if (sortBy === 'name') return (a.locationName || '').localeCompare(b.locationName || '');
-      // timestamp format: "DD-MM-YYYY HH:MM" — parse manually
+      // New places (no follow-up yet) always float to top
+      const aNew = (!a.nextActionDate && a.pipelineStage === 'new_visit') ? 0 : 1;
+      const bNew = (!b.nextActionDate && b.pipelineStage === 'new_visit') ? 0 : 1;
+      if (aNew !== bNew) return aNew - bNew;
+      // Then by most recent timestamp
       const parseTs = (ts) => {
         if (!ts) return 0;
         const m = ts.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})/);
@@ -191,9 +195,37 @@ const ListView = ({
               <div style={{
                 color: 'var(--color-text-secondary)',
                 fontSize: 'var(--font-size-sm)',
-                marginBottom: loc.visitNotes ? '8px' : 0
+                marginBottom: '6px'
               }}>
                 {loc.businessAddress}
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '11px',
+                color: 'var(--color-text-muted)',
+                marginBottom: loc.visitNotes ? '8px' : 0
+              }}>
+                {loc.timestamp && (
+                  <span>{loc.timestamp}</span>
+                )}
+                {loc.salesRep && (
+                  <>
+                    {loc.timestamp && <span style={{ opacity: 0.4 }}>·</span>}
+                    <span style={{
+                      background: 'var(--color-bg-secondary)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '4px',
+                      padding: '1px 6px',
+                      fontWeight: '600',
+                      color: 'var(--color-text-secondary)'
+                    }}>
+                      {loc.salesRep}
+                    </span>
+                  </>
+                )}
               </div>
 
               {loc.visitNotes && (

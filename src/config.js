@@ -27,6 +27,7 @@ export const CONFIG = {
 
   // Business type options for the dropdown
   BUSINESS_TYPES: [
+    'Hotel',
     'German',
     'Italian',
     'French',

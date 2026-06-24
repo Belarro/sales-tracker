@@ -83,6 +83,17 @@ const Layout = ({
             >
               {GearIcon}
             </button>
+            {user.name && (
+              <span style={{
+                fontSize: '13px',
+                fontWeight: '600',
+                color: 'var(--color-text-secondary)',
+                padding: '0 4px',
+                whiteSpace: 'nowrap'
+              }}>
+                {user.name.split(' ')[0]}
+              </span>
+            )}
             <button onClick={onSignOut} className="btn btn-secondary">
               Sign Out
             </button>

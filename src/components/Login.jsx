@@ -94,7 +94,8 @@ const Login = ({ onLogin }) => {
               setTempUserInfo(userInfo);
 
               const savedName = localStorage.getItem(`salesTracker_userName_${userInfo.email}`);
-              if (savedName) setUserName(savedName);
+              const googleName = [userInfo.given_name, userInfo.family_name].filter(Boolean).join(' ');
+              setUserName(savedName || googleName || '');
 
               setShowNameInput(true);
               setError('');
