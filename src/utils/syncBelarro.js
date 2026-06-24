@@ -19,7 +19,8 @@ export async function syncProspectToSupabase(prospectData) {
     language = 'DE',
     visitNotes = '',
     sampleGiven = false,
-    visitDate = new Date().toISOString()
+    visitDate = new Date().toISOString(),
+    salesRep = ''
   } = prospectData;
 
   try {
@@ -48,7 +49,8 @@ export async function syncProspectToSupabase(prospectData) {
           language: (language || 'DE').toUpperCase(),
           visitNotes,
           sampleGiven,
-          visitDate
+          visitDate,
+          salesRep
         })
       }
     );

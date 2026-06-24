@@ -281,7 +281,8 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
             language: formData.language || 'DE',
             visitNotes: formData.visitNotes,
             sampleGiven: formData.sampleGiven === 'YES',
-            visitDate: new Date().toISOString()
+            visitDate: new Date().toISOString(),
+            salesRep: user.name || user.email || ''
           }).then(result => {
             if (result.success) {
               console.log(`✅ Synced to Belarro: ${result.locationName}`);
