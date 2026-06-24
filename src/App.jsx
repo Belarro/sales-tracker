@@ -50,6 +50,7 @@ function App() {
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [nearbyBanner, setNearbyBanner] = useState(null); // { locationName, businessAddress, ... }
+  const [saveToast, setSaveToast] = useState(null);
 
   const handleNearbyPlace = (placeData) => {
     setNearbyBanner(placeData);
@@ -131,8 +132,12 @@ function App() {
     refreshLocations();
   };
 
-  const handleSaveVisit = () => {
+  const handleSaveVisit = (locationName) => {
     refreshLocations();
+    clearSelection();
+    setCurrentView('map');
+    setSaveToast(locationName ? `Visit saved — ${locationName}` : 'Visit saved!');
+    setTimeout(() => setSaveToast(null), 4000);
   };
 
   const handleProspectAdded = () => refreshProspects();
@@ -315,6 +320,29 @@ function App() {
           onClose={clearSelection}
           onSave={handleSaveVisit}
         />
+      )}
+
+      {saveToast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: '#1a1a1a',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '12px',
+          fontWeight: '600',
+          fontSize: '14px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          whiteSpace: 'nowrap',
+        }}>
+          ✅ {saveToast}
+        </div>
       )}
     </Layout>
   );

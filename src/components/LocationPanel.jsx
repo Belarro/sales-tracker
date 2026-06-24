@@ -296,7 +296,7 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
         if (location.isProspect && location._prospectId) {
           await deleteProspect(location._prospectId).catch(() => {});
         }
-        onSave();
+        onSave(location.locationName);
         // Stay open so the follow-up message + Save to Contacts are visible
       } else {
         setSaveMessage({ type: 'error', text: 'Failed to save. Try again.' });
