@@ -95,24 +95,42 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
   const initMap = () => {
     if (!mapRef.current || !window.google) return;
 
-    // Get user location
+    // Get user location — watch until we get a good fix (accuracy < 50m), then stop
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      let mapCreated = false;
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
-          const userLocation = {
+          const loc = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
+          const accuracy = position.coords.accuracy; // metres
 
-          createMap(userLocation);
+          if (!mapCreated) {
+            // Show map immediately on first fix, even if coarse
+            createMap(loc);
+            mapCreated = true;
+          } else if (mapInstanceRef.current) {
+            // Refine center as GPS improves
+            mapInstanceRef.current.setCenter(loc);
+            if (userMarkerRef.current) {
+              userMarkerRef.current.position = new window.google.maps.LatLng(loc.lat, loc.lng);
+              userMarkerRef.current.draw();
+            }
+          }
+
+          // Stop watching once we have a fix under 50 metres
+          if (accuracy <= 50) {
+            navigator.geolocation.clearWatch(watchId);
+          }
         },
         (error) => {
           console.error('Geolocation error:', error);
           // Use default location (Berlin)
           const defaultLocation = { lat: 52.520008, lng: 13.404954 };
-          createMap(defaultLocation);
+          if (!mapCreated) createMap(defaultLocation);
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
       );
     } else {
       const defaultLocation = { lat: 52.520008, lng: 13.404954 };
@@ -547,7 +565,7 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
           console.error('Geolocation error:', error);
           alert('Unable to get your location. Please check your browser permissions.');
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
       );
     }
   };
