@@ -37,7 +37,8 @@ export function useFollowUps() {
       if (!fls || fls.length === 0) { setFollowups([]); return; }
 
       // Fetch location details
-      const locationIds = [...new Set(fls.map(f => f.location_id))];
+      const locationIds = [...new Set(fls.map(f => f.location_id).filter(Boolean))];
+      if (locationIds.length === 0) { setFollowups([]); return; }
       const { data: locs, error: lErr } = await supabase
         .from('locations')
         .select('id,location_name,contact_person,direct_phone,business_phone,direct_email,language,pipeline_stage,interest_level,timestamp,created_at,sales_rep')
@@ -93,7 +94,7 @@ export function useFollowUps() {
       .eq('id', followupId)
       .single();
 
-    if (cur) {
+    if (cur && cur.location_id) {
       const nextStage = (cur.stage || cur.follow_up_number || 1) + 1;
       const { data: next } = await supabase
         .from('belarro_v4_follow_up')
