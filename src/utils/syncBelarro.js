@@ -38,9 +38,7 @@ async function seedFollowUps(locationId, visitDate) {
 
   for (const [stageStr, days] of Object.entries(gaps)) {
     const stage = Number(stageStr);
-    const dueDate = stage === 1
-      ? new Date(now.getTime() + 2 * 60 * 60 * 1000) // Stage 1: 2 hours from now
-      : addBusinessDays(now, days);
+    const dueDate = stage === 1 ? now : addBusinessDays(now, days);
 
     rows.push({
       location_id: locationId,
