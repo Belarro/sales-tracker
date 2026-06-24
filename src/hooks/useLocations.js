@@ -13,7 +13,7 @@ export const useLocations = () => {
     const [searchQuery, setSearchQuery] = useState('');
     // Check URL params for view (e.g. from notification tap)
     const urlView = new URLSearchParams(window.location.search).get('view');
-    const [currentView, setCurrentView] = useState(urlView || 'tasks'); // 'tasks', 'map', or 'list'
+    const [currentView, setCurrentView] = useState(urlView || 'map'); // 'tasks', 'map', or 'list'
     const [loadError, setLoadError] = useState('');
 
     const refreshProspects = useCallback(async () => {
