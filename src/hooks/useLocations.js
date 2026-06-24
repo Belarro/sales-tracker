@@ -71,21 +71,32 @@ export const useLocations = () => {
     // New places (no nextActionDate, never followed up) always float to top
     const isNewPlace = (loc) => !loc.nextActionDate && loc.pipelineStage === 'new_visit';
 
+    // Parse "DD-MM-YYYY HH:MM" or ISO timestamp → ms
+    const parseTs = (ts) => {
+        if (!ts) return 0;
+        const m = ts.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})/);
+        if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}:00`).getTime();
+        return new Date(ts).getTime() || 0;
+    };
+
+    // Sort: new places first, then most recently visited
+    const byRecent = (a, b) => {
+        const aNew = isNewPlace(a) ? 0 : 1;
+        const bNew = isNewPlace(b) ? 0 : 1;
+        if (aNew !== bNew) return aNew - bNew;
+        return parseTs(b.timestamp) - parseTs(a.timestamp);
+    };
+
     const overdueTasks = useMemo(() =>
         taskLocations
             .filter(loc => loc._daysUntilAction !== null && loc._daysUntilAction < 0)
-            .sort((a, b) => {
-                const aNew = isNewPlace(a) ? 0 : 1;
-                const bNew = isNewPlace(b) ? 0 : 1;
-                if (aNew !== bNew) return aNew - bNew;
-                return a._daysUntilAction - b._daysUntilAction;
-            }),
+            .sort(byRecent),
         [taskLocations]);
 
     const todayTasks = useMemo(() =>
         taskLocations
             .filter(loc => loc._daysUntilAction === 0)
-            .sort((a, b) => (isNewPlace(a) ? 0 : 1) - (isNewPlace(b) ? 0 : 1)),
+            .sort(byRecent),
         [taskLocations]);
 
     const upcomingTasks = useMemo(() =>
@@ -93,12 +104,7 @@ export const useLocations = () => {
             .filter(loc => loc._daysUntilAction !== null &&
                            loc._daysUntilAction > 0 &&
                            loc._daysUntilAction <= CONFIG.UPCOMING_DAYS_WINDOW)
-            .sort((a, b) => {
-                const aNew = isNewPlace(a) ? 0 : 1;
-                const bNew = isNewPlace(b) ? 0 : 1;
-                if (aNew !== bNew) return aNew - bNew;
-                return a._daysUntilAction - b._daysUntilAction;
-            }),
+            .sort(byRecent),
         [taskLocations]);
 
     const handleLocationSelect = (location) => {
