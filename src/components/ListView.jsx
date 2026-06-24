@@ -48,19 +48,18 @@ const ListView = ({
       });
     }
 
+    const parseTs = (ts) => {
+      if (!ts) return 0;
+      // "DD-MM-YYYY HH:MM"
+      const m = ts.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})/);
+      if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}:00`).getTime();
+      // ISO or any other format
+      return new Date(ts).getTime() || 0;
+    };
+
     result.sort((a, b) => {
       if (sortBy === 'name') return (a.locationName || '').localeCompare(b.locationName || '');
-      // New places (no follow-up yet) always float to top
-      const aNew = (!a.nextActionDate && a.pipelineStage === 'new_visit') ? 0 : 1;
-      const bNew = (!b.nextActionDate && b.pipelineStage === 'new_visit') ? 0 : 1;
-      if (aNew !== bNew) return aNew - bNew;
-      // Then by most recent timestamp
-      const parseTs = (ts) => {
-        if (!ts) return 0;
-        const m = ts.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})/);
-        if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}:00`).getTime();
-        return new Date(ts).getTime() || 0;
-      };
+      // Most recently visited always on top
       return parseTs(b.timestamp) - parseTs(a.timestamp);
     });
 
