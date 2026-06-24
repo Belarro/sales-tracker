@@ -16,6 +16,7 @@ import ListView from './components/ListView.jsx';
 import TodaysTasks from './components/TodaysTasks.jsx';
 import Layout from './components/Layout.jsx';
 import LoadingScreen from './components/LoadingScreen.jsx';
+import FollowUpsView from './components/FollowUpsView.jsx';
 
 // Hooks
 import { useGoogleAuth } from './hooks/useGoogleAuth';
@@ -23,6 +24,7 @@ import { useLocations } from './hooks/useLocations';
 import { useBackButton } from './hooks/useBackButton';
 import { useSettings } from './hooks/useSettings';
 import { useNearbyDetection } from './hooks/useNearbyDetection';
+import { useFollowUps } from './hooks/useFollowUps';
 
 function App() {
   // Use Custom Hooks
@@ -46,6 +48,7 @@ function App() {
     upcomingTasks
   } = useLocations();
 
+  const { followups } = useFollowUps();
   const [settings, updateSetting] = useSettings();
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -198,6 +201,7 @@ function App() {
       currentView={currentView}
       onViewChange={setCurrentView}
       overdueCount={overdueTasks.length}
+      followupsCount={followups.length}
       settings={settings}
       onUpdateSetting={updateSetting}
     >
@@ -267,6 +271,8 @@ function App() {
             settings={settings}
             onUpdateSetting={updateSetting}
           />
+        ) : currentView === 'followups' ? (
+          <FollowUpsView />
         ) : null}
       </div>
 

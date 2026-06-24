@@ -27,6 +27,11 @@ const NavIcons = {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
     </svg>
+  ),
+  followups: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
   )
 };
 
@@ -48,6 +53,7 @@ const Layout = ({
   currentView,
   onViewChange,
   overdueCount = 0,
+  followupsCount = 0,
   settings,
   onUpdateSetting
 }) => {
@@ -154,6 +160,20 @@ const Layout = ({
           >
             <span className="nav-icon">{NavIcons.list}</span>
             <span className="nav-label">List</span>
+          </button>
+
+          <button
+            className={`nav-item ${!isDashboardOpen && currentView === 'followups' ? 'active' : ''}`}
+            onClick={() => {
+              if (isDashboardOpen) toggleDashboard();
+              onViewChange('followups');
+            }}
+          >
+            <span className="nav-icon">{NavIcons.followups}</span>
+            <span className="nav-label">Follow-ups</span>
+            {followupsCount > 0 && (
+              <span className="nav-badge">{followupsCount}</span>
+            )}
           </button>
 
           <button
