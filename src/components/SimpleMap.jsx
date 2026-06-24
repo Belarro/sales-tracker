@@ -374,24 +374,24 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
     // Create custom HTML marker
     const markerDiv = document.createElement('div');
     markerDiv.style.position = 'relative';
-    markerDiv.style.width = '36px';
-    markerDiv.style.height = '36px';
+    markerDiv.style.width = '18px';
+    markerDiv.style.height = '18px';
     markerDiv.style.cursor = 'pointer';
 
     // Circular background
     const circle = document.createElement('div');
-    circle.style.width = '36px';
-    circle.style.height = '36px';
+    circle.style.width = '18px';
+    circle.style.height = '18px';
     circle.style.borderRadius = '50%';
     circle.style.backgroundColor = color;
-    circle.style.border = '3px solid white';
-    circle.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+    circle.style.border = '2px solid white';
+    circle.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
     circle.style.display = 'flex';
     circle.style.alignItems = 'center';
     circle.style.justifyContent = 'center';
     circle.style.fontWeight = 'bold';
     circle.style.color = 'white';
-    circle.style.fontSize = '14px';
+    circle.style.fontSize = '9px';
     circle.textContent = count > 1 ? count : '';
 
     markerDiv.appendChild(circle);
@@ -443,8 +443,8 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
         const projection = this.getProjection();
         const pos = projection.fromLatLngToDivPixel(this.position);
         if (pos) {
-          this.div.style.left = (pos.x - 18) + 'px'; // Center the 36px marker
-          this.div.style.top = (pos.y - 18) + 'px';
+          this.div.style.left = (pos.x - 9) + 'px'; // Center the 18px marker
+          this.div.style.top = (pos.y - 9) + 'px';
           this.div.style.position = 'absolute';
         }
       }
@@ -467,12 +467,12 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
       : new window.google.maps.LatLng(positionInput.lat, positionInput.lng);
     const markerDiv = document.createElement('div');
     markerDiv.style.position = 'absolute';
-    markerDiv.style.width = '20px';
-    markerDiv.style.height = '20px';
+    markerDiv.style.width = '12px';
+    markerDiv.style.height = '12px';
     markerDiv.style.backgroundColor = '#4285F4';
     markerDiv.style.borderRadius = '50%';
-    markerDiv.style.border = '3px solid white';
-    markerDiv.style.boxShadow = '0 0 10px rgba(66, 133, 244, 0.5)';
+    markerDiv.style.border = '2px solid white';
+    markerDiv.style.boxShadow = '0 0 6px rgba(66, 133, 244, 0.5)';
     markerDiv.style.zIndex = '999'; // On top of other markers
 
     // Pulse effect
@@ -521,8 +521,8 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
         const pos = projection.fromLatLngToDivPixel(this.position);
         if (pos) {
           // Centered
-          this.div.style.left = (pos.x - 10) + 'px';
-          this.div.style.top = (pos.y - 10) + 'px';
+          this.div.style.left = (pos.x - 6) + 'px';
+          this.div.style.top = (pos.y - 6) + 'px';
         }
       }
 
@@ -554,12 +554,24 @@ const SimpleMap = ({ onLocationSelect, visitedLocations = [], prospects = [], on
           };
           setUserLocation(newLocation);
           mapInstanceRef.current.setCenter(newLocation);
-          mapInstanceRef.current.setZoom(15);
+          mapInstanceRef.current.setZoom(18);
           // Update the blue user location marker
           if (userMarkerRef.current) {
             userMarkerRef.current.position = new window.google.maps.LatLng(newLocation.lat, newLocation.lng);
             userMarkerRef.current.draw();
           }
+          // Show "You are here" label briefly
+          const label = document.createElement('div');
+          label.textContent = 'You are here';
+          label.style.cssText = `
+            position:fixed; bottom:120px; left:50%; transform:translateX(-50%);
+            background:#1a73e8; color:#fff; padding:8px 18px;
+            border-radius:20px; font-size:14px; font-weight:600;
+            box-shadow:0 2px 8px rgba(0,0,0,0.25); z-index:9999;
+            pointer-events:none; animation:fadeIn 0.2s ease;
+          `;
+          document.body.appendChild(label);
+          setTimeout(() => label.remove(), 2500);
         },
         (error) => {
           console.error('Geolocation error:', error);
