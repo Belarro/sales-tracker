@@ -159,7 +159,8 @@ function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
 
   const handleCommunicated = async () => {
     setActioning(true);
-    await supabase.from('belarro_v4_follow_up').update({ status: 'replied', updated_at: new Date().toISOString() }).eq('id', f.id);
+    const { error: commErr } = await supabase.from('belarro_v4_follow_up').update({ status: 'replied', updated_at: new Date().toISOString() }).eq('id', f.id);
+    if (commErr) console.error('Communicated update failed:', commErr);
     setActioning(false);
     onRefresh();
   };
@@ -178,7 +179,7 @@ function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
 
   const handleConverted = async () => {
     setActioning(true);
-    await supabase.from('locations').update({ pipeline_stage: 'active', updated_at: new Date().toISOString() }).eq('id', f.location_id);
+    await supabase.from('locations').update({ pipeline_stage: 'active', interest_level: 'Closed Deal', updated_at: new Date().toISOString() }).eq('id', f.location_id);
     await supabase.from('belarro_v4_follow_up').update({ status: 'skipped', updated_at: new Date().toISOString() }).eq('location_id', f.location_id).eq('status', 'pending');
     setActioning(false);
     onRefresh();
@@ -326,10 +327,22 @@ function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
 
       {/* Action buttons */}
       <div style={{ display: 'flex', gap: '6px' }}>
-        <button onClick={handleCommunicated} disabled={actioning}
-          style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #fcd34d', background: '#fefce8', color: '#92400e', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
-          💬 Communicated
-        </button>
+        {f.status === 'replied' ? (
+          <button onClick={async () => {
+            setActioning(true);
+            await supabase.from('belarro_v4_follow_up').update({ status: 'pending', updated_at: new Date().toISOString() }).eq('id', f.id);
+            setActioning(false);
+            onRefresh();
+          }} disabled={actioning}
+            style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #6ee7b7', background: '#ecfdf5', color: '#065f46', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
+            ▶ Resume
+          </button>
+        ) : (
+          <button onClick={handleCommunicated} disabled={actioning}
+            style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #fcd34d', background: '#fefce8', color: '#92400e', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
+            💬 Communicated
+          </button>
+        )}
         <button onClick={() => setShowSnooze(true)} disabled={actioning}
           style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #fcd34d', background: '#fffbeb', color: '#92400e', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
           Snooze
