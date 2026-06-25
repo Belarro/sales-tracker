@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useFollowUps } from '../hooks/useFollowUps.js';
+import { supabase } from '../utils/supabaseClient.js';
 
 const STAGE_LABELS = {
   1: 'Message 1 · 2h',
@@ -80,7 +81,7 @@ function buildMessage(stage, flow, loc) {
   return (msgs[flow] || msgs.new)[stage] || '';
 }
 
-function FollowUpCard({ f, onMarkSent }) {
+function FollowUpCard({ f, onMarkSent, onRefresh }) {
   const loc = f.loc || {};
   const phone = loc.direct_phone || loc.business_phone || null;
   const email = loc.direct_email || null;
@@ -95,6 +96,9 @@ function FollowUpCard({ f, onMarkSent }) {
   const [confirmVia, setConfirmVia] = useState(null);
   const [showMsg, setShowMsg] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showSnooze, setShowSnooze] = useState(false);
+  const [snoozeDays, setSnoozeDays] = useState(90);
+  const [actioning, setActioning] = useState(false);
 
   const msg = buildMessage(f.stage, flow, loc);
   const waLink = hasWA ? buildWaLink(phone, msg) : null;
@@ -151,6 +155,33 @@ function FollowUpCard({ f, onMarkSent }) {
     const via = Array.from(sentChannels).join('+');
     await onMarkSent(f.id, via);
     setSubmitting(false);
+  };
+
+  const handleCommunicated = async () => {
+    setActioning(true);
+    await supabase.from('belarro_v4_follow_up').update({ status: 'replied', updated_at: new Date().toISOString() }).eq('id', f.id);
+    setActioning(false);
+    onRefresh();
+  };
+
+  const handleSnooze = async () => {
+    setActioning(true);
+    const wake = new Date();
+    wake.setDate(wake.getDate() + snoozeDays);
+    await supabase.from('belarro_v4_follow_up')
+      .update({ due_date: wake.toISOString(), updated_at: new Date().toISOString() })
+      .eq('location_id', f.location_id).eq('status', 'pending');
+    setActioning(false);
+    setShowSnooze(false);
+    onRefresh();
+  };
+
+  const handleConverted = async () => {
+    setActioning(true);
+    await supabase.from('locations').update({ pipeline_stage: 'active', updated_at: new Date().toISOString() }).eq('id', f.location_id);
+    await supabase.from('belarro_v4_follow_up').update({ status: 'skipped', updated_at: new Date().toISOString() }).eq('location_id', f.location_id).eq('status', 'pending');
+    setActioning(false);
+    onRefresh();
   };
 
   const anySent = sentChannels.size > 0;
@@ -301,6 +332,47 @@ function FollowUpCard({ f, onMarkSent }) {
         </button>
       )}
 
+      {/* Action buttons */}
+      <div style={{ display: 'flex', gap: '6px' }}>
+        <button onClick={handleCommunicated} disabled={actioning}
+          style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #fcd34d', background: '#fefce8', color: '#92400e', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
+          💬 Communicated
+        </button>
+        <button onClick={() => setShowSnooze(true)} disabled={actioning}
+          style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #fcd34d', background: '#fffbeb', color: '#92400e', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
+          Snooze
+        </button>
+        <button onClick={handleConverted} disabled={actioning}
+          style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #bfdbfe', background: '#eff6ff', color: '#1d4ed8', fontWeight: '600', fontSize: '11px', cursor: 'pointer' }}>
+          Converted
+        </button>
+      </div>
+
+      {/* Snooze picker */}
+      {showSnooze && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 'var(--border-radius-sm)', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: '600', color: '#92400e' }}>Snooze for how long?</div>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {[30, 60, 90].map(d => (
+              <button key={d} onClick={() => setSnoozeDays(d)}
+                style={{ flex: 1, padding: '6px', borderRadius: 'var(--border-radius-sm)', border: `1px solid ${snoozeDays === d ? '#f59e0b' : '#e5e7eb'}`, background: snoozeDays === d ? '#f59e0b' : 'white', color: snoozeDays === d ? 'white' : '#374151', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}>
+                {d}d
+              </button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <button onClick={() => setShowSnooze(false)}
+              style={{ flex: 1, padding: '8px', borderRadius: 'var(--border-radius-sm)', border: '1px solid #e5e7eb', background: 'white', color: '#374151', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}>
+              Cancel
+            </button>
+            <button onClick={handleSnooze} disabled={actioning}
+              style={{ flex: 1, padding: '8px', borderRadius: 'var(--border-radius-sm)', border: 'none', background: '#f59e0b', color: 'white', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}>
+              {actioning ? '...' : `Snooze ${snoozeDays}d`}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Did you send it? confirm */}
       {confirmVia && (
         <div style={{
@@ -384,7 +456,7 @@ const FollowUpsView = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
           {followups.map(f => (
-            <FollowUpCard key={f.id} f={f} onMarkSent={markSent} />
+            <FollowUpCard key={f.id} f={f} onMarkSent={markSent} onRefresh={refetch} />
           ))}
         </div>
       )}
