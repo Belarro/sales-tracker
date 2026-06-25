@@ -17,7 +17,9 @@ const STAGE_GAPS_NEW = { 1: 0, 2: 2, 3: 5, 4: 14, 5: 30 };
 const STAGE_GAPS_REENGAGE = { 1: 0, 2: 5, 3: 14, 4: 30 };
 
 export function useFollowUps() {
-  const [followups, setFollowups] = useState([]);
+  const [today, setToday] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [warm, setWarm] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,19 +28,23 @@ export function useFollowUps() {
       setLoading(true);
       setError(null);
 
-      // Fetch pending follow-ups
+      // Fetch pending + replied follow-ups
       const { data: fls, error: fErr } = await supabase
         .from('belarro_v4_follow_up')
         .select('*')
-        .eq('status', 'pending')
+        .in('status', ['pending', 'replied'])
+        .neq('status', 'skipped')
         .order('due_date', { ascending: true });
 
       if (fErr) throw fErr;
-      if (!fls || fls.length === 0) { setFollowups([]); return; }
+      if (!fls || fls.length === 0) {
+        setToday([]); setUpcoming([]); setWarm([]);
+        return;
+      }
 
-      // Fetch location details
       const locationIds = [...new Set(fls.map(f => f.location_id).filter(Boolean))];
-      if (locationIds.length === 0) { setFollowups([]); return; }
+      if (locationIds.length === 0) { setToday([]); setUpcoming([]); setWarm([]); return; }
+
       const { data: locs, error: lErr } = await supabase
         .from('locations')
         .select('id,location_name,contact_person,direct_phone,business_phone,direct_email,language,pipeline_stage,interest_level,timestamp,created_at,sales_rep')
@@ -48,9 +54,15 @@ export function useFollowUps() {
       if (lErr) throw lErr;
       const locMap = new Map((locs || []).map(l => [l.id, l]));
 
-      // Keep only lowest pending stage per location
+      // Warm: replied status
+      const warmItems = fls
+        .filter(f => f.status === 'replied')
+        .map(f => ({ ...f, stage: f.stage || f.follow_up_number || 1, loc: locMap.get(f.location_id) }))
+        .filter(f => f.loc && f.loc.pipeline_stage !== 'active');
+
+      // Pending: keep only lowest stage per location
       const nextPerLoc = new Map();
-      for (const f of fls) {
+      for (const f of fls.filter(f => f.status === 'pending')) {
         const loc = locMap.get(f.location_id);
         if (!loc) continue;
         if (loc.pipeline_stage === 'active' || loc.pipeline_stage === 'snoozed') continue;
@@ -61,14 +73,13 @@ export function useFollowUps() {
         }
       }
 
-      const now = new Date();
       const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
+      const all = Array.from(nextPerLoc.values());
 
-      const result = Array.from(nextPerLoc.values())
-        .filter(f => new Date(f.due_date) <= todayEnd)
-        .sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+      setToday(all.filter(f => new Date(f.due_date) <= todayEnd).sort((a, b) => new Date(b.due_date) - new Date(a.due_date)));
+      setUpcoming(all.filter(f => new Date(f.due_date) > todayEnd).sort((a, b) => new Date(a.due_date) - new Date(b.due_date)));
+      setWarm(warmItems.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)));
 
-      setFollowups(result);
     } catch (err) {
       console.error('useFollowUps error:', err);
       setError(err.message);
@@ -78,6 +89,9 @@ export function useFollowUps() {
   }, []);
 
   useEffect(() => { fetchFollowups(); }, [fetchFollowups]);
+
+  // Keep followups as today for backward compat
+  const followups = today;
 
   const markSent = useCallback(async (followupId, via) => {
     const now = new Date();
@@ -119,5 +133,5 @@ export function useFollowUps() {
     fetchFollowups();
   }, [fetchFollowups]);
 
-  return { followups, loading, error, refetch: fetchFollowups, markSent };
+  return { followups, today, upcoming, warm, loading, error, refetch: fetchFollowups, markSent };
 }

@@ -81,7 +81,7 @@ function buildMessage(stage, flow, loc) {
   return (msgs[flow] || msgs.new)[stage] || '';
 }
 
-function FollowUpCard({ f, onMarkSent, onRefresh }) {
+function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
   const loc = f.loc || {};
   const phone = loc.direct_phone || loc.business_phone || null;
   const email = loc.direct_email || null;
@@ -271,51 +271,43 @@ function FollowUpCard({ f, onMarkSent, onRefresh }) {
       )}
 
       {/* Send buttons */}
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {hasWA && (
-          <button
-            onClick={handleSendWA}
-            style={{
-              flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)',
-              border: waSent ? '1px solid #10b981' : 'none',
-              background: waSent ? '#f0fdf4' : '#16a34a',
-              color: waSent ? '#16a34a' : 'white',
-              fontWeight: '700', fontSize: '13px', cursor: 'pointer'
-            }}
-          >
-            {waSent ? '✓ WhatsApp' : '💬 WhatsApp'}
-          </button>
-        )}
-        {email && (
-          <button
-            onClick={handleSendEmail}
-            disabled={sendingEmail}
-            style={{
-              flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)',
-              border: emailSent ? '1px solid #2563eb' : 'none',
-              background: emailSent ? '#eff6ff' : sendingEmail ? '#93c5fd' : '#2563eb',
-              color: emailSent ? '#2563eb' : 'white',
-              fontWeight: '700', fontSize: '13px', cursor: sendingEmail ? 'default' : 'pointer'
-            }}
-          >
-            {emailSent ? '✓ Email' : sendingEmail ? 'Sending...' : '📧 Email'}
-          </button>
-        )}
-        {emailError && (
-          <div style={{ fontSize: '11px', color: '#ef4444', fontWeight: '600' }}>{emailError}</div>
-        )}
-        {!hasWA && !email && (
-          <button
-            onClick={() => { setShowMsg(true); navigator.clipboard?.writeText(msg); }}
-            style={{
-              flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)',
-              background: '#4b5563', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer', border: 'none'
-            }}
-          >
-            📋 Copy Message
-          </button>
-        )}
-      </div>
+      {locked ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div style={{ textAlign: 'center', padding: '8px', fontSize: '11px', color: '#9ca3af', fontWeight: '600', background: '#f9fafb', borderRadius: 'var(--border-radius-sm)', border: '1px solid #e5e7eb' }}>
+            🔒 Unlocks {new Date(f.due_date).toLocaleDateString('en-DE', { day: 'numeric', month: 'short' })}
+          </div>
+          {email && (
+            <button onClick={handleSendEmail} disabled={sendingEmail}
+              style={{ width: '100%', padding: '10px', borderRadius: 'var(--border-radius-sm)', border: 'none', background: emailSent ? '#eff6ff' : sendingEmail ? '#93c5fd' : '#2563eb', color: emailSent ? '#2563eb' : 'white', fontWeight: '700', fontSize: '13px', cursor: sendingEmail ? 'default' : 'pointer' }}>
+              {emailSent ? '✓ Email' : sendingEmail ? 'Sending...' : '📧 Send Email Anyway'}
+            </button>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {hasWA && (
+            <button onClick={handleSendWA}
+              style={{ flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)', border: waSent ? '1px solid #10b981' : 'none', background: waSent ? '#f0fdf4' : '#16a34a', color: waSent ? '#16a34a' : 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}>
+              {waSent ? '✓ WhatsApp' : '💬 WhatsApp'}
+            </button>
+          )}
+          {email && (
+            <button onClick={handleSendEmail} disabled={sendingEmail}
+              style={{ flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)', border: emailSent ? '1px solid #2563eb' : 'none', background: emailSent ? '#eff6ff' : sendingEmail ? '#93c5fd' : '#2563eb', color: emailSent ? '#2563eb' : 'white', fontWeight: '700', fontSize: '13px', cursor: sendingEmail ? 'default' : 'pointer' }}>
+              {emailSent ? '✓ Email' : sendingEmail ? 'Sending...' : '📧 Email'}
+            </button>
+          )}
+          {!hasWA && !email && (
+            <button onClick={() => { setShowMsg(true); navigator.clipboard?.writeText(msg); }}
+              style={{ flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)', background: '#4b5563', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer', border: 'none' }}>
+              📋 Copy Message
+            </button>
+          )}
+        </div>
+      )}
+      {emailError && (
+        <div style={{ fontSize: '11px', color: '#ef4444', fontWeight: '600' }}>{emailError}</div>
+      )}
 
       {/* Done button — appears after any channel sent */}
       {anySent && (
@@ -420,43 +412,64 @@ function FollowUpCard({ f, onMarkSent, onRefresh }) {
 }
 
 const FollowUpsView = () => {
-  const { followups, loading, error, refetch, markSent } = useFollowUps();
+  const { today, upcoming, warm, loading, error, refetch, markSent } = useFollowUps();
+  const [activeTab, setActiveTab] = useState('today');
+
+  const tabs = [
+    { key: 'today', label: `Today (${today.length})`, urgent: today.length > 0 },
+    { key: 'upcoming', label: `Upcoming (${upcoming.length})` },
+    { key: 'warm', label: `Warm (${warm.length})`, urgent: warm.length > 0 },
+  ];
+
+  const displayed = activeTab === 'today' ? today : activeTab === 'upcoming' ? upcoming : warm;
 
   return (
-    <div style={{
-      padding: 'var(--spacing-md)',
-      paddingBottom: '80px',
-      height: '100%',
-      overflowY: 'auto',
-      background: 'var(--color-bg-secondary)'
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
-        <h2 style={{ fontSize: 'var(--font-size-lg)', color: 'var(--color-text-main)', fontWeight: '600' }}>
-          Follow-ups Due ({followups.length})
+    <div style={{ padding: 'var(--spacing-md)', paddingBottom: '80px', height: '100%', overflowY: 'auto', background: 'var(--color-bg-secondary)' }}>
+
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <h2 style={{ fontSize: 'var(--font-size-lg)', color: 'var(--color-text-main)', fontWeight: '700' }}>
+          Follow-ups
         </h2>
         <button onClick={refetch} className="btn btn-secondary" style={{ fontSize: '12px', padding: '6px 12px' }}>
           Refresh
         </button>
       </div>
 
+      {/* Tabs */}
+      <div style={{ display: 'flex', borderBottom: '2px solid #e5e7eb', marginBottom: '16px', gap: '0' }}>
+        {tabs.map(t => (
+          <button
+            key={t.key}
+            onClick={() => setActiveTab(t.key)}
+            style={{
+              flex: 1, padding: '10px 4px', fontSize: '12px', fontWeight: '700',
+              border: 'none', background: 'none', cursor: 'pointer',
+              borderBottom: activeTab === t.key ? '2px solid #10b981' : '2px solid transparent',
+              color: activeTab === t.key ? '#10b981' : t.urgent ? '#ef4444' : '#6b7280',
+              marginBottom: '-2px',
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>
-          Loading...
-        </div>
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>Loading...</div>
       ) : error ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#ef4444', fontSize: '13px' }}>
-          Error: {error}
-        </div>
-      ) : followups.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: '#ef4444', fontSize: '13px' }}>Error: {error}</div>
+      ) : displayed.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-text-muted)' }}>
-          <div style={{ fontSize: '40px', marginBottom: '12px' }}>✓</div>
-          <div style={{ fontWeight: '600', fontSize: 'var(--font-size-md)' }}>All caught up!</div>
-          <div style={{ fontSize: 'var(--font-size-sm)', marginTop: '6px' }}>No follow-ups due today.</div>
+          <div style={{ fontSize: '40px', marginBottom: '12px' }}>{activeTab === 'today' ? '✓' : '—'}</div>
+          <div style={{ fontWeight: '600', fontSize: 'var(--font-size-md)' }}>
+            {activeTab === 'today' ? 'All caught up!' : activeTab === 'upcoming' ? 'No upcoming follow-ups.' : 'No warm leads.'}
+          </div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-          {followups.map(f => (
-            <FollowUpCard key={f.id} f={f} onMarkSent={markSent} onRefresh={refetch} />
+          {displayed.map(f => (
+            <FollowUpCard key={f.id} f={f} onMarkSent={markSent} onRefresh={refetch} locked={activeTab === 'upcoming'} />
           ))}
         </div>
       )}
