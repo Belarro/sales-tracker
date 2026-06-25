@@ -42,7 +42,7 @@ const CHEF_PAGE = 'https://belarro.com/for-chefs';
 
 function buildMessage(stage, flow, loc) {
   const name = loc.contact_person || loc.location_name || 'there';
-  const isDE = (loc.language || '').toUpperCase() === 'DE';
+  const isDE = (loc.language || '').toUpperCase() !== 'EN'; // default DE
 
   const msgs = {
     new: {
@@ -118,7 +118,7 @@ function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
     setSendingEmail(true);
     setEmailError(null);
     try {
-      const isDE = (loc.language || '').toUpperCase() === 'DE';
+      const isDE = (loc.language || '').toUpperCase() !== 'EN'; // default DE
       const subjects = isDE ? EMAIL_SUBJECTS_DE : EMAIL_SUBJECTS_EN;
       const subject = subjects[f.stage] || 'Belarro Microgreens';
       const res = await fetch('https://frontend-six-beryl-91.vercel.app/api/send-followup-email', {
