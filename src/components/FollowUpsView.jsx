@@ -104,16 +104,41 @@ function FollowUpCard({ f, onMarkSent }) {
     setConfirmVia('whatsapp');
   };
 
-  const handleSendEmail = () => {
-    const to = encodeURIComponent(email);
-    const subject = encodeURIComponent('Belarro Microgreens');
-    const isDE = (loc.language || '').toUpperCase() === 'DE';
-    const flyerUrl = isDE
-      ? 'https://wbqzlxdyjdmbzifhsyil.supabase.co/storage/v1/object/public/assets/flyers/followup-de.png'
-      : 'https://wbqzlxdyjdmbzifhsyil.supabase.co/storage/v1/object/public/assets/flyers/followup-en.png';
-    const body = encodeURIComponent(msg + '\n\n' + flyerUrl);
-    window.open(`https://mail.google.com/mail/u/5/?view=cm&from=hello%40belarro.com&to=${to}&su=${subject}&body=${body}`, '_blank');
-    setConfirmVia('email');
+  const EMAIL_SUBJECTS_DE = { 1: 'Belarro Microgreens - Nach unserem Gespraech heute', 2: 'Belarro Microgreens - Kurze Nachfrage', 3: 'Belarro Microgreens - Noch interessiert?', 4: 'Belarro Microgreens - Letzte Nachricht von uns', 5: 'Belarro Microgreens - Wir melden uns ein letztes Mal' };
+  const EMAIL_SUBJECTS_EN = { 1: 'Belarro Microgreens - Following our conversation today', 2: 'Belarro Microgreens - Quick follow-up', 3: 'Belarro Microgreens - Still interested?', 4: 'Belarro Microgreens - One last message', 5: 'Belarro Microgreens - Final note from us' };
+
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailError, setEmailError] = useState(null);
+
+  const handleSendEmail = async () => {
+    setSendingEmail(true);
+    setEmailError(null);
+    try {
+      const isDE = (loc.language || '').toUpperCase() === 'DE';
+      const subjects = isDE ? EMAIL_SUBJECTS_DE : EMAIL_SUBJECTS_EN;
+      const subject = subjects[f.stage] || 'Belarro Microgreens';
+      const res = await fetch('https://frontend-six-beryl-91.vercel.app/api/send-followup-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          followup_id: f.id,
+          to: email,
+          subject,
+          body: msg,
+          language: loc.language || 'EN',
+        }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSentChannels(prev => new Set([...prev, 'email']));
+      } else {
+        setEmailError(json.error || 'Send failed');
+      }
+    } catch {
+      setEmailError('Network error');
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   const confirmSent = (via) => {
@@ -233,16 +258,20 @@ function FollowUpCard({ f, onMarkSent }) {
         {email && (
           <button
             onClick={handleSendEmail}
+            disabled={sendingEmail}
             style={{
               flex: 1, padding: '10px', borderRadius: 'var(--border-radius-sm)',
               border: emailSent ? '1px solid #2563eb' : 'none',
-              background: emailSent ? '#eff6ff' : '#2563eb',
+              background: emailSent ? '#eff6ff' : sendingEmail ? '#93c5fd' : '#2563eb',
               color: emailSent ? '#2563eb' : 'white',
-              fontWeight: '700', fontSize: '13px', cursor: 'pointer'
+              fontWeight: '700', fontSize: '13px', cursor: sendingEmail ? 'default' : 'pointer'
             }}
           >
-            {emailSent ? '✓ Email' : '📧 Email'}
+            {emailSent ? '✓ Email' : sendingEmail ? 'Sending...' : '📧 Email'}
           </button>
+        )}
+        {emailError && (
+          <div style={{ fontSize: '11px', color: '#ef4444', fontWeight: '600' }}>{emailError}</div>
         )}
         {!hasWA && !email && (
           <button
