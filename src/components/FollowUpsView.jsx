@@ -273,16 +273,8 @@ function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
 
       {/* Send buttons */}
       {locked ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <div style={{ textAlign: 'center', padding: '8px', fontSize: '11px', color: '#9ca3af', fontWeight: '600', background: '#f9fafb', borderRadius: 'var(--border-radius-sm)', border: '1px solid #e5e7eb' }}>
-            🔒 Unlocks {new Date(f.due_date).toLocaleDateString('en-DE', { day: 'numeric', month: 'short' })}
-          </div>
-          {email && (
-            <button onClick={handleSendEmail} disabled={sendingEmail}
-              style={{ width: '100%', padding: '10px', borderRadius: 'var(--border-radius-sm)', border: 'none', background: emailSent ? '#eff6ff' : sendingEmail ? '#93c5fd' : '#2563eb', color: emailSent ? '#2563eb' : 'white', fontWeight: '700', fontSize: '13px', cursor: sendingEmail ? 'default' : 'pointer' }}>
-              {emailSent ? '✓ Email' : sendingEmail ? 'Sending...' : '📧 Send Email Anyway'}
-            </button>
-          )}
+        <div style={{ textAlign: 'center', padding: '8px', fontSize: '11px', color: '#9ca3af', fontWeight: '600', background: '#f9fafb', borderRadius: 'var(--border-radius-sm)', border: '1px solid #e5e7eb' }}>
+          🔒 Unlocks {new Date(f.due_date).toLocaleDateString('en-DE', { day: 'numeric', month: 'short' })}
         </div>
       ) : (
         <div style={{ display: 'flex', gap: '8px' }}>

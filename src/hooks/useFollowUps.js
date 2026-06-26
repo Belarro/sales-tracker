@@ -119,9 +119,7 @@ export function useFollowUps() {
         .single();
 
       if (next) {
-        const isReengage = next.follow_up_days <= 14 && nextStage <= 4;
-        const gaps = isReengage ? STAGE_GAPS_REENGAGE : STAGE_GAPS_NEW;
-        const days = gaps[nextStage] ?? next.follow_up_days ?? 2;
+        const days = STAGE_GAPS_NEW[nextStage] ?? next.follow_up_days ?? 2;
         const newDue = addBusinessDays(now, days);
         await supabase
           .from('belarro_v4_follow_up')
