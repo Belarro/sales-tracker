@@ -11,9 +11,10 @@ export const useLocations = () => {
     const [prospects, setProspects] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    // Check URL params for view (e.g. from notification tap)
+    // Check URL params for view — only honour 'followups' and 'tasks' (used by notification links)
     const urlView = new URLSearchParams(window.location.search).get('view');
-    const [currentView, setCurrentView] = useState(urlView || 'map'); // 'tasks', 'map', or 'list'
+    const allowedUrlViews = ['followups', 'tasks'];
+    const [currentView, setCurrentView] = useState(allowedUrlViews.includes(urlView) ? urlView : 'map');
     const [loadError, setLoadError] = useState('');
 
     const refreshProspects = useCallback(async () => {
