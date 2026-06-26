@@ -343,6 +343,10 @@ const LocationPanel = ({ location, user, onClose, onSave }) => {
     try {
       const success = await deleteLocation(location.locationName, location.businessAddress);
       if (success) {
+        // Also delete from Supabase (locations + follow-ups)
+        import('../utils/syncBelarro.js').then(({ deleteLocationFromSupabase }) => {
+          deleteLocationFromSupabase(location.locationName).catch(() => {});
+        });
         setSaveMessage({ type: 'success', text: 'Deleted' });
         setTimeout(() => { onSave(); onClose(); }, 1000);
       } else {

@@ -118,4 +118,23 @@ export async function syncProspectToSupabase(prospectData) {
   }
 }
 
-export default { syncProspectToSupabase };
+export async function deleteLocationFromSupabase(locationName) {
+  try {
+    const { data: locs } = await supabase
+      .from('locations')
+      .select('id')
+      .ilike('location_name', locationName)
+      .limit(5);
+
+    if (!locs || locs.length === 0) return;
+
+    for (const loc of locs) {
+      await supabase.from('belarro_v4_follow_up').delete().eq('location_id', loc.id);
+      await supabase.from('locations').delete().eq('id', loc.id);
+    }
+  } catch (err) {
+    console.warn('Supabase delete failed (non-fatal):', err.message);
+  }
+}
+
+export default { syncProspectToSupabase, deleteLocationFromSupabase };
