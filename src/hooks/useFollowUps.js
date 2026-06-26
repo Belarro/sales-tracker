@@ -73,11 +73,12 @@ export function useFollowUps() {
         }
       }
 
-      const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
+      const todayStr = new Date().toLocaleDateString('sv'); // YYYY-MM-DD in local tz
       const all = Array.from(nextPerLoc.values());
 
-      setToday(all.filter(f => new Date(f.due_date) <= todayEnd).sort((a, b) => new Date(b.due_date) - new Date(a.due_date)));
-      setUpcoming(all.filter(f => new Date(f.due_date) > todayEnd).sort((a, b) => new Date(a.due_date) - new Date(b.due_date)));
+      const dueDateStr = (f) => new Date(f.due_date).toLocaleDateString('sv');
+      setToday(all.filter(f => dueDateStr(f) <= todayStr).sort((a, b) => new Date(b.due_date) - new Date(a.due_date)));
+      setUpcoming(all.filter(f => dueDateStr(f) > todayStr).sort((a, b) => new Date(a.due_date) - new Date(b.due_date)));
       setWarm(warmItems.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)));
 
     } catch (err) {
