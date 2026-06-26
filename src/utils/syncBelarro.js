@@ -34,11 +34,14 @@ async function seedFollowUps(locationId, visitDate) {
   const old = isOldLead(visitDate);
   const gaps = old ? REENGAGE_GAPS : NEW_LEAD_GAPS;
   const now = new Date();
+  // Anchor to start-of-today in local timezone so stage 1 always lands on today
+  // regardless of what time the lead is created (even after midnight)
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
   const rows = [];
 
   for (const [stageStr, days] of Object.entries(gaps)) {
     const stage = Number(stageStr);
-    const dueDate = stage === 1 ? now : addBusinessDays(now, days);
+    const dueDate = stage === 1 ? todayStart : addBusinessDays(todayStart, days);
 
     rows.push({
       location_id: locationId,
