@@ -129,7 +129,7 @@ function FollowUpCard({ f, onMarkSent, onRefresh, locked = false }) {
           to: email,
           subject,
           body: msg,
-          language: loc.language || 'EN',
+          language: loc.language || 'DE',
         }),
       });
       const json = await res.json();
