@@ -17,6 +17,7 @@ import TodaysTasks from './components/TodaysTasks.jsx';
 import Layout from './components/Layout.jsx';
 import LoadingScreen from './components/LoadingScreen.jsx';
 import FollowUpsView from './components/FollowUpsView.jsx';
+import DeliveriesView from './components/DeliveriesView.jsx';
 
 // Hooks
 import { useGoogleAuth } from './hooks/useGoogleAuth';
@@ -25,6 +26,7 @@ import { useBackButton } from './hooks/useBackButton';
 import { useSettings } from './hooks/useSettings';
 import { useNearbyDetection } from './hooks/useNearbyDetection';
 import { useFollowUps } from './hooks/useFollowUps';
+import { useDeliveries } from './hooks/useDeliveries';
 
 function App() {
   // Use Custom Hooks
@@ -49,6 +51,7 @@ function App() {
   } = useLocations();
 
   const { followups } = useFollowUps();
+  const deliveries = useDeliveries();
   const [settings, updateSetting] = useSettings();
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -130,6 +133,12 @@ function App() {
     }
   }, [authorized, refreshLocations]);
 
+  // Load this week's delivery schedule when authorized (drives the nav badge)
+  useEffect(() => {
+    if (authorized) deliveries.fetchDue();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authorized]);
+
   const handleAdminSetupComplete = () => {
     setShowAdminSetup(false);
     refreshLocations();
@@ -202,6 +211,7 @@ function App() {
       onViewChange={setCurrentView}
       overdueCount={overdueTasks.length}
       followupsCount={followups.length}
+      deliveriesPendingCount={deliveries.customers.reduce((s, c) => s + c.items.filter(i => i.status === 'pending').length, 0)}
       settings={settings}
       onUpdateSetting={updateSetting}
     >
@@ -273,6 +283,8 @@ function App() {
           />
         ) : currentView === 'followups' ? (
           <FollowUpsView />
+        ) : currentView === 'deliveries' ? (
+          <DeliveriesView user={user} deliveries={deliveries} />
         ) : null}
       </div>
 

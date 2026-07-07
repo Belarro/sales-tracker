@@ -13,7 +13,7 @@ export const useLocations = () => {
     const [searchQuery, setSearchQuery] = useState('');
     // Check URL params for view — only honour 'followups' and 'tasks' (used by notification links)
     const urlView = new URLSearchParams(window.location.search).get('view');
-    const allowedUrlViews = ['followups', 'tasks'];
+    const allowedUrlViews = ['followups', 'tasks', 'deliveries'];
     const [currentView, setCurrentView] = useState(allowedUrlViews.includes(urlView) ? urlView : 'map');
     const [loadError, setLoadError] = useState('');
 

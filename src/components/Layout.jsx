@@ -32,6 +32,11 @@ const NavIcons = {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
+  ),
+  deliveries: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" />
+    </svg>
   )
 };
 
@@ -54,6 +59,7 @@ const Layout = ({
   onViewChange,
   overdueCount = 0,
   followupsCount = 0,
+  deliveriesPendingCount = 0,
   settings,
   onUpdateSetting
 }) => {
@@ -173,6 +179,20 @@ const Layout = ({
             <span className="nav-label">Follow-ups</span>
             {followupsCount > 0 && (
               <span className="nav-badge">{followupsCount}</span>
+            )}
+          </button>
+
+          <button
+            className={`nav-item ${!isDashboardOpen && currentView === 'deliveries' ? 'active' : ''}`}
+            onClick={() => {
+              if (isDashboardOpen) toggleDashboard();
+              onViewChange('deliveries');
+            }}
+          >
+            <span className="nav-icon">{NavIcons.deliveries}</span>
+            <span className="nav-label">Deliveries</span>
+            {deliveriesPendingCount > 0 && (
+              <span className="nav-badge">{deliveriesPendingCount}</span>
             )}
           </button>
 
