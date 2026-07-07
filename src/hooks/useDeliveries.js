@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 
-// Same host syncBelarro.js already calls — the admin app is the source of
-// truth for order/production data, this app only confirms what happened.
-const BELARRO_BASE = 'https://belarro-v4.vercel.app';
+// Production admin app — source of truth for order/production data; this
+// app only confirms what happened. NOTE: belarro-v4.vercel.app is a DEAD
+// domain (DEPLOYMENT_NOT_FOUND) even though older code references it.
+const BELARRO_BASE = 'https://admin.belarro.com';
 const SYNC_SECRET = import.meta.env.VITE_SALETRACKER_SYNC_SECRET || '';
 
 function ymdLocal(d) {
