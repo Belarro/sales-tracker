@@ -20,6 +20,7 @@ function nextTuesday(from) {
 
 export function useDeliveries() {
   const [customers, setCustomers] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
   const [date, setDate] = useState(() => ymdLocal(nextTuesday(new Date())));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,11 +36,13 @@ export function useDeliveries() {
       const json = await res.json();
       if (!json.success) throw new Error(json.error || 'Failed to load deliveries');
       setCustomers(json.data || []);
+      setUpcoming(json.upcoming || []);
       setDate(json.date || targetDate);
     } catch (err) {
       console.error('useDeliveries fetchDue error:', err);
       setError(err.message);
       setCustomers([]);
+      setUpcoming([]);
     } finally {
       setLoading(false);
     }
@@ -77,5 +80,5 @@ export function useDeliveries() {
     fetchDue(ymdLocal(d));
   }, [date, fetchDue]);
 
-  return { customers, date, loading, error, fetchDue, confirm, goToPreviousTuesday, goToNextTuesday };
+  return { customers, upcoming, date, loading, error, fetchDue, confirm, goToPreviousTuesday, goToNextTuesday };
 }

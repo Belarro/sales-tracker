@@ -148,8 +148,39 @@ const CustomerCard = ({ customer, onConfirmLine, confirmingId }) => {
   );
 };
 
+function fmtShort(ymd) {
+  return new Date(`${ymd}T00:00:00`).toLocaleDateString('en-DE', { day: 'numeric', month: 'short' });
+}
+
+function weeksAway(fromYmd, toYmd) {
+  const a = new Date(`${fromYmd}T00:00:00`);
+  const b = new Date(`${toYmd}T00:00:00`);
+  return Math.round((b - a) / (7 * 86400000));
+}
+
+const UpcomingRow = ({ item, currentDate }) => {
+  const w = weeksAway(currentDate, item.next_delivery_date);
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: 'var(--spacing-sm) var(--spacing-md)', borderBottom: '1px solid var(--color-border)',
+    }}>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--color-text-main)' }}>{item.customer_name}</div>
+        <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{item.crop_names.join(', ')}</div>
+      </div>
+      <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '8px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-text-main)' }}>{fmtShort(item.next_delivery_date)}</div>
+        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
+          {w <= 0 ? 'this week' : w === 1 ? 'in 1 week' : `in ${w} weeks`}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const DeliveriesView = ({ user, deliveries }) => {
-  const { customers, date, loading, error, confirm, goToPreviousTuesday, goToNextTuesday } = deliveries;
+  const { customers, upcoming, date, loading, error, confirm, goToPreviousTuesday, goToNextTuesday } = deliveries;
   const [confirmingId, setConfirmingId] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -171,7 +202,10 @@ const DeliveriesView = ({ user, deliveries }) => {
   const doneItems = customers.reduce((s, c) => s + c.items.filter(i => i.status !== 'pending').length, 0);
 
   return (
-    <div style={{ padding: 'var(--spacing-md)', height: '100%', overflowY: 'auto' }}>
+    <div style={{
+      position: 'absolute', inset: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+      padding: 'var(--spacing-md)', paddingBottom: '80px', boxSizing: 'border-box',
+    }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--spacing-md)' }}>
         <button className="btn btn-secondary" style={{ padding: '8px 12px' }} onClick={goToPreviousTuesday}>←</button>
         <div style={{ textAlign: 'center' }}>
@@ -187,14 +221,37 @@ const DeliveriesView = ({ user, deliveries }) => {
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>Loading…</div>
       ) : error ? (
         <div style={{ textAlign: 'center', padding: '40px', color: '#EF4444' }}>{error}</div>
-      ) : customers.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>
-          No deliveries due this day.
-        </div>
       ) : (
-        customers.map(c => (
-          <CustomerCard key={c.customer_id} customer={c} onConfirmLine={handleConfirm} confirmingId={confirmingId} />
-        ))
+        <>
+          {customers.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '24px', color: 'var(--color-text-muted)' }}>
+              No deliveries due this day.
+            </div>
+          ) : (
+            customers.map(c => (
+              <CustomerCard key={c.customer_id} customer={c} onConfirmLine={handleConfirm} confirmingId={confirmingId} />
+            ))
+          )}
+
+          {upcoming && upcoming.length > 0 && (
+            <div style={{ marginTop: 'var(--spacing-lg)' }}>
+              <div style={{
+                fontSize: '12px', fontWeight: 700, color: 'var(--color-text-muted)',
+                textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 'var(--spacing-sm)',
+              }}>
+                Upcoming — no delivery this week
+              </div>
+              <div style={{
+                background: 'var(--color-bg-secondary)', borderRadius: 'var(--border-radius-lg)',
+                border: '1px solid var(--color-border)', overflow: 'hidden',
+              }}>
+                {upcoming.map(item => (
+                  <UpcomingRow key={item.customer_id} item={item} currentDate={date} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {toast && (
