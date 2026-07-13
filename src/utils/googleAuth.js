@@ -67,7 +67,8 @@ export const isAdminWithSheet = (email, sheetAdmins = []) => {
  * @returns {boolean} True if user is authorized
  */
 export const isAuthorized = (email, authorizedUsers) => {
-  return isAdmin(email) || authorizedUsers.includes(email);
+  const emailLower = email.toLowerCase();
+  return isAdmin(email) || authorizedUsers.some(u => u.toLowerCase() === emailLower);
 };
 
 /**

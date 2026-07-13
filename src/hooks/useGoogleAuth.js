@@ -48,12 +48,16 @@ export const useGoogleAuth = () => {
                 console.log('✅ User is admin:', userInfo.email);
                 setAuthorized(true);
             }
-            // Check if user is authorized 
+            // Check if user is authorized
             else {
                 const authorizedUsers = await getAuthorizedUsers();
                 console.log('🔍 Checking authorization for:', userInfo.email);
+                console.log('📋 Authorized users:', authorizedUsers);
 
-                if (authorizedUsers.includes(userInfo.email)) {
+                const userEmailLower = userInfo.email.toLowerCase();
+                const isAuthorized = authorizedUsers.some(email => email.toLowerCase() === userEmailLower);
+
+                if (isAuthorized) {
                     setAuthorized(true);
                 } else {
                     setError('You are not authorized to access this app. Please contact the administrator.');
